@@ -1,0 +1,76 @@
+# Built application files
+*.apk
+*.ap_
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+.cxx/
+.externalNativeBuild/
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+local.properties
+.DS_Store
+*.iml
+*.iws
+*.ipr
+
+# Android Studio and IntelliJ IDEA files
+.idea/
+.vs/
+.vscode/
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build files
+/app/build
+/app/.cxx
+/app/.externalNativeBuild
+
+# User-specific files
+.idea/libraries
+.idea/dictionaries
+.idea/codeStyles
+.idea/fileTemplates
+
+# Kotlin compiler caches
+.kotlin/
+.incremental/
+
+# Annotation processing
+*.kapt_generated
+
+# NDK
+.ndk/
+
+# Crashlytics
+crashlytics-build.properties
+
+# Google Services (json file)
+google-services.json
+
+# Test output
+/app/src/androidTest/
+/app/src/test/
+
+# For macOS
+.DS_Store
+
+# Misc
+*.aar
+*.aab
