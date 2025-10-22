@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class HistoryAdapter(private val historyList: List<AnalysisEntry>, private val onClick: (AnalysisEntry) -> Unit) :
+class HistoryAdapter(
+    private val historyList: List<AnalysisEntry>,
+    private val onClick: (AnalysisEntry) -> Unit,
+    private val onOptionsClick: (AnalysisEntry, View) -> Unit
+) :
     RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -19,6 +24,7 @@ class HistoryAdapter(private val historyList: List<AnalysisEntry>, private val o
         val localNameTextView: TextView = itemView.findViewById(R.id.history_item_local_name)
         val scientificNameTextView: TextView = itemView.findViewById(R.id.history_item_scientific_name)
         val timestampTextView: TextView = itemView.findViewById(R.id.history_item_timestamp)
+        val optionsButton: ImageButton = itemView.findViewById(R.id.history_item_options_button)
 
         fun bind(entry: AnalysisEntry) {
             imageView.setImageURI(Uri.parse(entry.imageUri))
@@ -27,6 +33,7 @@ class HistoryAdapter(private val historyList: List<AnalysisEntry>, private val o
             val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             timestampTextView.text = sdf.format(Date(entry.timestamp))
             itemView.setOnClickListener { onClick(entry) }
+            optionsButton.setOnClickListener { onOptionsClick(entry, it) }
         }
     }
 

@@ -32,5 +32,22 @@ class AnalysisHistoryManager(context: Context) {
     fun clearHistory() {
         sharedPreferences.edit().remove(KEY_HISTORY_LIST).apply()
     }
+
+    fun deleteAnalysisEntry(entry: AnalysisEntry) {
+        val historyList = getAnalysisHistory().toMutableList()
+        historyList.remove(entry)
+        val json = gson.toJson(historyList)
+        sharedPreferences.edit().putString(KEY_HISTORY_LIST, json).apply()
+    }
+
+    fun updateAnalysisEntry(updatedEntry: AnalysisEntry) {
+        val historyList = getAnalysisHistory().toMutableList()
+        val index = historyList.indexOfFirst { it.imageUri == updatedEntry.imageUri }
+        if (index != -1) {
+            historyList[index] = updatedEntry
+            val json = gson.toJson(historyList)
+            sharedPreferences.edit().putString(KEY_HISTORY_LIST, json).apply()
+        }
+    }
 }
 

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import android.net.Uri
 
 data class AnalysisEntry(
     val imageUri: String,
@@ -20,6 +21,7 @@ data class AnalysisEntry(
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewPager: ViewPager2
+    private var imageUriForCamera: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharedPrefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
@@ -36,6 +38,11 @@ class MainActivity : AppCompatActivity() {
         viewPager.setOffscreenPageLimit(1) // Garder les fragments adjacents en mémoire pour des transitions plus fluides
     }
 
+    fun navigateToCameraWithImage(imageUri: String) {
+        imageUriForCamera = imageUri
+        viewPager.setCurrentItem(1, true) // Naviguer vers le CameraFragment avec animation
+    }
+
     // Adaptateur pour le ViewPager
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         override fun getItemCount(): Int = 3 // Trois écrans : Last Analysis, Camera, History
@@ -43,7 +50,11 @@ class MainActivity : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> LastAnalysisFragment()
-                1 -> CameraFragment() // Le fragment de la caméra
+                1 -> {
+                    val fragment = CameraFragment.newInstance(imageUriForCamera)
+                    imageUriForCamera = null // Réinitialiser après utilisation
+                    fragment
+                }
                 2 -> HistoryListFragment()
                 else -> throw IllegalStateException("Invalid position")
             }

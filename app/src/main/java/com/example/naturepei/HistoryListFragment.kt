@@ -12,12 +12,23 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.view.Menu
+import android.widget.PopupMenu
+import android.app.AlertDialog
+import android.net.Uri
+import android.widget.Toast
 
 class HistoryListFragment : Fragment() {
 
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var analysisHistoryManager: AnalysisHistoryManager
     private lateinit var noDataTextView: TextView
+    private lateinit var imageAnalyzer: ImageAnalyzer
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        imageAnalyzer = ImageAnalyzer(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +60,7 @@ class HistoryListFragment : Fragment() {
                 if (historyList.isNotEmpty()) {
                     historyRecyclerView.visibility = View.VISIBLE
                     noDataTextView.visibility = View.GONE
-                    val adapter = HistoryAdapter(historyList) { entry ->
+                    val adapter = HistoryAdapter(historyList, { entry ->
                         val intent = Intent(requireContext(), ResultActivity::class.java).apply {
                             putExtra(ResultActivity.EXTRA_IMAGE_URI, entry.imageUri)
                             putExtra(ResultActivity.EXTRA_LOCAL_NAME, entry.localName)
@@ -57,6 +68,65 @@ class HistoryListFragment : Fragment() {
                             putExtra(ResultActivity.EXTRA_DESCRIPTION, entry.description)
                         }
                         startActivity(intent)
+                    }) { entry, itemView ->
+                        // Gérer les options via le nouveau bouton
+                        val popupMenu = PopupMenu(requireContext(), itemView) // 'itemView' est la vue du bouton
+                        popupMenu.menu.apply {
+                            add(Menu.NONE, 0, 0, "Effacer")
+                            add(Menu.NONE, 1, 1, "Re-analyser")
+                        }
+
+                        popupMenu.setOnMenuItemClickListener { menuItem ->
+                            when (menuItem.itemId) {
+                                0 -> {
+                                    // Option Effacer avec confirmation
+                                    AlertDialog.Builder(requireContext())
+                                        .setTitle("Confirmer la suppression")
+                                        .setMessage("Êtes-vous sûr de vouloir supprimer cette fiche d'analyse ?")
+                                        .setPositiveButton("Supprimer") { dialog, which ->
+                                            lifecycleScope.launch(Dispatchers.IO) {
+                                                analysisHistoryManager.deleteAnalysisEntry(entry)
+                                                withContext(Dispatchers.Main) { loadHistory() }
+                                                Toast.makeText(requireContext(), "Fiche supprimée.", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                        .setNegativeButton("Annuler") { dialog, which ->
+                                            dialog.dismiss()
+                                        }
+                                        .show()
+                                    true
+                                }
+                                1 -> {
+                                    // Option Re-analyser
+                                    val loadingDialog = LoadingDialogFragment()
+                                    loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
+
+                                    lifecycleScope.launch(Dispatchers.IO) {
+                                        val newResponse = imageAnalyzer.analyzeImage(Uri.parse(entry.imageUri))
+
+                                        withContext(Dispatchers.Main) {
+                                            loadingDialog.dismiss()
+                                            if (newResponse != null) {
+                                                val updatedEntry = entry.copy(
+                                                    localName = newResponse.localName,
+                                                    scientificName = newResponse.scientificName,
+                                                    description = newResponse.description
+                                                )
+                                                analysisHistoryManager.updateAnalysisEntry(updatedEntry)
+                                                loadHistory()
+                                                Toast.makeText(requireContext(), "Ré-analyse terminée !", Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                Toast.makeText(requireContext(), "Échec de la ré-analyse.", Toast.LENGTH_LONG).show()
+                                            }
+                                        }
+                                    }
+                                    true
+                                }
+                                else -> false
+                            }
+                        }
+                        popupMenu.show()
+                        true
                     }
                     historyRecyclerView.adapter = adapter
                 } else {

@@ -57,6 +57,14 @@
 
         </LinearLayout>
 
+        <ImageButton
+            android:id="@+id/history_item_options_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_three_dots_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Menu d'options"/>
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

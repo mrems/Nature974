@@ -56,6 +56,13 @@ import java.util.concurrent.TimeUnit
 import android.hardware.camera2.CameraCharacteristics
 import android.os.HandlerThread
 import android.os.Handler
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import android.hardware.camera2.CaptureFailure
+import androidx.core.net.toUri
+import android.widget.ImageView // Ajout pour la dernière photo de la galerie
+import coil.load // Import de Coil
+import coil.transform.CircleCropTransformation // Import pour CircleCropTransformation
 
 class CameraFragment : Fragment() {
 
@@ -63,26 +70,51 @@ class CameraFragment : Fragment() {
 
     private var currentPhotoUri: Uri? = null
     private var croppedImageUri: Uri? = null
+    private var imageFile: File? = null
 
     private var cameraDevice: CameraDevice? = null
-    private lateinit var captureSession: CameraCaptureSession
-    private lateinit var previewRequestBuilder: CaptureRequest.Builder
+    private var captureSession: CameraCaptureSession? = null
+    private var previewRequestBuilder: CaptureRequest.Builder? = null
     private lateinit var previewSize: Size
     private lateinit var imageReader: ImageReader
     private lateinit var cameraManager: CameraManager
 
-    private lateinit var galleryButton: ImageButton
+    private lateinit var galleryImageView: ImageView // Remplacé par ImageView
     private lateinit var optionsButton: ImageButton
     private lateinit var captureButton: ImageButton
 
     private var backgroundThread: HandlerThread? = null
     private var backgroundHandler: Handler? = null
 
+    private lateinit var imageAnalyzer: ImageAnalyzer
+    private lateinit var phoneOrientationSensor: PhoneOrientationSensor
+    private var sensorOrientation: Int = 0
+    private var deviceRotation: Int = 0
+    
+    // Cache pour l'image de galerie
+    private var lastLoadedGalleryImageUri: Uri? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        imageAnalyzer = ImageAnalyzer(requireContext())
+    }
+
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 100 // Ce n'est plus nécessaire avec ActivityResultContracts
         private const val REQUEST_STORAGE_PERMISSION = 101 // Ce n'est plus nécessaire avec ActivityResultContracts
         private const val BACKEND_API_URL = "https://super-abu.com/api/nature-pei/"
         private const val UCROP_REQUEST_CODE = 69
+        private const val ARG_IMAGE_URI = "image_uri"
+
+        fun newInstance(imageUri: String? = null): CameraFragment {
+            val fragment = CameraFragment()
+            imageUri?.let { uri ->
+                val args = Bundle()
+                args.putString(ARG_IMAGE_URI, uri)
+                fragment.arguments = args
+            }
+            return fragment
+        }
     }
 
     override fun onCreateView(
@@ -97,32 +129,58 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         cameraPreviewTextureView = view.findViewById(R.id.camera_preview_texture_view)
+        captureButton = view.findViewById(R.id.capture_button)
+        galleryImageView = view.findViewById(R.id.gallery_icon) // Référence à l'ImageView
+        optionsButton = view.findViewById(R.id.options_icon)
+
+        phoneOrientationSensor = PhoneOrientationSensor(requireContext()) { roll ->
+            // Mettre à jour l'UI sur le thread principal
+            requireActivity().runOnUiThread {
+                galleryImageView.rotation = roll // Appliquer la rotation à l'ImageView de la galerie
+            }
+        }
+
+        // Initialisation normale de la caméra si aucune URI n'est fournie
         cameraPreviewTextureView.surfaceTextureListener = textureListener
 
         cameraManager = requireActivity().getSystemService(Context.CAMERA_SERVICE) as CameraManager
-
-        galleryButton = view.findViewById(R.id.gallery_icon)
-        optionsButton = view.findViewById(R.id.options_icon)
-        captureButton = view.findViewById(R.id.capture_button)
-
-        galleryButton.setOnClickListener { checkStoragePermissionAndOpenGallery() }
-        optionsButton.setOnClickListener { showThemeSelectionDialog() }
         captureButton.setOnClickListener { takePicture() }
+        galleryImageView.setOnClickListener { checkStoragePermissionAndOpenGallery() } // Clic sur l'ImageView
+        optionsButton.setOnClickListener { showThemeSelectionDialog() }
+
+        // Charger la dernière image de la galerie au démarrage
+        loadLastGalleryImage()
+
+        // Si une URI est passée pour la ré-analyse, nous devons lancer l'analyse dans une coroutine.
+        arguments?.getString(ARG_IMAGE_URI)?.let { uriString ->
+            val imageUri = Uri.parse(uriString)
+            // Désactiver la capture et analyser directement l'image fournie
+            cameraPreviewTextureView.visibility = View.GONE
+            captureButton.visibility = View.GONE
+            galleryImageView.visibility = View.GONE
+            optionsButton.visibility = View.GONE
+            lifecycleScope.launch(Dispatchers.IO) { // Lancer l'analyse dans une coroutine
+                analyzeImageWithGemini(imageUri)
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         startBackgroundThread()
+        phoneOrientationSensor.startListening()
         if (cameraPreviewTextureView.isAvailable) {
             openCamera()
         } else {
             cameraPreviewTextureView.surfaceTextureListener = textureListener
         }
+        loadLastGalleryImage() // Recharger la dernière image au retour sur le fragment
     }
 
     override fun onPause() {
         closeCamera()
         stopBackgroundThread()
+        phoneOrientationSensor.stopListening()
         super.onPause()
     }
 
@@ -143,7 +201,7 @@ class CameraFragment : Fragment() {
     }
 
     private fun closeCamera() {
-        captureSession.close()
+        captureSession?.close()
         cameraDevice?.close()
         cameraDevice = null
         imageReader.close()
@@ -172,6 +230,20 @@ class CameraFragment : Fragment() {
         }
     }
 
+    private val captureCallback = object : CameraCaptureSession.CaptureCallback() {
+        override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
+            super.onCaptureCompleted(session, request, result)
+            lifecycleScope.launch(Dispatchers.IO) { // Appeler suspend fun dans une coroutine
+                analyzeImageWithGemini() // Démarrer l'analyse une fois l'image recadrée
+            }
+        }
+
+        override fun onCaptureFailed(session: CameraCaptureSession, request: CaptureRequest, failure: CaptureFailure) {
+            super.onCaptureFailed(session, request, failure)
+            Log.e("CameraFragment", "Photo capturée échouée: ${failure.reason}")
+        }
+    }
+
     private val stateCallback = object : CameraDevice.StateCallback() {
         override fun onOpened(camera: CameraDevice) {
             cameraDevice = camera
@@ -194,10 +266,19 @@ class CameraFragment : Fragment() {
         try {
             val cameraId = cameraManager.cameraIdList[0]
             val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+            
+            sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
+            val displayRotation = requireActivity().windowManager.defaultDisplay.rotation
+            deviceRotation = getOrientation(displayRotation)
+
             val map: StreamConfigurationMap? = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
 
-            previewSize = map!!.getOutputSizes(SurfaceTexture::class.java)[0]
-            imageReader = ImageReader.newInstance(previewSize.width, previewSize.height, android.graphics.ImageFormat.JPEG, 2)
+            // Optimisation : Choisir une résolution de preview adaptée (720p ou 1080p)
+            previewSize = chooseOptimalSize(map!!.getOutputSizes(SurfaceTexture::class.java))
+            
+            // ImageReader pour la capture photo en haute résolution
+            val captureSize = map.getOutputSizes(android.graphics.ImageFormat.JPEG)[0]
+            imageReader = ImageReader.newInstance(captureSize.width, captureSize.height, android.graphics.ImageFormat.JPEG, 2)
 
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 return
@@ -205,6 +286,38 @@ class CameraFragment : Fragment() {
             cameraManager.openCamera(cameraId, stateCallback, backgroundHandler)
         } catch (e: CameraAccessException) {
             e.printStackTrace()
+        }
+    }
+    
+    /**
+     * Choisit une taille de preview optimale pour éviter le lag
+     * Cible 1080p max pour la fluidité
+     */
+    private fun chooseOptimalSize(sizes: Array<Size>): Size {
+        val preferredWidth = 1920 // 1080p
+        val preferredHeight = 1080
+        
+        // Trier par aire pour avoir les tailles de la plus petite à la plus grande
+        val sortedSizes = sizes.sortedBy { it.width * it.height }
+        
+        // Chercher la taille la plus proche de 1080p sans dépasser
+        val optimalSize = sortedSizes.lastOrNull { 
+            it.width <= preferredWidth && it.height <= preferredHeight 
+        } ?: sortedSizes.firstOrNull { 
+            it.width <= 1280 && it.height <= 720 // Fallback à 720p
+        } ?: sortedSizes[0] // Dernier recours
+        
+        Log.d("CameraFragment", "Taille de preview sélectionnée: ${optimalSize.width}x${optimalSize.height}")
+        return optimalSize
+    }
+
+    private fun getOrientation(rotation: Int): Int {
+        return when (rotation) {
+            Surface.ROTATION_0 -> 0
+            Surface.ROTATION_90 -> 90
+            Surface.ROTATION_180 -> 180
+            Surface.ROTATION_270 -> 270
+            else -> 0
         }
     }
 
@@ -216,24 +329,31 @@ class CameraFragment : Fragment() {
             val surface = Surface(texture)
 
             previewRequestBuilder = cameraDevice!!.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
-            previewRequestBuilder.addTarget(surface)
+            previewRequestBuilder!!.addTarget(surface)
 
             cameraDevice!!.createCaptureSession(listOf(surface, imageReader.surface), object : CameraCaptureSession.StateCallback() {
                 override fun onConfigured(cameraCaptureSession: CameraCaptureSession) {
                     if (cameraDevice == null) return
                     captureSession = cameraCaptureSession
                     try {
-                        previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
-                        captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, backgroundHandler)
+                        // Optimisations pour la fluidité
+                        previewRequestBuilder!!.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
+                        previewRequestBuilder!!.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
+                        
+                        // Limiter le FPS pour réduire la charge CPU (optionnel)
+                        // previewRequestBuilder!!.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, android.util.Range(30, 30))
+                        
+                        captureSession!!.setRepeatingRequest(previewRequestBuilder!!.build(), null, backgroundHandler)
+                        Log.d("CameraFragment", "Session de preview configurée avec succès")
                     } catch (e: CameraAccessException) {
                         e.printStackTrace()
                     }
                 }
 
                 override fun onConfigureFailed(cameraCaptureSession: CameraCaptureSession) {
-                    Toast.makeText(requireContext(), "Configuration de la caméra échouée", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Échec de la configuration de la session de capture.", Toast.LENGTH_SHORT).show()
                 }
-            }, backgroundHandler)
+            }, null)
         } catch (e: CameraAccessException) {
             e.printStackTrace()
         }
@@ -261,19 +381,21 @@ class CameraFragment : Fragment() {
             captureBuilder.addTarget(imageReader.surface)
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
 
+            // Obtenir l'orientation actuelle du téléphone depuis le capteur
+            val currentOrientation = phoneOrientationSensor.getDeviceOrientation()
+            
+            // Calculer l'orientation JPEG finale (orientation capteur - orientation téléphone inversée)
+            // Inversion car les axes sont inversés par rapport à l'orientation EXIF
+            val rotation = (sensorOrientation - currentOrientation + 360) % 360
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotation)
+            Log.d("CameraFragment", "Device orientation: $currentOrientation°, Sensor orientation: $sensorOrientation°, Final JPEG_ORIENTATION: $rotation°")
+
             imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler)
 
-            captureSession.stopRepeating()
-            captureSession.abortCaptures()
+            captureSession?.stopRepeating()
+            captureSession?.abortCaptures()
 
-            val captureCallback = object : CameraCaptureSession.CaptureCallback() {
-                override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
-                    super.onCaptureCompleted(session, request, result)
-                    Log.d("CameraFragment", "Photo capturée !")
-                    createCameraPreviewSession()
-                }
-            }
-            captureSession.capture(captureBuilder.build(), captureCallback, backgroundHandler)
+            captureSession?.capture(captureBuilder.build(), captureCallback, backgroundHandler)
 
         } catch (e: CameraAccessException) {
             e.printStackTrace()
@@ -411,7 +533,9 @@ class CameraFragment : Fragment() {
                 val resultUri = UCrop.getOutput(data)
                 Log.d("CameraFragment", "Result URI: $resultUri")
                 croppedImageUri = resultUri
+                lifecycleScope.launch(Dispatchers.IO) {
                 analyzeImageWithGemini() // Démarrer l'analyse une fois l'image recadrée
+                }
             }
         } else if (result.resultCode == UCrop.RESULT_ERROR) {
             val data = result.data
@@ -423,52 +547,22 @@ class CameraFragment : Fragment() {
         }
     }
 
-    @Suppress("DEPRECATION")
-    private fun analyzeImageWithGemini() {
-        val imageUri = croppedImageUri
-        if (imageUri == null) {
-            Toast.makeText(requireContext(), "Aucune image recadrée à analyser.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
+    // Méthode pour démarrer l'analyse de l'image (déjà existante)
+    private suspend fun analyzeImageWithGemini(imageUri: Uri? = null) {
         val loadingDialog = LoadingDialogFragment()
         loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        val finalImageUri: Uri? = imageUri ?: croppedImageUri ?: imageFile?.let { Uri.fromFile(it) }
+
+        finalImageUri?.let { uri ->
             try {
-                val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, imageUri)
-                val mimeType = requireActivity().contentResolver.getType(imageUri) ?: "image/jpeg"
-                val base64Image = bitmapToBase64(bitmap, mimeType)
-                val fullPrompt = getCombinedPrompt()
-
-                val request = AnalyzeImageRequest(base64Image, mimeType, fullPrompt)
-
-                var response: AnalyzeImageResponse? = null
-                val maxRetries = 5
-                var attempt = 0
-                var success = false
-
-                while (attempt < maxRetries && !success) {
-                    try {
-                        response = naturePeiService.analyzeImage(request)
-                        success = true
-                    } catch (e: Exception) {
-                        attempt++
-                        if (attempt < maxRetries) {
-                            val delayTime = (Math.pow(2.0, attempt.toDouble()).toLong() * 1000) + (0..1000).random()
-                            Log.e("CameraFragment", "Tentative $attempt échouée. Nouvelle tentative dans ${delayTime / 1000}s...", e)
-                            delay(delayTime)
-                        } else {
-                            throw e // Re-throw after max retries
-                        }
-                    }
-                }
+                val response = imageAnalyzer.analyzeImage(uri)
 
                 withContext(Dispatchers.Main) {
                     loadingDialog.dismiss()
                     if (response != null) {
                         val intent = Intent(requireContext(), ResultActivity::class.java).apply {
-                            putExtra(ResultActivity.EXTRA_IMAGE_URI, imageUri.toString())
+                            putExtra(ResultActivity.EXTRA_IMAGE_URI, uri.toString())
                             putExtra(ResultActivity.EXTRA_LOCAL_NAME, response.localName)
                             putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, response.scientificName)
                             putExtra(ResultActivity.EXTRA_DESCRIPTION, response.description)
@@ -476,7 +570,7 @@ class CameraFragment : Fragment() {
                         startActivity(intent)
 
                         val analysisEntry = AnalysisEntry(
-                            imageUri = imageUri.toString(),
+                            imageUri = uri.toString(),
                             localName = response.localName,
                             scientificName = response.scientificName,
                             description = response.description
@@ -496,55 +590,42 @@ class CameraFragment : Fragment() {
                     Toast.makeText(requireContext(), "Erreur lors de l\'analyse: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
+        } ?: withContext(Dispatchers.Main) { // Utiliser withContext pour les opérations UI sur le thread principal
+            loadingDialog.dismiss()
+            Toast.makeText(requireContext(), "Aucune image à analyser. Veuillez en capturer une ou en sélectionner une dans la galerie.", Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun bitmapToBase64(bitmap: Bitmap, mimeType: String): String {
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        val format = when (mimeType) {
-            "image/jpeg" -> Bitmap.CompressFormat.JPEG
-            "image/png" -> Bitmap.CompressFormat.PNG
-            else -> Bitmap.CompressFormat.JPEG // Default to JPEG
+    private fun loadLastGalleryImage() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val imageUri = getLastImageUri(requireContext())
+            withContext(Dispatchers.Main) {
+                // Optimisation : Ne recharger que si l'URI a changé
+                if (imageUri != null && imageUri != lastLoadedGalleryImageUri) {
+                    lastLoadedGalleryImageUri = imageUri
+                    galleryImageView.load(imageUri) {
+                        crossfade(true)
+                        transformations(CircleCropTransformation())
+                    }
+                }
+                // Toujours réaffecter le listener (léger)
+                galleryImageView.setOnClickListener { checkStoragePermissionAndOpenGallery() }
+            }
         }
-        bitmap.compress(format, 70, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.NO_WRAP)
     }
 
-    interface NaturePeiApiService {
-        @POST("analyze-image")
-        suspend fun analyzeImage(@Body request: AnalyzeImageRequest): AnalyzeImageResponse
-    }
+    private fun getLastImageUri(context: Context): Uri? {
+        val projection = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_ADDED)
+        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+        val queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
-    data class AnalyzeImageRequest(
-        val image: String,
-        val mimeType: String,
-        val prompt: String
-    )
-
-    data class AnalyzeImageResponse(
-        val localName: String,
-        val scientificName: String,
-        val description: String
-    )
-
-    private val okHttpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .build()
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BACKEND_API_URL)
-        .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val naturePeiService = retrofit.create(NaturePeiApiService::class.java)
-
-    private fun getCombinedPrompt(): String {
-        val systemPrompt = "Vous êtes un expert en biodiversité (faune et flore) spécialisé dans les espèces de l\'Île de la Réunion. Identifiez l\'espèce et fournissez sa description."
-        val userQuery = "Identifiez cette espèce (animale ou végétale) trouvée à l\'Île de la Réunion. Fournissez son nom commun en français, son nom scientifique (si applicable) et une description de ses caractéristiques (taille, forme, couleur, habitat, comportements, floraison/fructification, etc.) sur l\'île. Indiquez également où elle peut être trouvée sur l\'île. Si l\'espèce ne peut pas être identifiée, dites simplement 'Identification impossible' sans description."
-        return "${systemPrompt}\n\n${userQuery}"
+        context.contentResolver.query(queryUri, projection, null, null, sortOrder)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val imageId = cursor.getLong(idColumn)
+                return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId.toString())
+            }
+        }
+        return null
     }
 }
