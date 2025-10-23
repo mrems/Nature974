@@ -10,14 +10,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import android.net.Uri
 
-data class AnalysisEntry(
-    val imageUri: String,
-    val localName: String,
-    val scientificName: String,
-    val description: String,
-    val timestamp: Long = System.currentTimeMillis()
-)
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewPager: ViewPager2

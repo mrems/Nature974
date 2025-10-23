@@ -73,14 +73,18 @@ class LastAnalysisFragment : Fragment() {
                                     val updated = entry.copy(
                                         localName = response.localName,
                                         scientificName = response.scientificName,
-                                        description = response.description
+                                        description = "N/C", // Description n'est plus fournie par l'API
+                                        type = response.type,
+                                        habitat = response.habitat,
+                                        characteristics = response.characteristics,
+                                        reunionContext = response.reunionContext
                                     )
                                     analysisHistoryManager.updateAnalysisEntry(updated)
                                     // mettre à jour l'UI locale
                                     lastEntry = updated
                                     lastAnalysisLocalNameTextView.text = updated.localName
                                     lastAnalysisScientificNameTextView.text = updated.scientificName
-                                    lastAnalysisDescriptionTextView.text = updated.description
+                                    lastAnalysisDescriptionTextView.text = updated.description ?: "N/C" // Gérer la nullabilité si description est null pour anciennes entrées
                                     Toast.makeText(requireContext(), "Ré-analyse terminée !", Toast.LENGTH_SHORT).show()
                                 } else {
                                     Toast.makeText(requireContext(), "Échec de la ré-analyse.", Toast.LENGTH_LONG).show()
@@ -118,6 +122,9 @@ class LastAnalysisFragment : Fragment() {
                     lastAnalysisLocalNameTextView.text = entry.localName
                     lastAnalysisScientificNameTextView.text = entry.scientificName
                     lastAnalysisDescriptionTextView.text = "${entry.description}"
+
+                    // Mettre à jour les autres vues pour les nouveaux champs si nécessaire
+                    // Exemple: lastAnalysisTypeTextView.text = entry.type ?: "N/C"
 
                 } else {
                     lastAnalysisContentLayout.visibility = View.GONE

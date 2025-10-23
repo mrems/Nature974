@@ -15,6 +15,20 @@
     <color name="background_light">#FFFFFFFF</color>
     <color name="surface_light">#FFFFFFFF</color>
 
+    <!-- Couleurs pour le loading dialog -->
+    <color name="loading_dialog_background">#F5F5F5</color>
+    <color name="loading_card_background">#FFFFFF</color>
+    <color name="loading_primary">#4CAF50</color>
+    <color name="loading_primary_dark">#388E3C</color>
+    <color name="loading_text_primary">#212121</color>
+    <color name="loading_text_secondary">#757575</color>
+
+    <!-- Couleurs pour les badges de statut -->
+    <color name="badge_endemique_background">#4CAF50</color>
+    <color name="badge_introduit_background">#FF9800</color>
+    <color name="badge_nc_background">#9E9E9E</color>
+    <color name="badge_text">#FFFFFF</color>
+
 </resources>
 
 

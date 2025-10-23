@@ -565,7 +565,11 @@ class CameraFragment : Fragment() {
                             putExtra(ResultActivity.EXTRA_IMAGE_URI, uri.toString())
                             putExtra(ResultActivity.EXTRA_LOCAL_NAME, response.localName)
                             putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, response.scientificName)
-                            putExtra(ResultActivity.EXTRA_DESCRIPTION, response.description)
+                            putExtra(ResultActivity.EXTRA_TYPE, response.type)
+                            putExtra(ResultActivity.EXTRA_HABITAT, response.habitat)
+                            putExtra(ResultActivity.EXTRA_CHARACTERISTICS, response.characteristics)
+                            putExtra(ResultActivity.EXTRA_REUNION_CONTEXT, response.reunionContext)
+                            putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C") // Description n'est plus fournie par l'API, utiliser N/C
                         }
                         startActivity(intent)
 
@@ -573,18 +577,22 @@ class CameraFragment : Fragment() {
                             imageUri = uri.toString(),
                             localName = response.localName,
                             scientificName = response.scientificName,
-                            description = response.description
+                            type = response.type,
+                            habitat = response.habitat,
+                            characteristics = response.characteristics,
+                            reunionContext = response.reunionContext,
+                            description = "N/C" // Description n'est plus fournie par l'API, utiliser N/C
                         )
                         AnalysisHistoryManager(requireContext()).saveAnalysisEntry(analysisEntry)
 
-                        Log.d("CameraFragment", "Réponse Gemini: ${response.localName}, ${response.scientificName}, ${response.description}")
+                        Log.d("CameraFragment", "Réponse Gemini: ${response.localName}, ${response.scientificName}, ${response.type}") // Ajusté pour les nouveaux champs
                         Toast.makeText(requireContext(), "Analyse terminée !", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), "Aucune réponse de l\'API.", Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
-                Log.e("CameraFragment", "Erreur lors de l\'analyse: ", e)
+                
                 withContext(Dispatchers.Main) {
                     loadingDialog.dismiss()
                     Toast.makeText(requireContext(), "Erreur lors de l\'analyse: ${e.message}", Toast.LENGTH_LONG).show()

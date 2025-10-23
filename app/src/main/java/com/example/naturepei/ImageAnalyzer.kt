@@ -41,9 +41,20 @@ class ImageAnalyzer(private val context: Context) {
     private val naturePeiService = retrofit.create(NaturePeiApiService::class.java)
 
     private fun getCombinedPrompt(): String {
-        val systemPrompt = "Vous êtes un expert en biodiversité (faune et flore) spécialisé dans les espèces de l\'Île de la Réunion. Identifiez l\'espèce et fournissez sa description."
-        val userQuery = "Identifiez cette espèce (animale ou végétale) trouvée à l\'Île de la Réunion. Fournissez son nom commun en français, son nom scientifique (si applicable) et une description de ses caractéristiques (taille, forme, couleur, habitat, comportements, floraison/fructification, etc.) sur l\'île. Indiquez également où elle peut être trouvée sur l\'île. Si l\'espèce ne peut pas être identifiée, dites simplement 'Identification impossible' sans description."
-        return "${systemPrompt}\n\n${userQuery}"
+        val systemPrompt = "Vous êtes un expert en biodiversité (faune et flore) spécialisé dans les espèces de l\'Île de la Réunion. Identifiez l\'espèce et fournissez des informations structurées."
+        val userQuery = """
+            Analysez cette image et fournissez une réponse JSON stricte avec les 6 champs suivants:
+            1.  "localName": Nom commun en français (ex: "Tamarin des Hauts") ou "N/C" si inconnu.
+            2.  "scientificName": Nom scientifique latin (ex: "Acacia heterophylla") ou "N/C" si inconnu.
+            3.  "type": Type d'espèce et son statut combinés (ex: "Plante endémique", "Oiseau introduit", "Animal non endémique", "N/C") ou "N/C" si inconnu.
+            4.  "habitat": Habitat principal à La Réunion (ex: "Forêts humides >1200m", "Littoral", "Milieux urbains") ou "N/C" si inconnu.
+            5.  "characteristics": Description physique COURTE et synthétique (taille, couleur, forme, max 2-3 phrases) ou "N/C" si inconnu.
+            6.  "reunionContext": Contexte réunionnais COURT et synthétique (usages, écologie, anecdote culturelle, max 2-3 phrases) ou "N/C" si inconnu.
+            
+            Si l'espèce ne peut pas être identifiée ou si un champ est inconnu, utilisez "N/C".
+            Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.
+        """.trimIndent()
+        return "```json\n${systemPrompt}\n\n${userQuery}\n```"
     }
 
     private fun bitmapToBase64(bitmap: Bitmap, mimeType: String): String {
@@ -66,14 +77,18 @@ class ImageAnalyzer(private val context: Context) {
 
     data class AnalyzeImageRequest(
         val image: String,
-        val mimeType: String,
-        val prompt: String
+        val mimeType: String
+        // Le prompt n'est plus envoyé par l'application, il est construit par le backend.
+        // val prompt: String
     )
 
     data class AnalyzeImageResponse(
         val localName: String,
         val scientificName: String,
-        val description: String
+        val type: String,
+        val habitat: String,
+        val characteristics: String,
+        val reunionContext: String
     )
 
     suspend fun analyzeImage(imageUri: Uri): AnalyzeImageResponse? {
@@ -86,9 +101,10 @@ class ImageAnalyzer(private val context: Context) {
                 }
                 val mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
                 val base64Image = bitmapToBase64(bitmap, mimeType)
-                val fullPrompt = getCombinedPrompt()
+                // Le prompt n'est plus construit ici, il est géré par le backend.
+                // val fullPrompt = getCombinedPrompt()
 
-                val request = AnalyzeImageRequest(base64Image, mimeType, fullPrompt)
+                val request = AnalyzeImageRequest(base64Image, mimeType)
 
                 var response: AnalyzeImageResponse? = null
                 val maxRetries = 5

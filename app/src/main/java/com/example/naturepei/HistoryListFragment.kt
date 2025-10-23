@@ -65,6 +65,10 @@ class HistoryListFragment : Fragment() {
                             putExtra(ResultActivity.EXTRA_IMAGE_URI, entry.imageUri)
                             putExtra(ResultActivity.EXTRA_LOCAL_NAME, entry.localName)
                             putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, entry.scientificName)
+                            putExtra(ResultActivity.EXTRA_TYPE, entry.type)
+                            putExtra(ResultActivity.EXTRA_HABITAT, entry.habitat)
+                            putExtra(ResultActivity.EXTRA_CHARACTERISTICS, entry.characteristics)
+                            putExtra(ResultActivity.EXTRA_REUNION_CONTEXT, entry.reunionContext)
                             putExtra(ResultActivity.EXTRA_DESCRIPTION, entry.description)
                         }
                         startActivity(intent)
@@ -110,7 +114,11 @@ class HistoryListFragment : Fragment() {
                                                 val updatedEntry = entry.copy(
                                                     localName = newResponse.localName,
                                                     scientificName = newResponse.scientificName,
-                                                    description = newResponse.description
+                                                    description = "N/C", // Description n'est plus fournie par l'API
+                                                    type = newResponse.type,
+                                                    habitat = newResponse.habitat,
+                                                    characteristics = newResponse.characteristics,
+                                                    reunionContext = newResponse.reunionContext
                                                 )
                                                 analysisHistoryManager.updateAnalysisEntry(updatedEntry)
                                                 loadHistory()

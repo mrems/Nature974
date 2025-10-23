@@ -31,7 +31,7 @@ class HistoryAdapter(
             localNameTextView.text = entry.localName
             scientificNameTextView.text = entry.scientificName
             val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-            timestampTextView.text = sdf.format(Date(entry.timestamp))
+            timestampTextView.text = entry.timestamp?.let { sdf.format(Date(it)) } ?: "N/A"
             itemView.setOnClickListener { onClick(entry) }
             optionsButton.setOnClickListener { onOptionsClick(entry, it) }
         }

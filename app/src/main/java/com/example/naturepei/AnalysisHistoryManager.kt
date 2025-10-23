@@ -5,6 +5,22 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+data class AnalysisEntry(
+    val imageUri: String,
+    val localName: String,
+    val scientificName: String,
+    val type: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
+    val habitat: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
+    val characteristics: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
+    val reunionContext: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
+    val description: String, // Ancien champ, pour la rétrocompatibilité
+    val timestamp: Long? = System.currentTimeMillis() // Nouveau champ pour l'ordre chronologique
+) {
+    // Pour la rétrocompatibilité avec les anciennes données (pas de type, habitat, etc. ni timestamp)
+    constructor(imageUri: String, localName: String, scientificName: String, description: String) :
+            this(imageUri, localName, scientificName, null, null, null, null, description, null)
+}
+
 class AnalysisHistoryManager(context: Context) {
 
     private val PREFS_NAME = "naturepei_analysis_history"

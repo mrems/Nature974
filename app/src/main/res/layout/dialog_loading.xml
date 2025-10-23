@@ -1,27 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp"
-    android:background="@android:color/white">
+    android:background="#80000000"
+    android:padding="32dp">
 
-    <TextView
-        android:id="@+id/loading_title"
+    <LinearLayout
+        android:id="@+id/loading_content_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="NaturePéi"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="24dp" />
+        android:layout_gravity="center"
+        android:minWidth="280dp"
+        android:maxWidth="340dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/loading_dialog_background"
+        android:elevation="8dp">
 
-    <ProgressBar
-        android:id="@+id/loading_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true" />
+        <!-- Icône de nature -->
+        <ImageView
+            android:id="@+id/loading_leaf_icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_nature_leaf"
+            android:contentDescription="@string/app_name"
+            android:layout_marginBottom="24dp" />
 
-</LinearLayout>
+        <!-- Titre principal -->
+        <TextView
+            android:id="@+id/loading_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Analyse de l'image en cours..."
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/loading_text_primary"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Barre de progression moderne -->
+        <ProgressBar
+            android:id="@+id/loading_progress_bar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/loading_primary" />
+
+    </LinearLayout>
+
+</FrameLayout>
 
