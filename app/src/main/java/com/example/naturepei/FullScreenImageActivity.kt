@@ -26,3 +26,4 @@ class FullScreenImageActivity : AppCompatActivity() {
 
 
 
+

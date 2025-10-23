@@ -38,11 +38,6 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true) // Activer le bouton retour
-        toolbar.setNavigationOnClickListener { finish() } // Gérer le clic sur le bouton retour
-
         imageAnalyzer = ImageAnalyzer(this)
         analysisHistoryManager = AnalysisHistoryManager(this)
 
@@ -96,9 +91,6 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun displayResult(entry: AnalysisEntry) {
-        val collapsingToolbarLayout: CollapsingToolbarLayout = findViewById(R.id.collapsing_toolbar)
-        collapsingToolbarLayout.title = entry.localName
-
         entry.imageUri.let { uriString ->
             resultImageView.setImageURI(Uri.parse(uriString))
         }
@@ -130,7 +122,7 @@ class ResultActivity : AppCompatActivity() {
 
         setupInfoCard(cardHabitat, R.drawable.ic_habitat, "Habitat", entry.habitat)
         setupInfoCard(cardCharacteristics, R.drawable.ic_characteristics, "Caractéristiques", entry.characteristics)
-        setupInfoCard(cardReunionContext, R.drawable.ic_reunion_context, "Contexte Réunionnais", entry.reunionContext)
+        setupInfoCard(cardReunionContext, R.drawable.ic_reunion_context, "Contexte local", entry.reunionContext)
     }
 
     private fun setupInfoCard(cardView: View, iconResId: Int, title: String, content: String?) {
