@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="splash_background_light">#FF68A9EB</color>
+    <color name="splash_background_light">#2c72a6</color>
 
     <!-- Couleurs de texte pour le mode clair -->
     <color name="text_primary_light">#FF000000</color>
@@ -22,6 +22,8 @@
     <color name="loading_primary_dark">#388E3C</color>
     <color name="loading_text_primary">#212121</color>
     <color name="loading_text_secondary">#757575</color>
+
+    <color name="text_title_detail">#424242</color>
 
     <!-- Couleurs pour les badges de statut -->
     <color name="badge_endemique_background">#4CAF50</color>

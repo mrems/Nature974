@@ -13,11 +13,15 @@ import java.util.Date
 import java.util.Locale
 
 class HistoryAdapter(
-    private val historyList: List<AnalysisEntry>,
+    private val historyList: MutableList<AnalysisEntry>,
     private val onClick: (AnalysisEntry) -> Unit,
     private val onOptionsClick: (AnalysisEntry, View) -> Unit
 ) :
     RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
+
+    init {
+        setHasStableIds(true)
+    }
 
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.history_item_image)
@@ -47,5 +51,17 @@ class HistoryAdapter(
     }
 
     override fun getItemCount(): Int = historyList.size
+
+    override fun getItemId(position: Int): Long {
+        val entry = historyList[position]
+        // Utiliser l'URI d'image comme ID stable (hash converti en Long)
+        return entry.imageUri.hashCode().toLong()
+    }
+
+    fun updateItems(newItems: List<AnalysisEntry>) {
+        historyList.clear()
+        historyList.addAll(newItems)
+        notifyDataSetChanged()
+    }
 }
 

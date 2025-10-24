@@ -20,9 +20,9 @@
         <!-- Icône de nature -->
         <ImageView
             android:id="@+id/loading_leaf_icon"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_nature_leaf"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:src="@drawable/geronimo"
             android:contentDescription="@string/app_name"
             android:layout_marginBottom="24dp" />
 
@@ -44,7 +44,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:indeterminate="true"
-            android:indeterminateTint="@color/loading_primary" />
+            android:indeterminateTint="@color/splash_background_light" />
 
     </LinearLayout>
 

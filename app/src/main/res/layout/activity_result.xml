@@ -30,7 +30,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:paddingEnd="16dp"
+                android:paddingTop="12dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -41,15 +42,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_toStartOf="@id/result_options_button">
+                        >
 
                         <TextView
                             android:id="@+id/result_local_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="24sp"
+                            android:textSize="28sp"
                             android:textStyle="bold"
-                            android:textColor="#212121"
+                            android:textColor="@color/text_title_detail"
                             tools:text="Tamarin des Hauts" />
 
                         <TextView
@@ -62,17 +63,7 @@
 
                     </LinearLayout>
 
-                    <ImageButton
-                        android:id="@+id/result_options_button"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="Menu d'options"
-                        android:src="@drawable/ic_three_dots_vertical_large"
-                        android:padding="0dp"
-                        android:translationX="20dp" />
+                    
 
                 </RelativeLayout>
 
@@ -88,7 +79,9 @@
                     android:textColor="@color/badge_text"
                     android:textSize="14sp"
                     android:textStyle="bold"
+                    android:layout_marginBottom="16dp"
                     tools:text="Plante Endémique" />
+                    
 
             </LinearLayout>
 

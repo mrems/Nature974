@@ -48,10 +48,11 @@ class HistoryListFragment : Fragment() {
         loadHistory()
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadHistory() // Recharger l'historique au retour sur le fragment
-    }
+    // Ne pas recharger automatiquement l'historique au retour pour préserver la position de scroll
+    // override fun onResume() {
+    //     super.onResume()
+    //     loadHistory()
+    // }
 
     private fun loadHistory() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -60,7 +61,12 @@ class HistoryListFragment : Fragment() {
                 if (historyList.isNotEmpty()) {
                     historyRecyclerView.visibility = View.VISIBLE
                     noDataTextView.visibility = View.GONE
-                    val adapter = HistoryAdapter(historyList, { entry ->
+                    // Sauvegarder l'état de scroll avant mise à jour
+                    val layoutManager = historyRecyclerView.layoutManager
+                    val savedState = layoutManager?.onSaveInstanceState()
+
+                    val currentAdapter = historyRecyclerView.adapter as? HistoryAdapter
+                    val adapter = currentAdapter ?: HistoryAdapter(mutableListOf(), { entry ->
                         val intent = Intent(requireContext(), ResultActivity::class.java).apply {
                             putExtra(ResultActivity.EXTRA_IMAGE_URI, entry.imageUri)
                             putExtra(ResultActivity.EXTRA_LOCAL_NAME, entry.localName)
@@ -90,8 +96,10 @@ class HistoryListFragment : Fragment() {
                                         .setPositiveButton("Supprimer") { dialog, which ->
                                             lifecycleScope.launch(Dispatchers.IO) {
                                                 analysisHistoryManager.deleteAnalysisEntry(entry)
-                                                withContext(Dispatchers.Main) { loadHistory() }
-                                                Toast.makeText(requireContext(), "Fiche supprimée.", Toast.LENGTH_SHORT).show()
+                                                withContext(Dispatchers.Main) {
+                                                    loadHistory()
+                                                    Toast.makeText(requireContext(), "Fiche supprimée.", Toast.LENGTH_SHORT).show()
+                                                }
                                             }
                                         }
                                         .setNegativeButton("Annuler") { dialog, which ->
@@ -136,7 +144,14 @@ class HistoryListFragment : Fragment() {
                         popupMenu.show()
                         true
                     }
-                    historyRecyclerView.adapter = adapter
+
+                    if (currentAdapter == null) {
+                        historyRecyclerView.adapter = adapter
+                    }
+
+                    // Mettre à jour les éléments et restaurer la position
+                    adapter.updateItems(historyList)
+                    layoutManager?.onRestoreInstanceState(savedState)
                 } else {
                     historyRecyclerView.visibility = View.GONE
                     noDataTextView.visibility = View.VISIBLE

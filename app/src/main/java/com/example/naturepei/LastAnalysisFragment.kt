@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -28,7 +26,6 @@ class LastAnalysisFragment : Fragment() {
     private lateinit var lastAnalysisLocalNameTextView: TextView
     private lateinit var lastAnalysisScientificNameTextView: TextView
     private lateinit var lastAnalysisTypeBadge: TextView
-    private lateinit var lastAnalysisOptionsButton: ImageButton
     private lateinit var lastAnalysisContentLayout: LinearLayout
     private lateinit var lastAnalysisInfoCardsContainer: LinearLayout
 
@@ -52,52 +49,9 @@ class LastAnalysisFragment : Fragment() {
         lastAnalysisLocalNameTextView = view.findViewById(R.id.last_analysis_local_name)
         lastAnalysisScientificNameTextView = view.findViewById(R.id.last_analysis_scientific_name)
         lastAnalysisTypeBadge = view.findViewById(R.id.last_analysis_type_badge)
-        lastAnalysisOptionsButton = view.findViewById(R.id.last_analysis_options_button)
         lastAnalysisContentLayout = view.findViewById(R.id.last_analysis_content)
         lastAnalysisInfoCardsContainer = view.findViewById(R.id.last_analysis_info_cards_container)
 
-        lastAnalysisOptionsButton.setOnClickListener { anchor ->
-            val popup = PopupMenu(requireContext(), anchor)
-            val deleteItem = popup.menu.add(0, 0, 0, "Effacer")
-            deleteItem.isEnabled = false // grisé / désactivé
-            popup.menu.add(0, 1, 1, "Re-analyser")
-            popup.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    1 -> {
-                        val entry = lastEntry ?: return@setOnMenuItemClickListener true
-                        val loadingDialog = LoadingDialogFragment()
-                        loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            val response = imageAnalyzer.analyzeImage(Uri.parse(entry.imageUri))
-                            withContext(Dispatchers.Main) {
-                                loadingDialog.dismiss()
-                                if (response != null) {
-                                    val updated = entry.copy(
-                                        localName = response.localName,
-                                        scientificName = response.scientificName,
-                                        description = "N/C", // Description n'est plus fournie par l'API
-                                        type = response.type,
-                                        habitat = response.habitat,
-                                        characteristics = response.characteristics,
-                                        reunionContext = response.reunionContext
-                                    )
-                                    analysisHistoryManager.updateAnalysisEntry(updated)
-                                    // mettre à jour l'UI locale
-                                    lastEntry = updated
-                                    loadLastAnalysis() // Recharger l'UI après la ré-analyse
-                                    Toast.makeText(requireContext(), "Ré-analyse terminée !", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(requireContext(), "Échec de la ré-analyse.", Toast.LENGTH_LONG).show()
-                                }
-                            }
-                        }
-                        true
-                    }
-                    else -> false
-                }
-            }
-            popup.show()
-        }
 
         loadLastAnalysis()
     }
