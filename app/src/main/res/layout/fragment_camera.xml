@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -18,10 +18,7 @@
         android:id="@+id/overlay_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        >
 
         <!-- Icône Options (Thème) -->
         <ImageButton
@@ -97,4 +94,21 @@
 
     </FrameLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Bottom sheet Galerie placé sous la caméra -->
+    <LinearLayout
+        android:id="@+id/gallery_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/background_light"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        app:behavior_peekHeight="0dp"
+        app:behavior_hideable="true">
+
+        <FrameLayout
+            android:id="@+id/gallery_sheet_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

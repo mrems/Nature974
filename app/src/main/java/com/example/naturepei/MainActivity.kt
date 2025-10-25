@@ -1,9 +1,7 @@
 package com.example.naturepei
 
-import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -16,10 +14,6 @@ class MainActivity : AppCompatActivity() {
     private var imageUriForCamera: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val sharedPrefs = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val themeMode = sharedPrefs.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_NO) // Thème par défaut: Clair
-        AppCompatDelegate.setDefaultNightMode(themeMode)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -33,6 +27,10 @@ class MainActivity : AppCompatActivity() {
     fun navigateToCameraWithImage(imageUri: String) {
         imageUriForCamera = imageUri
         viewPager.setCurrentItem(1, true) // Naviguer vers le CameraFragment avec animation
+    }
+
+    fun navigateToGallery() {
+        viewPager.setCurrentItem(3, true)
     }
 
     // Adaptateur pour le ViewPager

@@ -1,6 +1,7 @@
 package com.example.naturepei
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,13 @@ class HistoryListFragment : Fragment() {
     private lateinit var analysisHistoryManager: AnalysisHistoryManager
     private lateinit var noDataTextView: TextView
     private lateinit var imageAnalyzer: ImageAnalyzer
+    private var sharedPrefs: SharedPreferences? = null
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        if (key == AnalysisHistoryManager.KEY_HISTORY_LIST) {
+            // Charger l'historique quand il change
+            loadHistory()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,15 +52,27 @@ class HistoryListFragment : Fragment() {
         historyRecyclerView = view.findViewById(R.id.history_recycler_view)
         analysisHistoryManager = AnalysisHistoryManager(requireContext())
         noDataTextView = view.findViewById(R.id.history_no_data_text)
+        sharedPrefs = requireContext().getSharedPreferences(AnalysisHistoryManager.PREFS_NAME, android.content.Context.MODE_PRIVATE)
 
         loadHistory()
     }
 
-    // Ne pas recharger automatiquement l'historique au retour pour préserver la position de scroll
-    // override fun onResume() {
-    //     super.onResume()
-    //     loadHistory()
-    // }
+    override fun onStart() {
+        super.onStart()
+        // Écoute des changements de l'historique
+        sharedPrefs?.registerOnSharedPreferenceChangeListener(prefsListener)
+    }
+
+    override fun onStop() {
+        sharedPrefs?.unregisterOnSharedPreferenceChangeListener(prefsListener)
+        super.onStop()
+    }
+
+    // Recharger au retour sur l'écran pour prendre en compte les ajouts effectués pendant l'absence
+    override fun onResume() {
+        super.onResume()
+        loadHistory()
+    }
 
     private fun loadHistory() {
         lifecycleScope.launch(Dispatchers.IO) {

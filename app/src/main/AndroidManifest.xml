@@ -48,6 +48,8 @@
             android:name=".HistoryActivity"
             android:exported="false" />
 
+        
+
         <!-- UCrop Activity declaration -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

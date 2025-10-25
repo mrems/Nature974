@@ -23,8 +23,11 @@ data class AnalysisEntry(
 
 class AnalysisHistoryManager(context: Context) {
 
-    private val PREFS_NAME = "naturepei_analysis_history"
-    private val KEY_HISTORY_LIST = "history_list"
+    companion object {
+        const val PREFS_NAME: String = "naturepei_analysis_history"
+        const val KEY_HISTORY_LIST: String = "history_list"
+    }
+
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val gson = Gson()
 

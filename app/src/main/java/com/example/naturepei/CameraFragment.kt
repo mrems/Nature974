@@ -28,13 +28,20 @@ import android.view.Surface
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
+import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.widget.ImageButton
+import android.widget.FrameLayout
 import android.widget.Toast
+import android.widget.LinearLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -82,6 +89,16 @@ class CameraFragment : Fragment() {
     private lateinit var galleryImageView: ImageView // Remplacé par ImageView
     private lateinit var optionsButton: ImageButton
     private lateinit var captureButton: ImageButton
+    private lateinit var overlayLayout: FrameLayout
+    private lateinit var galleryBottomSheet: LinearLayout
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private var swipeStartX: Float? = null
+    private var swipeStartY: Float? = null
+    private var lockedDirection: Direction? = null
+    private val touchSlop: Int by lazy { ViewConfiguration.get(requireContext()).scaledTouchSlop }
+
+    private enum class Direction { VERTICAL, HORIZONTAL }
 
     private var backgroundThread: HandlerThread? = null
     private var backgroundHandler: Handler? = null
@@ -105,6 +122,8 @@ class CameraFragment : Fragment() {
         private const val BACKEND_API_URL = "https://super-abu.com/api/nature-pei/"
         private const val UCROP_REQUEST_CODE = 69
         private const val ARG_IMAGE_URI = "image_uri"
+        private const val SWIPE_THRESHOLD_PX = 80
+        private const val SWIPE_VELOCITY_THRESHOLD = 900
 
         fun newInstance(imageUri: String? = null): CameraFragment {
             val fragment = CameraFragment()
@@ -132,6 +151,99 @@ class CameraFragment : Fragment() {
         captureButton = view.findViewById(R.id.capture_button)
         galleryImageView = view.findViewById(R.id.gallery_icon) // Référence à l'ImageView
         optionsButton = view.findViewById(R.id.options_icon)
+        overlayLayout = view.findViewById(R.id.overlay_layout)
+        galleryBottomSheet = view.findViewById(R.id.gallery_bottom_sheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(galleryBottomSheet)
+        bottomSheetBehavior.peekHeight = 0
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        bottomSheetBehavior.isDraggable = true
+
+        // Désactiver le swipe latéral du ViewPager quand la galerie est ouverte
+        val viewPager = requireActivity().findViewById<ViewPager2>(R.id.view_pager)
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                val disable = newState == BottomSheetBehavior.STATE_EXPANDED || newState == BottomSheetBehavior.STATE_HALF_EXPANDED || newState == BottomSheetBehavior.STATE_DRAGGING
+                viewPager?.isUserInputEnabled = !disable
+            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                val disable = slideOffset > 0.05f
+                viewPager?.isUserInputEnabled = !disable
+            }
+        })
+
+        // Injecter le contenu de galerie dans le container du bottom sheet
+        childFragmentManager.beginTransaction()
+            .replace(R.id.gallery_sheet_container, GalleryFragment())
+            .commitNowAllowingStateLoss()
+
+        // Recevoir l'image choisie depuis GalleryFragment (résultat posté sur parentFragmentManager du child)
+        childFragmentManager.setFragmentResultListener("gallery_result", viewLifecycleOwner) { _, bundle ->
+            val uriString = bundle.getString("uri")
+            if (uriString != null) {
+                // Laisser la galerie visible le temps que le recadrage s'ouvre, elle sera fermée discrètement ensuite
+                startCrop(Uri.parse(uriString))
+            }
+        }
+
+        // Swipe sur l'écran caméra: distinguer vertical vs horizontal et coopérer avec ViewPager
+        val onTouchListener = View.OnTouchListener { v, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    swipeStartX = event.x
+                    swipeStartY = event.y
+                    lockedDirection = null
+                    // Empêcher temporairement l'interception par le ViewPager; on la réautorise si geste horizontal
+                    v.parent?.requestDisallowInterceptTouchEvent(true)
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val startX = swipeStartX
+                    val startY = swipeStartY
+                    if (startX == null || startY == null) return@OnTouchListener false
+                    val dx = event.x - startX
+                    val dy = event.y - startY
+                    if (lockedDirection == null) {
+                        if (kotlin.math.abs(dx) > touchSlop || kotlin.math.abs(dy) > touchSlop) {
+                            if (kotlin.math.abs(dy) > kotlin.math.abs(dx) * 1.2f) {
+                                lockedDirection = Direction.VERTICAL
+                                v.parent?.requestDisallowInterceptTouchEvent(true)
+                                true
+                            } else if (kotlin.math.abs(dx) > kotlin.math.abs(dy)) {
+                                lockedDirection = Direction.HORIZONTAL
+                                v.parent?.requestDisallowInterceptTouchEvent(false)
+                                return@OnTouchListener false
+                            } else {
+                                false
+                            }
+                        } else false
+                    } else if (lockedDirection == Direction.VERTICAL) {
+                        // Seuil dynamique en fonction de la densité et du touch slop
+                        val density = resources.displayMetrics.density
+                        val verticalTrigger = kotlin.math.max(touchSlop * 2, (48 * density).toInt())
+                        if (dy < -verticalTrigger) {
+                            openBottomSheet()
+                            true
+                        } else if (dy > verticalTrigger && bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                            closeBottomSheet()
+                            true
+                        } else true
+                    } else false
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    swipeStartX = null
+                    swipeStartY = null
+                    lockedDirection = null
+                    false
+                }
+                else -> false
+            }
+        }
+
+        overlayLayout.setOnTouchListener(onTouchListener)
+        cameraPreviewTextureView.setOnTouchListener(onTouchListener)
+
+        // S'assurer que la permission lecture images est accordée (Android 13+)
+        ensureGalleryReadPermission()
 
         phoneOrientationSensor = PhoneOrientationSensor(requireContext()) { roll ->
             // Mettre à jour l'UI sur le thread principal
@@ -145,11 +257,14 @@ class CameraFragment : Fragment() {
 
         cameraManager = requireActivity().getSystemService(Context.CAMERA_SERVICE) as CameraManager
         captureButton.setOnClickListener { takePicture() }
-        galleryImageView.setOnClickListener { checkStoragePermissionAndOpenGallery() } // Clic sur l'ImageView
-        optionsButton.setOnClickListener { showThemeSelectionDialog() }
+        galleryImageView.setOnClickListener { openBottomSheet() } // L'utilisateur glisse ensuite
+        // Supprime l'ouverture du sélecteur de thème
+        optionsButton.visibility = View.GONE
 
         // Charger la dernière image de la galerie au démarrage
         loadLastGalleryImage()
+
+        // Retirer les gestuelles custom: le bottom sheet est glissé directement par l'utilisateur
 
         // Si une URI est passée pour la ré-analyse, nous devons lancer l'analyse dans une coroutine.
         arguments?.getString(ARG_IMAGE_URI)?.let { uriString ->
@@ -207,10 +322,7 @@ class CameraFragment : Fragment() {
         imageReader.close()
     }
 
-    private fun showThemeSelectionDialog() {
-        val dialog = ThemeSelectionDialogFragment()
-        dialog.show(requireActivity().supportFragmentManager, "ThemeSelectionDialogFragment")
-    }
+    // Sélecteur de thème supprimé
 
     private val textureListener = object : TextureView.SurfaceTextureListener {
         override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
@@ -442,6 +554,30 @@ class CameraFragment : Fragment() {
         pickImageLauncher.launch(galleryIntent)
     }
 
+    private fun openBottomSheet() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun closeBottomSheet() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+    }
+
+    private fun ensureGalleryReadPermission() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestInAppStoragePermissionLauncher.launch(permission)
+        }
+    }
+
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -479,6 +615,16 @@ class CameraFragment : Fragment() {
         }
     }
 
+    // Lanceur d'activité pour la permission de stockage (galerie interne)
+    private val requestInAppStoragePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            isGranted: Boolean ->
+        if (!isGranted) {
+            Toast.makeText(requireContext(), "Permission de stockage refusée", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    
+
     private fun startCrop(sourceUri: Uri) {
         Log.d("CameraFragment", "startCrop: Démarrage du recadrage pour URI: $sourceUri")
         val photoFile: File? = try {
@@ -502,6 +648,8 @@ class CameraFragment : Fragment() {
                 .withMaxResultSize(800, 800)
                 .getIntent(requireContext())
             uCropActivityResultLauncher.launch(uCropIntent)
+            // Fermer la galerie discrètement en arrière-plan juste après l'ouverture du recadrage
+            view?.postDelayed({ closeBottomSheet() }, 150)
         } ?: run {
             Log.e("CameraFragment", "startCrop: Impossible de créer un fichier pour l'URI de destination.")
             Toast.makeText(requireContext(), "Erreur: Impossible de préparer le recadrage.", Toast.LENGTH_LONG).show()
@@ -533,6 +681,8 @@ class CameraFragment : Fragment() {
                 val resultUri = UCrop.getOutput(data)
                 Log.d("CameraFragment", "Result URI: $resultUri")
                 croppedImageUri = resultUri
+                // Fermer la galerie discrètement en arrière-plan pendant l'analyse
+                closeBottomSheet()
                 lifecycleScope.launch(Dispatchers.IO) {
                 analyzeImageWithGemini() // Démarrer l'analyse une fois l'image recadrée
                 }
@@ -637,3 +787,6 @@ class CameraFragment : Fragment() {
         return null
     }
 }
+
+
+
