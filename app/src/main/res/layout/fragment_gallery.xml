@@ -7,7 +7,10 @@
         android:id="@+id/gallery_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
+        />
 
 </FrameLayout>
 

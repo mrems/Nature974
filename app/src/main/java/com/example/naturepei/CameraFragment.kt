@@ -19,7 +19,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
+ 
 import android.util.Base64
 import android.util.Log
 import android.util.Size
@@ -66,10 +66,9 @@ import android.os.Handler
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import android.hardware.camera2.CaptureFailure
-import androidx.core.net.toUri
-import android.widget.ImageView // Ajout pour la dernière photo de la galerie
-import coil.load // Import de Coil
-import coil.transform.CircleCropTransformation // Import pour CircleCropTransformation
+ 
+ 
+import android.widget.TextView
 
 class CameraFragment : Fragment() {
 
@@ -86,12 +85,13 @@ class CameraFragment : Fragment() {
     private lateinit var imageReader: ImageReader
     private lateinit var cameraManager: CameraManager
 
-    private lateinit var galleryImageView: ImageView // Remplacé par ImageView
     private lateinit var optionsButton: ImageButton
     private lateinit var captureButton: ImageButton
     private lateinit var overlayLayout: FrameLayout
     private lateinit var galleryBottomSheet: LinearLayout
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var galleryHandle: FrameLayout
+    private lateinit var appTitleTextView: TextView
 
     private var swipeStartX: Float? = null
     private var swipeStartY: Float? = null
@@ -108,8 +108,7 @@ class CameraFragment : Fragment() {
     private var sensorOrientation: Int = 0
     private var deviceRotation: Int = 0
     
-    // Cache pour l'image de galerie
-    private var lastLoadedGalleryImageUri: Uri? = null
+    
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,14 +148,27 @@ class CameraFragment : Fragment() {
 
         cameraPreviewTextureView = view.findViewById(R.id.camera_preview_texture_view)
         captureButton = view.findViewById(R.id.capture_button)
-        galleryImageView = view.findViewById(R.id.gallery_icon) // Référence à l'ImageView
         optionsButton = view.findViewById(R.id.options_icon)
         overlayLayout = view.findViewById(R.id.overlay_layout)
         galleryBottomSheet = view.findViewById(R.id.gallery_bottom_sheet)
+        galleryHandle = view.findViewById(R.id.gallery_sheet_handle)
         bottomSheetBehavior = BottomSheetBehavior.from(galleryBottomSheet)
         bottomSheetBehavior.peekHeight = 0
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.isDraggable = true
+
+        appTitleTextView = view.findViewById(R.id.app_title_text_view)
+
+        // Calculer la hauteur du titre + une petite marge en dp
+        val density = resources.displayMetrics.density
+        val extraOffset = (34 * density).toInt() // Marge supplémentaire pour ne pas coller au titre, augmentée de 4dp (total 34dp)
+        view.post { // S'assurer que le layout est mesuré avant de calculer la hauteur
+            val screenHeight = resources.displayMetrics.heightPixels
+            val titleBottom = appTitleTextView.bottom // Position Y du bas du titre
+            val desiredHeight = screenHeight - titleBottom - extraOffset
+            // Définir la hauteur maximale du bottom sheet pour qu'il ne dépasse pas le titre
+            bottomSheetBehavior.maxHeight = desiredHeight
+        }
 
         // Désactiver le swipe latéral du ViewPager quand la galerie est ouverte
         val viewPager = requireActivity().findViewById<ViewPager2>(R.id.view_pager)
@@ -164,10 +176,12 @@ class CameraFragment : Fragment() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 val disable = newState == BottomSheetBehavior.STATE_EXPANDED || newState == BottomSheetBehavior.STATE_HALF_EXPANDED || newState == BottomSheetBehavior.STATE_DRAGGING
                 viewPager?.isUserInputEnabled = !disable
+                galleryHandle.visibility = if (disable || newState == BottomSheetBehavior.STATE_COLLAPSED) View.VISIBLE else View.GONE
             }
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 val disable = slideOffset > 0.05f
                 viewPager?.isUserInputEnabled = !disable
+                galleryHandle.visibility = if (slideOffset > 0f) View.VISIBLE else View.GONE
             }
         })
 
@@ -245,24 +259,17 @@ class CameraFragment : Fragment() {
         // S'assurer que la permission lecture images est accordée (Android 13+)
         ensureGalleryReadPermission()
 
-        phoneOrientationSensor = PhoneOrientationSensor(requireContext()) { roll ->
-            // Mettre à jour l'UI sur le thread principal
-            requireActivity().runOnUiThread {
-                galleryImageView.rotation = roll // Appliquer la rotation à l'ImageView de la galerie
-            }
-        }
+        phoneOrientationSensor = PhoneOrientationSensor(requireContext()) { /* plus de rotation UI */ }
 
         // Initialisation normale de la caméra si aucune URI n'est fournie
         cameraPreviewTextureView.surfaceTextureListener = textureListener
 
         cameraManager = requireActivity().getSystemService(Context.CAMERA_SERVICE) as CameraManager
         captureButton.setOnClickListener { takePicture() }
-        galleryImageView.setOnClickListener { openBottomSheet() } // L'utilisateur glisse ensuite
         // Supprime l'ouverture du sélecteur de thème
         optionsButton.visibility = View.GONE
 
-        // Charger la dernière image de la galerie au démarrage
-        loadLastGalleryImage()
+        // Suppression du bouton galerie et de son chargement
 
         // Retirer les gestuelles custom: le bottom sheet est glissé directement par l'utilisateur
 
@@ -272,7 +279,6 @@ class CameraFragment : Fragment() {
             // Désactiver la capture et analyser directement l'image fournie
             cameraPreviewTextureView.visibility = View.GONE
             captureButton.visibility = View.GONE
-            galleryImageView.visibility = View.GONE
             optionsButton.visibility = View.GONE
             lifecycleScope.launch(Dispatchers.IO) { // Lancer l'analyse dans une coroutine
                 analyzeImageWithGemini(imageUri)
@@ -289,7 +295,7 @@ class CameraFragment : Fragment() {
         } else {
             cameraPreviewTextureView.surfaceTextureListener = textureListener
         }
-        loadLastGalleryImage() // Recharger la dernière image au retour sur le fragment
+        // plus de rechargement de la dernière image
     }
 
     override fun onPause() {
@@ -530,29 +536,7 @@ class CameraFragment : Fragment() {
         startCrop(savedUri)
     }
 
-    private fun checkStoragePermissionAndOpenGallery() {
-        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        }
-
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                permission
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestStoragePermissionLauncher.launch(permission)
-        } else {
-            openGallery()
-        }
-    }
-
-    private fun openGallery() {
-        Log.d("CameraFragment", "openGallery: Ouverture de la galerie")
-        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        pickImageLauncher.launch(galleryIntent)
-    }
+    
 
     private fun openBottomSheet() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -578,21 +562,7 @@ class CameraFragment : Fragment() {
         }
     }
 
-    private val pickImageLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val imageUri = result.data?.data
-                if (imageUri != null) {
-                    Log.d("CameraFragment", "pickImageLauncher: Image sélectionnée, URI: $imageUri")
-                    startCrop(imageUri)
-                } else {
-                    Log.e("CameraFragment", "pickImageLauncher: URI d'image nulle après sélection.")
-                    Toast.makeText(requireContext(), "Erreur: URI d'image nulle.", Toast.LENGTH_LONG).show()
-                }
-            } else {
-                Log.d("CameraFragment", "pickImageLauncher: Sélection d'image annulée ou échouée.")
-            }
-        }
+    
 
     // Lanceur d'activité pour la permission de la caméra
     private val requestCameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -605,15 +575,7 @@ class CameraFragment : Fragment() {
         }
     }
 
-    // Lanceur d'activité pour la permission de stockage
-    private val requestStoragePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            isGranted: Boolean ->
-        if (isGranted) {
-            openGallery()
-        } else {
-            Toast.makeText(requireContext(), "Permission de stockage refusée", Toast.LENGTH_SHORT).show()
-        }
-    }
+    
 
     // Lanceur d'activité pour la permission de stockage (galerie interne)
     private val requestInAppStoragePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -754,38 +716,7 @@ class CameraFragment : Fragment() {
         }
     }
 
-    private fun loadLastGalleryImage() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val imageUri = getLastImageUri(requireContext())
-            withContext(Dispatchers.Main) {
-                // Optimisation : Ne recharger que si l'URI a changé
-                if (imageUri != null && imageUri != lastLoadedGalleryImageUri) {
-                    lastLoadedGalleryImageUri = imageUri
-                    galleryImageView.load(imageUri) {
-                        crossfade(true)
-                        transformations(CircleCropTransformation())
-                    }
-                }
-                // Toujours réaffecter le listener (léger)
-                galleryImageView.setOnClickListener { checkStoragePermissionAndOpenGallery() }
-            }
-        }
-    }
-
-    private fun getLastImageUri(context: Context): Uri? {
-        val projection = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_ADDED)
-        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
-        val queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-
-        context.contentResolver.query(queryUri, projection, null, null, sortOrder)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val imageId = cursor.getLong(idColumn)
-                return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId.toString())
-            }
-        }
-        return null
-    }
+    
 }
 
 

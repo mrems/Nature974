@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -80,4 +81,11 @@ dependencies {
     // Image Cropper Library
     // implementation("com.theartofdev.edmodo:android-image-cropper:2.3.1") // Dépendance précédente
     implementation("com.github.yalantis:ucrop:2.2.8") // Nouvelle dépendance uCrop
+
+    // Importez la Firebase BoM (Bill of Materials)
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+
+    // Ajoutez les dépendances Firebase que vous utilisez dans votre application
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 }

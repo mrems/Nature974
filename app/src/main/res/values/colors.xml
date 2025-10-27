@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="splash_background_light">#2c72a6</color>
+    <color name="splash_background_light">#992c72a6</color> <!-- Opacité réduite à 60% -->
 
     <!-- Couleurs de texte pour le mode clair -->
     <color name="text_primary_light">#FF000000</color>
