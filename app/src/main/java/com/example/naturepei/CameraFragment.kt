@@ -69,7 +69,12 @@ import android.hardware.camera2.CaptureFailure
  
  
 import android.widget.TextView
-
+import androidx.activity.OnBackPressedCallback
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.currentCoroutineContext
+ 
+ 
 class CameraFragment : Fragment() {
 
     private lateinit var cameraPreviewTextureView: TextureView
@@ -107,6 +112,11 @@ class CameraFragment : Fragment() {
     private lateinit var phoneOrientationSensor: PhoneOrientationSensor
     private var sensorOrientation: Int = 0
     private var deviceRotation: Int = 0
+    
+    
+
+    private var analysisJob: Job? = null
+    private lateinit var onBackPressedCallback: OnBackPressedCallback
     
     
 
@@ -284,6 +294,37 @@ class CameraFragment : Fragment() {
                 analyzeImageWithGemini(imageUri)
             }
         }
+
+        onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                when {
+                    analysisJob?.isActive == true -> {
+                        analysisJob?.cancel()
+                        Toast.makeText(requireContext(), "Analyse annulée.", Toast.LENGTH_SHORT).show()
+                        Log.d("CameraFragment", "Analyse annulée par le bouton retour.")
+                        // Revenir à l'état initial ou à l'écran de recadrage
+                        croppedImageUri = null // Annuler l'URI recadrée
+                        closeCamera() // Fermer la caméra proprement
+                        // openCamera() // Ne pas appeler openCamera() ici, laisser onResume le faire.
+                        cameraPreviewTextureView.visibility = View.VISIBLE
+                        captureButton.visibility = View.VISIBLE
+                        // optionsButton.visibility = View.VISIBLE // Si vous voulez le re-montrer
+                    }
+                    // Gérer si UCrop est visible (l'ActivityResultLauncher d'UCrop gère déjà le retour)
+                    // Pour UCrop, le simple fait d'appeler super.handleOnBackPressed() ou de laisser la gestion par défaut
+                    // devrait revenir à l'activité appelante (CameraFragment) avec RESULT_CANCELED.
+                    // Il n'y a pas de moyen direct de savoir si UCrop est "actif" de l'extérieur.
+                    // La meilleure approche est de simplement ne pas intercepter si on sait qu'on a lancé UCrop.
+                    // Pour l'instant, on laisse UCrop gérer son propre retour.
+                    else -> {
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
+                    }
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
     }
 
     override fun onResume() {
@@ -323,6 +364,7 @@ class CameraFragment : Fragment() {
 
     private fun closeCamera() {
         captureSession?.close()
+        captureSession = null // Explicitly nullify
         cameraDevice?.close()
         cameraDevice = null
         imageReader.close()
@@ -603,6 +645,8 @@ class CameraFragment : Fragment() {
             uCropOptions.setFreeStyleCropEnabled(false)
             uCropOptions.setCropGridColumnCount(0)
             uCropOptions.setCropGridRowCount(0)
+            uCropOptions.setDimmedLayerColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+            uCropOptions.setRootViewBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.white))
 
             val uCropIntent = UCrop.of(sourceUri, destinationUri)
                 .withOptions(uCropOptions)
@@ -656,6 +700,13 @@ class CameraFragment : Fragment() {
                 Log.e("CameraFragment", "Erreur de recadrage: ${cropError?.message}")
                 Toast.makeText(requireContext(), "Erreur de recadrage: ${cropError?.message}", Toast.LENGTH_LONG).show()
             }
+        } else { // Annulation du recadrage (Activity.RESULT_CANCELED)
+            Log.d("CameraFragment", "Recadrage annulé.")
+            croppedImageUri = null // Nettoyer l'URI de l'image recadrée
+            // Ne pas appeler openCamera() ici, laisser onResume le faire.
+            cameraPreviewTextureView.visibility = View.VISIBLE
+            captureButton.visibility = View.VISIBLE
+            // optionsButton.visibility = View.VISIBLE
         }
     }
 
@@ -667,47 +718,65 @@ class CameraFragment : Fragment() {
         val finalImageUri: Uri? = imageUri ?: croppedImageUri ?: imageFile?.let { Uri.fromFile(it) }
 
         finalImageUri?.let { uri ->
-            try {
-                val response = imageAnalyzer.analyzeImage(uri)
+            analysisJob = lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val response = imageAnalyzer.analyzeImage(uri)
 
-                withContext(Dispatchers.Main) {
-                    loadingDialog.dismiss()
-                    if (response != null) {
-                        val intent = Intent(requireContext(), ResultActivity::class.java).apply {
-                            putExtra(ResultActivity.EXTRA_IMAGE_URI, uri.toString())
-                            putExtra(ResultActivity.EXTRA_LOCAL_NAME, response.localName)
-                            putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, response.scientificName)
-                            putExtra(ResultActivity.EXTRA_TYPE, response.type)
-                            putExtra(ResultActivity.EXTRA_HABITAT, response.habitat)
-                            putExtra(ResultActivity.EXTRA_CHARACTERISTICS, response.characteristics)
-                            putExtra(ResultActivity.EXTRA_REUNION_CONTEXT, response.reunionContext)
-                            putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C") // Description n'est plus fournie par l'API, utiliser N/C
-                        }
-                        startActivity(intent)
-
-                        val analysisEntry = AnalysisEntry(
-                            imageUri = uri.toString(),
-                            localName = response.localName,
-                            scientificName = response.scientificName,
-                            type = response.type,
-                            habitat = response.habitat,
-                            characteristics = response.characteristics,
-                            reunionContext = response.reunionContext,
-                            description = "N/C" // Description n'est plus fournie par l'API, utiliser N/C
-                        )
-                        AnalysisHistoryManager(requireContext()).saveAnalysisEntry(analysisEntry)
-
-                        Log.d("CameraFragment", "Réponse Gemini: ${response.localName}, ${response.scientificName}, ${response.type}") // Ajusté pour les nouveaux champs
-                        Toast.makeText(requireContext(), "Analyse terminée !", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(requireContext(), "Aucune réponse de l\'API.", Toast.LENGTH_LONG).show()
+                    if (!currentCoroutineContext().isActive) {
+                        Log.d("CameraFragment", "Analyse annulée avant la mise à jour UI.")
+                        return@launch
                     }
-                }
-            } catch (e: Exception) {
-                
-                withContext(Dispatchers.Main) {
-                    loadingDialog.dismiss()
-                    Toast.makeText(requireContext(), "Erreur lors de l\'analyse: ${e.message}", Toast.LENGTH_LONG).show()
+
+                    withContext(Dispatchers.Main) {
+                        loadingDialog.dismiss()
+                        if (response != null) {
+                            val intent = Intent(requireContext(), ResultActivity::class.java).apply {
+                                putExtra(ResultActivity.EXTRA_IMAGE_URI, uri.toString())
+                                putExtra(ResultActivity.EXTRA_LOCAL_NAME, response.localName)
+                                putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, response.scientificName)
+                                putExtra(ResultActivity.EXTRA_TYPE, response.type)
+                                putExtra(ResultActivity.EXTRA_HABITAT, response.habitat)
+                                putExtra(ResultActivity.EXTRA_CHARACTERISTICS, response.characteristics)
+                                putExtra(ResultActivity.EXTRA_REUNION_CONTEXT, response.reunionContext)
+                                putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C") // Description n'est plus fournie par l'API, utiliser N/C
+                            }
+                            startActivity(intent)
+
+                            val analysisEntry = AnalysisEntry(
+                                imageUri = uri.toString(),
+                                localName = response.localName,
+                                scientificName = response.scientificName,
+                                type = response.type,
+                                habitat = response.habitat,
+                                characteristics = response.characteristics,
+                                reunionContext = response.reunionContext,
+                                description = "N/C" // Description n'est plus fournie par l'API, utiliser N/C
+                            )
+                            AnalysisHistoryManager(requireContext()).saveAnalysisEntry(analysisEntry)
+
+                            Log.d("CameraFragment", "Réponse Gemini: ${response.localName}, ${response.scientificName}, ${response.type}") // Ajusté pour les nouveaux champs
+                            Toast.makeText(requireContext(), "Analyse terminée !", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Aucune réponse de l\'API.", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    if (!currentCoroutineContext().isActive) {
+                        Log.d("CameraFragment", "Exception attrapée mais coroutine déjà annulée.")
+                        return@launch
+                    }
+                    withContext(Dispatchers.Main) {
+                        loadingDialog.dismiss()
+                        Toast.makeText(requireContext(), "Erreur lors de l\'analyse: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                } finally {
+                    // S'assurer que la boîte de dialogue est fermée même si annulée ou erreur
+                    withContext(Dispatchers.Main) {
+                        if (loadingDialog.isAdded) {
+                            loadingDialog.dismiss()
+                        }
+                        analysisJob = null
+                    }
                 }
             }
         } ?: withContext(Dispatchers.Main) { // Utiliser withContext pour les opérations UI sur le thread principal

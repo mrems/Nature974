@@ -18,6 +18,9 @@
         <item name="android:navigationBarColor" tools:targetApi="l">@android:color/white</item>
         <!-- Light navigation bar icons. -->
         <item name="android:windowLightNavigationBar" tools:targetApi="o">true</item>
+        <!-- Styles personnalisés pour le PopupMenu -->
+        <item name="popupMenuStyle">@style/CustomPopupMenu</item>
+        <item name="android:popupMenuStyle">@style/CustomPopupMenu</item>
         <!-- Customize your theme here. -->
     </style>
 
@@ -25,6 +28,18 @@
         <item name="android:statusBarColor" tools:targetApi="l">@color/splash_background_light</item>
         <item name="android:navigationBarColor" tools:targetApi="l">@color/splash_background_light</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o">false</item>
+    </style>
+
+    <style name="CustomPopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:dropDownListViewStyle">@style/CustomDropDownListView</item>
+    </style>
+
+    <style name="CustomDropDownListView" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:listPreferredItemHeightSmall">28dp</item> <!-- Réduit la hauteur des éléments -->
+        <item name="android:paddingStart">8dp</item> <!-- Padding à gauche -->
+        <item name="android:paddingEnd">8dp</item> <!-- Padding à droite -->
+        <item name="android:listPreferredItemPaddingLeft">8dp</item>
+        <item name="android:listPreferredItemPaddingRight">8dp</item>
     </style>
 
 </resources>

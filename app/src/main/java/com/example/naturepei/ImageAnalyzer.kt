@@ -24,7 +24,7 @@ import android.os.Build
 
 class ImageAnalyzer(private val context: Context) {
 
-    private val BACKEND_API_URL = "https://super-abu.com/api/nature-pei/"
+    private val BACKEND_API_URL = "https://europe-west9-geronimo-7224a.cloudfunctions.net/api/"
 
     private val okHttpClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)

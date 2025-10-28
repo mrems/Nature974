@@ -102,8 +102,8 @@ class HistoryListFragment : Fragment() {
                         // Gérer les options via le nouveau bouton
                         val popupMenu = PopupMenu(requireContext(), itemView) // 'itemView' est la vue du bouton
                         popupMenu.menu.apply {
-                            add(Menu.NONE, 0, 0, "Effacer")
-                            add(Menu.NONE, 1, 1, "Re-analyser")
+                            add(Menu.NONE, 0, 0, "Delete").setIcon(R.drawable.ic_delete)
+                            add(Menu.NONE, 1, 1, "Re-analyze").setIcon(R.drawable.ic_reload)
                         }
 
                         popupMenu.setOnMenuItemClickListener { menuItem ->
