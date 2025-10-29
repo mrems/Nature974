@@ -37,6 +37,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
 }
 
@@ -91,4 +92,7 @@ dependencies {
     // Ajoutez les dépendances Firebase que vous utilisez dans votre application
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
+
+    // Dépendances pour Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:20.7.0") // Vérifiez la dernière version stable
 }

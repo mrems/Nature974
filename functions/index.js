@@ -6,7 +6,15 @@ const express = require("express");
 const cors = require("cors");
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
+const functions = require("firebase-functions");
+const functionsV1 = require("firebase-functions/v1");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+const admin = require('firebase-admin');
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+initializeApp();
+const db = getFirestore();
 
 // Région (Paris)
 const REGION = "europe-west9"; 
@@ -186,3 +194,22 @@ app.post("/analyze-image", analyzeImage);
 
 // Export de la fonction HTTPS Firebase
 exports.api = onRequest({ region: REGION, secrets: [GEMINI_API_KEY] }, app);
+
+// Déclencheur v1 (compat) pour la création d'utilisateur Firebase Auth
+exports.onUserCreate = functionsV1.auth.user().onCreate(async (user) => {
+  const { uid, email } = user;
+  console.log(`Nouvel utilisateur créé: ${uid} (${email})`);
+  try {
+    await db.collection('users').doc(uid).set({
+      email: email || null,
+      credits: 5,
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    console.log(`Document utilisateur créé pour ${uid}`);
+    return null;
+  } catch (error) {
+    console.error(`Erreur lors de la création du document utilisateur pour ${uid}:`, error);
+    return null;
+  }
+});
