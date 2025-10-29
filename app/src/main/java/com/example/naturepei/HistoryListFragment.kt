@@ -94,7 +94,7 @@ class HistoryListFragment : Fragment() {
                             putExtra(ResultActivity.EXTRA_TYPE, entry.type)
                             putExtra(ResultActivity.EXTRA_HABITAT, entry.habitat)
                             putExtra(ResultActivity.EXTRA_CHARACTERISTICS, entry.characteristics)
-                            putExtra(ResultActivity.EXTRA_REUNION_CONTEXT, entry.reunionContext)
+                            putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, entry.localContext)
                             putExtra(ResultActivity.EXTRA_DESCRIPTION, entry.description)
                         }
                         startActivity(intent)
@@ -134,7 +134,11 @@ class HistoryListFragment : Fragment() {
                                     loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
 
                                     lifecycleScope.launch(Dispatchers.IO) {
-                                        val newResponse = imageAnalyzer.analyzeImage(Uri.parse(entry.imageUri))
+                                        val newResponse = imageAnalyzer.analyzeImage(
+                                            Uri.parse(entry.imageUri),
+                                            entry.country,
+                                            entry.region
+                                        )
 
                                         withContext(Dispatchers.Main) {
                                             loadingDialog.dismiss()
@@ -146,7 +150,7 @@ class HistoryListFragment : Fragment() {
                                                     type = newResponse.type,
                                                     habitat = newResponse.habitat,
                                                     characteristics = newResponse.characteristics,
-                                                    reunionContext = newResponse.reunionContext
+                                                    localContext = newResponse.localContext
                                                 )
                                                 analysisHistoryManager.updateAnalysisEntry(updatedEntry)
                                                 loadHistory()

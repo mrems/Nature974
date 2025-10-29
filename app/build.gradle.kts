@@ -41,6 +41,9 @@ android {
 }
 
 dependencies {
+    // Dépendances pour les services de localisation Google Play
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
     // ... vos dépendances existantes du nouveau projet ...
 
     // Coil for image loading

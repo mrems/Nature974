@@ -12,13 +12,15 @@ data class AnalysisEntry(
     val type: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
     val habitat: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
     val characteristics: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
-    val reunionContext: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
+    val localContext: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
+    val country: String? = null, // Localisation: pays
+    val region: String? = null, // Localisation: région/adminArea
     val description: String, // Ancien champ, pour la rétrocompatibilité
     val timestamp: Long? = System.currentTimeMillis() // Nouveau champ pour l'ordre chronologique
 ) {
     // Pour la rétrocompatibilité avec les anciennes données (pas de type, habitat, etc. ni timestamp)
     constructor(imageUri: String, localName: String, scientificName: String, description: String) :
-            this(imageUri, localName, scientificName, null, null, null, null, description, null)
+            this(imageUri, localName, scientificName, null, null, null, null, null, null, description, null)
 }
 
 class AnalysisHistoryManager(context: Context) {

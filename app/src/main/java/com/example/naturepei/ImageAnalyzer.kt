@@ -77,7 +77,9 @@ class ImageAnalyzer(private val context: Context) {
 
     data class AnalyzeImageRequest(
         val image: String,
-        val mimeType: String
+        val mimeType: String,
+        val country: String? = null,
+        val region: String? = null
         // Le prompt n'est plus envoyé par l'application, il est construit par le backend.
         // val prompt: String
     )
@@ -88,10 +90,10 @@ class ImageAnalyzer(private val context: Context) {
         val type: String,
         val habitat: String,
         val characteristics: String,
-        val reunionContext: String
+        val localContext: String
     )
 
-    suspend fun analyzeImage(imageUri: Uri): AnalyzeImageResponse? {
+    suspend fun analyzeImage(imageUri: Uri, country: String? = null, region: String? = null): AnalyzeImageResponse? {
         return withContext(Dispatchers.IO) {
             try {
                 val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -104,7 +106,12 @@ class ImageAnalyzer(private val context: Context) {
                 // Le prompt n'est plus construit ici, il est géré par le backend.
                 // val fullPrompt = getCombinedPrompt()
 
-                val request = AnalyzeImageRequest(base64Image, mimeType)
+                val request = AnalyzeImageRequest(
+                    image = base64Image,
+                    mimeType = mimeType,
+                    country = country,
+                    region = region
+                )
 
                 var response: AnalyzeImageResponse? = null
                 val maxRetries = 5

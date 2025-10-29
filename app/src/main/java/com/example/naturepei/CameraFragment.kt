@@ -75,6 +75,12 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.currentCoroutineContext
  
  
+// Importations pour la localisation
+import android.location.Geocoder
+import android.location.Location
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+ 
 class CameraFragment : Fragment() {
 
     private lateinit var cameraPreviewTextureView: TextureView
@@ -120,9 +126,16 @@ class CameraFragment : Fragment() {
     
     
 
+    // Variables pour la localisation
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var userCountry: String? = null
+    private var userRegion: String? = null
+    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageAnalyzer = ImageAnalyzer(requireContext())
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
     companion object {
@@ -337,6 +350,7 @@ class CameraFragment : Fragment() {
             cameraPreviewTextureView.surfaceTextureListener = textureListener
         }
         // plus de rechargement de la dernière image
+        requestLocationPermissions()
     }
 
     override fun onPause() {
@@ -629,6 +643,88 @@ class CameraFragment : Fragment() {
 
     
 
+    // Lanceur d'activité pour les permissions de localisation
+    private val requestLocationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            permissions ->
+        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+            // Au moins une permission de localisation est accordée
+            getLastLocation()
+        } else {
+            Toast.makeText(requireContext(), "Permission de localisation refusée. Certaines fonctionnalités pourraient être limitées.", Toast.LENGTH_LONG).show()
+            userCountry = null
+            userRegion = null
+        }
+    }
+
+    private fun checkLocationPermissions(): Boolean {
+        val fineLocationGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        val coarseLocationGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        return fineLocationGranted || coarseLocationGranted
+    }
+
+    private fun requestLocationPermissions() {
+        requestLocationPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
+
+    private fun getLastLocation() {
+        if (checkLocationPermissions()) {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        getCountryAndRegionFromLocation(it)
+                    } ?: run {
+                        Log.d("CameraFragment", "Aucune localisation connue.")
+                        userCountry = null
+                        userRegion = null
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("CameraFragment", "Erreur lors de la récupération de la localisation: ${e.message}")
+                    userCountry = null
+                    userRegion = null
+                }
+        } else {
+            // Les permissions ne sont pas accordées, on ne devrait pas appeler getLastLocation sans vérification
+            // Cette branche ne devrait pas être atteinte si checkLocationPermissions est bien gérée avant.
+            userCountry = null
+            userRegion = null
+        }
+    }
+
+    private fun getCountryAndRegionFromLocation(location: Location) {
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                if (!addresses.isNullOrEmpty()) {
+                    userCountry = addresses[0].countryName
+                    userRegion = addresses[0].adminArea
+                    Log.d("CameraFragment", "Localisation obtenue: Pays = $userCountry, Région = $userRegion")
+                } else {
+                    Log.d("CameraFragment", "Aucune adresse trouvée pour la localisation.")
+                    userCountry = null
+                    userRegion = null
+                }
+            } catch (e: IOException) {
+                Log.e("CameraFragment", "Erreur de géocodage: ${e.message}")
+                userCountry = null
+                userRegion = null
+            }
+        }
+    }
+
     private fun startCrop(sourceUri: Uri) {
         Log.d("CameraFragment", "startCrop: Démarrage du recadrage pour URI: $sourceUri")
         val photoFile: File? = try {
@@ -720,7 +816,8 @@ class CameraFragment : Fragment() {
         finalImageUri?.let { uri ->
             analysisJob = lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    val response = imageAnalyzer.analyzeImage(uri)
+                    // Analyser directement via l'URI; le backend gère le prompt et le traitement
+                    val response = imageAnalyzer.analyzeImage(uri, userCountry, userRegion)
 
                     if (!currentCoroutineContext().isActive) {
                         Log.d("CameraFragment", "Analyse annulée avant la mise à jour UI.")
@@ -737,7 +834,7 @@ class CameraFragment : Fragment() {
                                 putExtra(ResultActivity.EXTRA_TYPE, response.type)
                                 putExtra(ResultActivity.EXTRA_HABITAT, response.habitat)
                                 putExtra(ResultActivity.EXTRA_CHARACTERISTICS, response.characteristics)
-                                putExtra(ResultActivity.EXTRA_REUNION_CONTEXT, response.reunionContext)
+                                putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, response.localContext)
                                 putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C") // Description n'est plus fournie par l'API, utiliser N/C
                             }
                             startActivity(intent)
@@ -749,7 +846,9 @@ class CameraFragment : Fragment() {
                                 type = response.type,
                                 habitat = response.habitat,
                                 characteristics = response.characteristics,
-                                reunionContext = response.reunionContext,
+                                localContext = response.localContext,
+                                country = userCountry,
+                                region = userRegion,
                                 description = "N/C" // Description n'est plus fournie par l'API, utiliser N/C
                             )
                             AnalysisHistoryManager(requireContext()).saveAnalysisEntry(analysisEntry)
@@ -785,6 +884,12 @@ class CameraFragment : Fragment() {
         }
     }
 
+    private fun convertImageUriToBase64(imageUri: Uri): String {
+        val inputStream = requireContext().contentResolver.openInputStream(imageUri)
+        val bytes = inputStream?.readBytes()
+        inputStream?.close()
+        return if (bytes != null) Base64.encodeToString(bytes, Base64.NO_WRAP) else ""
+    }
     
 }
 

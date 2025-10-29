@@ -40,13 +40,13 @@ async function analyzeImage(req, res) {
     console.log(
       `[${new Date().toISOString()}] Validation des champs. Temps écoulé depuis le début: ${Date.now() - startTime} ms.`
     );
-    const { image, mimeType, prompt } = req.body;
+    const { image, mimeType, prompt, country, region } = req.body;
 
     if (!image || !mimeType) {
-      console.warn("Validation échouée: champs image, mimeType ou prompt manquants.");
+      console.warn("Validation échouée: champs image ou mimeType manquants.");
       return res
         .status(400)
-        .json({ message: "Les champs 'image', 'mimeType' et 'prompt' sont requis." });
+        .json({ message: "Les champs 'image' et 'mimeType' sont requis." });
     }
 
     // Conversion de l'image
@@ -74,15 +74,31 @@ async function analyzeImage(req, res) {
     console.log(
       `[${new Date().toISOString()}] Construction du prompt Gemini. Temps écoulé depuis le début: ${Date.now() - startTime} ms.`
     );
-    const geminiPrompt = `Vous êtes un expert en biodiversité (faune et flore) spécialisé dans les espèces de l'Île de la Réunion. Identifiez l'espèce et fournissez des informations structurées.
+    let locationContext = "";
+    if (country) {
+      locationContext = `L'utilisateur se trouve en ${country}.`;
+      if (region) {
+        locationContext += ` Région indiquée: ${region}. N'utilisez la région que si vous disposez d'informations factuelles, spécifiques et non génériques propres à cette région (habitat, statut, usages). Si vous n'êtes pas certain ou si la région ressemble à une ville/quartier, ignorez-la et ne la mentionnez pas.`;
+      }
+      locationContext += "\n\n"; // Ajouter une ligne vide pour une meilleure séparation
+    }
+    // Construire dynamiquement la spécialisation selon la localisation fournie
+    let expertiseLine = "Vous êtes un expert en biodiversité (faune et flore).";
+    if (country) {
+      expertiseLine = `Vous êtes un expert en biodiversité (faune et flore) spécialisé dans les espèces de ${country}.`;
+    }
+
+    const geminiPrompt = `${locationContext}${expertiseLine}
+
+Règle d'utilisation de la région: La variable 'country' est toujours utilisée. La variable 'region' est optionnelle et NE DOIT ÊTRE utilisée que si vous avez des informations spécifiques et vérifiables pour cette région. Sinon, n'incluez aucune référence à la région dans la réponse.
 
 Analysez cette image et fournissez une réponse JSON stricte avec les 6 champs suivants:
-1.  "localName": Nom commun en français (ex: "Tamarin des Hauts") ou "N/C" si inconnu.
-2.  "scientificName": Nom scientifique latin (ex: "Acacia heterophylla") ou "N/C" si inconnu.
+1.  "localName": Nom commun en français (ex: "Merle noir") ou "N/C" si inconnu.
+2.  "scientificName": Nom scientifique latin (ex: "Turdus merula") ou "N/C" si inconnu.
 3.  "type": Type d'espèce et son statut combinés (ex: "Plante endémique", "Oiseau introduit", "Animal non endémique", "N/C") ou "N/C" si inconnu.
-4.  "habitat": Habitat principal à La Réunion (ex: "Forêts humides >1200m", "Littoral", "Milieux urbains") ou "N/C" si inconnu.
+4.  "habitat": Habitat principal (ex: "Forêts humides >1200m", "Littoral", "Milieux urbains") ou "N/C" si inconnu.
 5.  "characteristics": Description physique COURTE et synthétique (taille, couleur, forme, max 2-3 phrases) ou "N/C" si inconnu.
-6.  "reunionContext": Contexte réunionnais COURT et synthétique (usages, écologie, anecdote culturelle, max 2-3 phrases) ou "N/C" si inconnu.
+6.  "localContext": Contexte local basé sur country="${country ?? 'N/C'}".${region ? ` N'incluez region="${region}" QUE si vous disposez d'informations concrètes, spécifiques et non génériques à cette région; sinon, n'évoquez pas la région.` : ''} (usages, écologie, anecdote culturelle, max 2-3 phrases) ou "N/C" si inconnu.
 
 Si l'espèce ne peut pas être identifiée ou si un champ est inconnu, utilisez "N/C".
 Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
@@ -129,7 +145,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
         parsedResult.type &&
         parsedResult.habitat &&
         parsedResult.characteristics &&
-        parsedResult.reunionContext
+        parsedResult.localContext
       ) {
         console.log(
           `[${new Date().toISOString()}] Réponse finale envoyée à l'application mobile: ${JSON.stringify(parsedResult)}`

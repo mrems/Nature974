@@ -47,7 +47,7 @@ class ResultActivity : AppCompatActivity() {
         val type = intent.getStringExtra(EXTRA_TYPE)
         val habitat = intent.getStringExtra(EXTRA_HABITAT)
         val characteristics = intent.getStringExtra(EXTRA_CHARACTERISTICS)
-        val reunionContext = intent.getStringExtra(EXTRA_REUNION_CONTEXT)
+        val localContext = intent.getStringExtra(EXTRA_LOCAL_CONTEXT)
         val description = intent.getStringExtra(EXTRA_DESCRIPTION) // Pour rétrocompatibilité
 
         if (imageUriString != null && localName != null && scientificName != null) {
@@ -58,7 +58,7 @@ class ResultActivity : AppCompatActivity() {
                 type = type,
                 habitat = habitat,
                 characteristics = characteristics,
-                reunionContext = reunionContext,
+                localContext = localContext,
                 description = description ?: "N/C" // Assurer une valeur par défaut
             )
             Log.d("ResultActivity", "Current Entry pour affichage: $currentEntry") // LOG AJOUTÉ ICI
@@ -110,7 +110,7 @@ class ResultActivity : AppCompatActivity() {
 
         setupInfoCard(cardHabitat, R.drawable.ic_habitat, "Habitat", entry.habitat)
         setupInfoCard(cardCharacteristics, R.drawable.ic_characteristics, "Caractéristiques", entry.characteristics)
-        setupInfoCard(cardReunionContext, R.drawable.ic_reunion_context, "Contexte local", entry.reunionContext)
+        setupInfoCard(cardReunionContext, R.drawable.ic_reunion_context, "Contexte local", entry.localContext)
     }
 
     private fun setupInfoCard(cardView: View, iconResId: Int, title: String, content: String?) {
@@ -136,7 +136,7 @@ class ResultActivity : AppCompatActivity() {
         const val EXTRA_TYPE = "type"
         const val EXTRA_HABITAT = "habitat"
         const val EXTRA_CHARACTERISTICS = "characteristics"
-        const val EXTRA_REUNION_CONTEXT = "reunionContext"
+        const val EXTRA_LOCAL_CONTEXT = "localContext"
         const val EXTRA_DESCRIPTION = "description"
     }
 }

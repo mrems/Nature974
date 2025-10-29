@@ -92,7 +92,7 @@ class LastAnalysisFragment : Fragment() {
 
                     setupInfoCard(cardHabitat, R.drawable.ic_habitat, "Habitat", entry.habitat)
                     setupInfoCard(cardCharacteristics, R.drawable.ic_characteristics, "Caractéristiques", entry.characteristics)
-                    setupInfoCard(cardReunionContext, R.drawable.ic_reunion_context, "Contexte local", entry.reunionContext)
+                    setupInfoCard(cardReunionContext, R.drawable.ic_reunion_context, "Contexte local", entry.localContext)
 
                 } else {
                     lastAnalysisContentLayout.visibility = View.GONE
