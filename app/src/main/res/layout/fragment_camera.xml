@@ -34,19 +34,44 @@
             android:scaleType="fitCenter"
             android:alpha="0.9"/>
 
-        <!-- Nom de l'application -->
-        <TextView
+        <!-- Titre de l'application (Image) -->
+        <ImageView
+            android:id="@+id/app_title_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|top"
             android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
-            android:text="Geronimo"
-            android:id="@+id/app_title_text_view"
-            android:textColor="#FFFFFF"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:alpha="0.5" />
+            android:src="@drawable/title"
+            android:maxWidth="180dp"
+            android:adjustViewBounds="true" />
+
+        <!-- Conteneur pour le compteur de crédits (chiffre + icône) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|top"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/credits_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/compteur_icon" />
+
+        </LinearLayout>
 
         <!-- Conteneur pour les boutons du bas (Capture, Galerie) -->
         <androidx.constraintlayout.widget.ConstraintLayout

@@ -18,6 +18,8 @@ import android.widget.PopupMenu
 import android.app.AlertDialog
 import android.net.Uri
 import android.widget.Toast
+import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 
 class HistoryListFragment : Fragment() {
 
@@ -134,6 +136,27 @@ class HistoryListFragment : Fragment() {
                                     loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
 
                                     lifecycleScope.launch(Dispatchers.IO) {
+                                        val currentUser = FirebaseAuth.getInstance().currentUser
+                                        if (currentUser == null) {
+                                            withContext(Dispatchers.Main) {
+                                                loadingDialog.dismiss()
+                                                Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
+                                            }
+                                            Log.e("HistoryListFragment", "Erreur: Ré-analyse appelée sans utilisateur connecté.")
+                                            return@launch
+                                        }
+                                        Log.d("HistoryListFragment", "Utilisateur connecté: ${currentUser.uid}")
+                                        // Gating: décrémenter 1 crédit avant ré-analyse
+                                        try {
+                                            CreditsManager.decrementOneCredit()
+                                        } catch (e: Exception) {
+                                            withContext(Dispatchers.Main) {
+                                                loadingDialog.dismiss()
+                                                Toast.makeText(requireContext(), "Crédits insuffisants ou non connecté.", Toast.LENGTH_LONG).show()
+                                            }
+                                            return@launch
+                                        }
+
                                         val newResponse = imageAnalyzer.analyzeImage(
                                             Uri.parse(entry.imageUri),
                                             entry.country,

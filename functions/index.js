@@ -213,3 +213,46 @@ exports.onUserCreate = functionsV1.auth.user().onCreate(async (user) => {
     return null;
   }
 });
+
+// Callable: décrémente 1 crédit de l'utilisateur authentifié, via transaction Firestore
+exports.decrementCredits = functionsV1.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functionsV1.https.HttpsError('unauthenticated', 'Authentification requise.');
+  }
+  const uid = context.auth.uid;
+  try {
+    await db.runTransaction(async (tx) => {
+      const userRef = db.collection('users').doc(uid);
+      const snap = await tx.get(userRef);
+      if (!snap.exists) {
+        throw new functionsV1.https.HttpsError('not-found', 'Document utilisateur introuvable.');
+      }
+      const credits = snap.get('credits') || 0;
+      if (credits <= 0) {
+        throw new functionsV1.https.HttpsError('failed-precondition', 'Crédits insuffisants.');
+      }
+      tx.update(userRef, {
+        credits: FieldValue.increment(-1),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+    return { success: true };
+  } catch (error) {
+    if (error instanceof functionsV1.https.HttpsError) throw error;
+    throw new functionsV1.https.HttpsError('internal', error.message || 'Erreur serveur');
+  }
+});
+
+// Callable: retourne le solde de crédits courant de l'utilisateur authentifié
+exports.getCredits = functionsV1.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functionsV1.https.HttpsError('unauthenticated', 'Authentification requise.');
+  }
+  const uid = context.auth.uid;
+  const snap = await db.collection('users').doc(uid).get();
+  if (!snap.exists) {
+    throw new functionsV1.https.HttpsError('not-found', 'Document utilisateur introuvable.');
+  }
+  const dataDoc = snap.data() || {};
+  return { credits: dataDoc.credits || 0 };
+});

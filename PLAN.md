@@ -1,4 +1,4 @@
-# Plan de Développement de l'Application NaturePei
+# Plan de Développement de l'Application Geronimo
 
 ## Plan Général en Phases
 
@@ -130,9 +130,116 @@ Mettre en place la connexion/inscription via Firebase Auth (Google et Email/Mot 
 
 *   **Terminée**: Activer Google et Email/Password dans la console Firebase (Authentication > Sign-in method).
 *   **Terminée**: Ajouter les dépendances Firebase Auth et Firestore aux fichiers `app/build.gradle.kts` et `gradle/libs.versions.toml`.
-*   **En cours**: Implémenter l'interface utilisateur pour l'authentification (connexion/inscription via Google Sign-In, Email/Password) dans l'application Android.
+*   **Terminée**: Implémenter l'interface utilisateur pour l'authentification (connexion/inscription via Google Sign-In, Email/Password) dans l'application Android.
     *   `activity_auth.xml` créé et corrigé.
     *   `googleg_standard_color_18.xml` créé.
-    *   `AuthActivity.kt` créé avec logique Google Sign-In uniquement et navigation.
-*   **En attente**: Développer et déployer la Cloud Function `onUserCreate` (`functions/index.js`) pour initialiser les crédits Firestore des nouveaux utilisateurs.
-*   **En attente**: Mettre à jour et déployer les règles Firestore (`firestore.rules`) pour sécuriser la collection `users`.
+    *   `AuthActivity.kt` créé avec logique Google Sign-In et navigation.
+*   **Terminée**: Développer et déployer la Cloud Function `onUserCreate` (`functions/index.js`) pour initialiser les crédits Firestore des nouveaux utilisateurs.
+*   **Terminée**: Mettre à jour et déployer les règles Firestore (`firestore.rules`) pour sécuriser la collection `users`.
+
+---
+
+## Plan Détaillé pour la Phase 2 : Système de compteur de requêtes
+
+### Objectif de la Phase 2
+Mettre en place un système de crédits consommés à chaque action clef ("requête"), avec décrémentation sécurisée côté serveur (Cloud Functions), affichage du solde dans l'app Geronimo, et blocage des actions lorsque le solde est nul.
+
+### 1. Définir ce qui consomme un crédit
+*   **Tâche**: Lister les actions précises qui consomment 1 crédit (ex. analyse d'image/identification).
+*   **Détails**: Documenter les écrans/points d'entrée concernés afin d'unifier le comportement côté app et serveur.
+
+### 2. Architecture et choix d’API
+*   **Option A (recommandée maintenant)**: Créer une **HTTPS Callable** `decrementCredits` appelée avant l’action (simples à intégrer côté Android). Ajouter aussi `getCredits` pour lire le solde.
+*   **Option B (renforcement ultérieur)**: Intégrer la décrémentation directement dans l’endpoint existant (`/analyze-image`) pour enforcement serveur automatique (anti contournement). Peut être fait après validation côté client.
+
+### 3. Cloud Functions : décrémentation atomique des crédits
+*   **Fichiers**: `functions/index.js`, `functions/package.json`
+*   **Exigences**:
+    * Authentification requise (`context.auth.uid`).
+    * Transaction Firestore pour garantir: si `credits > 0` alors `credits = credits - 1`, sinon erreur.
+    * Mise à jour `updatedAt` avec `FieldValue.serverTimestamp()`.
+
+```javascript
+// Exemple (à ajouter dans functions/index.js)
+const functionsV1 = require("firebase-functions/v1");
+const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const db = getFirestore();
+
+exports.decrementCredits = functionsV1.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functionsV1.https.HttpsError(
+      "unauthenticated",
+      "Authentification requise."
+    );
+  }
+  const uid = context.auth.uid;
+
+  try {
+    await db.runTransaction(async (tx) => {
+      const userRef = db.collection("users").doc(uid);
+      const snap = await tx.get(userRef);
+      if (!snap.exists) {
+        throw new functionsV1.https.HttpsError("not-found", "Document utilisateur introuvable.");
+      }
+      const credits = snap.get("credits") || 0;
+      if (credits <= 0) {
+        throw new functionsV1.https.HttpsError(
+          "failed-precondition",
+          "Crédits insuffisants."
+        );
+      }
+      tx.update(userRef, {
+        credits: FieldValue.increment(-1),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+    return { success: true };
+  } catch (error) {
+    if (error instanceof functionsV1.https.HttpsError) throw error;
+    throw new functionsV1.https.HttpsError("internal", error.message || "Erreur serveur");
+  }
+});
+
+exports.getCredits = functionsV1.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functionsV1.https.HttpsError(
+      "unauthenticated",
+      "Authentification requise."
+    );
+  }
+  const uid = context.auth.uid;
+  const snap = await db.collection("users").doc(uid).get();
+  if (!snap.exists) {
+    throw new functionsV1.https.HttpsError("not-found", "Document utilisateur introuvable.");
+  }
+  const { credits = 0 } = snap.data() || {};
+  return { credits };
+});
+```
+
+### 4. Règles Firestore
+*   **Statut**: Les règles actuelles empêchent déjà toute écriture directe par le client sur `users/{uid}`; l’Admin SDK des Functions n’est pas bloqué.
+*   **Action**: Conserver cette politique. Si ajout de endpoints HTTP publics, valider l’identité côté serveur.
+
+### 5. Intégration Android (affichage et gating)
+*   **Affichage du solde**: Écouter `users/{uid}` via `addSnapshotListener` et afficher le nombre de crédits.
+*   **Gating**: Avant l’action payante, vérifier le solde local; si `> 0`, appeler `decrementCredits` puis poursuivre; sinon, bloquer et afficher un message (CTA vers achats en Phase 3).
+*   **UX**: Désactiver les boutons si solde nul, surface d’erreur claire en cas d’échec de la callable.
+
+### 6. Tests
+*   **Unitaires Functions**: Chemins `credits > 0`, `credits == 0`, doc manquant.
+*   **Intégration App**: Rafraîchissement temps réel, gestion erreurs callable, cohérence UI.
+
+### Résultat attendu à la fin de la Phase 2
+*   Décrémentation sécurisée par transaction Firestore.
+*   Solde affiché et mis à jour en temps réel dans l’app Geronimo.
+*   Actions bloquées lorsque le solde est nul (préparation Phase 3 achats).
+
+## Liste des tâches pour la Phase 2
+
+*   **Terminée**: Définir la liste exacte des actions consommant 1 crédit (actuellement: analyse et ré‑analyse).
+*   **Terminée**: Ajouter les Cloud Functions `decrementCredits` et `getCredits` et intégrer côté app.
+*   **Terminée**: Intégrer l’affichage du solde dans l’UI (listener Firestore + `TextView` permanente).
+*   **Terminée**: Implémenter le gating côté app (callable `decrementCredits` avant analyse/ré‑analyse).
+*   **Terminée**: Déploiement des fonctions Firebase et validation en environnement de test.
+*   **À faire**: Tests (unitaires Functions, intégration app) et journalisation minimale.

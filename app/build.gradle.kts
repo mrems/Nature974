@@ -92,6 +92,8 @@ dependencies {
     // Ajoutez les dépendances Firebase que vous utilisez dans votre application
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-functions-ktx")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
 
     // Dépendances pour Google Sign-In
     implementation("com.google.android.gms:play-services-auth:20.7.0") // Vérifiez la dernière version stable

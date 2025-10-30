@@ -52,6 +52,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -80,6 +83,7 @@ import android.location.Geocoder
 import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import android.widget.ImageView
  
 class CameraFragment : Fragment() {
 
@@ -102,7 +106,7 @@ class CameraFragment : Fragment() {
     private lateinit var galleryBottomSheet: LinearLayout
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var galleryHandle: FrameLayout
-    private lateinit var appTitleTextView: TextView
+    private lateinit var appTitleImageView: ImageView
 
     private var swipeStartX: Float? = null
     private var swipeStartY: Float? = null
@@ -123,6 +127,8 @@ class CameraFragment : Fragment() {
 
     private var analysisJob: Job? = null
     private lateinit var onBackPressedCallback: OnBackPressedCallback
+
+    private lateinit var creditsTextView: TextView
     
     
 
@@ -130,6 +136,7 @@ class CameraFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userCountry: String? = null
     private var userRegion: String? = null
+    private var creditsListener: ListenerRegistration? = null
     
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,15 +187,21 @@ class CameraFragment : Fragment() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.isDraggable = true
 
-        appTitleTextView = view.findViewById(R.id.app_title_text_view)
+        appTitleImageView = view.findViewById(R.id.app_title_image_view)
+
+        creditsTextView = view.findViewById(R.id.credits_text_view)
 
         // Calculer la hauteur du titre + une petite marge en dp
         val density = resources.displayMetrics.density
         val extraOffset = (34 * density).toInt() // Marge supplémentaire pour ne pas coller au titre, augmentée de 4dp (total 34dp)
         view.post { // S'assurer que le layout est mesuré avant de calculer la hauteur
             val screenHeight = resources.displayMetrics.heightPixels
-            val titleBottom = appTitleTextView.bottom // Position Y du bas du titre
-            val desiredHeight = screenHeight - titleBottom - extraOffset
+            // Adapter le calcul pour la ImageView, ou utiliser une valeur fixe si l'ImageView n'a pas de bottom défini immédiatement
+            // Pour simplifier, nous allons utiliser une valeur fixe pour la hauteur du titre + marge.
+            // Environ 30dp pour la hauteur du titre + 8dp de marginTop = 38dp, plus l'extraOffset
+            val titleHeightDp = 30 // Hauteur estimée du titre en dp
+            val titleHeightPx = (titleHeightDp * density).toInt()
+            val desiredHeight = screenHeight - titleHeightPx - extraOffset
             // Définir la hauteur maximale du bottom sheet pour qu'il ne dépasse pas le titre
             bottomSheetBehavior.maxHeight = desiredHeight
         }
@@ -221,6 +234,9 @@ class CameraFragment : Fragment() {
                 startCrop(Uri.parse(uriString))
             }
         }
+
+        // Affichage temps réel du solde de crédits
+        setupCreditsListener()
 
         // Swipe sur l'écran caméra: distinguer vertical vs horizontal et coopérer avec ViewPager
         val onTouchListener = View.OnTouchListener { v, event ->
@@ -338,6 +354,17 @@ class CameraFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
+    }
+
+    private fun setupCreditsListener() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val docRef = FirebaseFirestore.getInstance().collection("users").document(uid)
+        creditsListener?.remove()
+        creditsListener = docRef.addSnapshotListener { snapshot, error ->
+            if (error != null) return@addSnapshotListener
+            val credits = snapshot?.getLong("credits")?.toInt() ?: return@addSnapshotListener
+            creditsTextView.text = "$credits"
+        }
     }
 
     override fun onResume() {
@@ -816,6 +843,26 @@ class CameraFragment : Fragment() {
         finalImageUri?.let { uri ->
             analysisJob = lifecycleScope.launch(Dispatchers.IO) {
                 try {
+                    val currentUser = FirebaseAuth.getInstance().currentUser
+                    if (currentUser == null) {
+                        withContext(Dispatchers.Main) {
+                            loadingDialog.dismiss()
+                            Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
+                        }
+                        Log.e("CameraFragment", "Erreur: analyzeImageWithGemini appelé sans utilisateur connecté.")
+                        return@launch
+                    }
+                    Log.d("CameraFragment", "Utilisateur connecté: ${currentUser.uid}")
+                    // Gating: décrémenter 1 crédit côté serveur avant l'analyse
+                    try {
+                        CreditsManager.decrementOneCredit()
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            loadingDialog.dismiss()
+                            Toast.makeText(requireContext(), "Crédits insuffisants ou non connecté.", Toast.LENGTH_LONG).show()
+                        }
+                        return@launch
+                    }
                     // Analyser directement via l'URI; le backend gère le prompt et le traitement
                     val response = imageAnalyzer.analyzeImage(uri, userCountry, userRegion)
 
