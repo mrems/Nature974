@@ -242,4 +242,262 @@ exports.getCredits = functionsV1.https.onCall(async (data, context) => {
 *   **Terminée**: Intégrer l’affichage du solde dans l’UI (listener Firestore + `TextView` permanente).
 *   **Terminée**: Implémenter le gating côté app (callable `decrementCredits` avant analyse/ré‑analyse).
 *   **Terminée**: Déploiement des fonctions Firebase et validation en environnement de test.
-*   **À faire**: Tests (unitaires Functions, intégration app) et journalisation minimale.
+*   **Terminée**: Tests (unitaires Functions, intégration app) et journalisation minimale.
+
+## Plan Détaillé pour la Phase 3 : Intégration des achats In‑App (Google Play Billing)
+
+### Objectif de la Phase 3
+Permettre aux utilisateurs d’acheter des packs de crédits via Google Play. La validation de l’achat est faite côté serveur (Cloud Function) avant de créditer le compte de l’utilisateur. Les produits sont des achats gérés « consommables » (Managed in‑app products) correspondant à des packs de crédits.
+
+### 1. Préparation dans la Google Play Console
+*   **Tâche**: Créer les produits in‑app de type « consommable ».
+*   **Étapes**:
+    1.  Ouvrir la fiche de l’application → « Monétisation » → « Produits in‑app ».
+    2.  Créer des produits (exemples) : `credits_10`, `credits_50`, `credits_100`.
+    3.  Définir prix, titre, description localisés.
+    4.  Ajouter des testeurs de licence (Paramètres développeur) pour tester en interne.
+    5.  Publier les produits et utiliser au moins la piste « Test interne » pour que l’API Billing retourne les détails.
+
+### 2. Dépendances Android (Gradle)
+*   **Fichiers**: `app/build.gradle.kts`, `gradle/libs.versions.toml`
+*   **Détails**:
+    *   Ajouter la bibliothèque Play Billing KTX.
+
+    ```kotlin
+    // build.gradle.kts (app) - sous dependencies
+    implementation("com.android.billingclient:billing-ktx:6.2.1")
+    ```
+
+### 3. Implémentation Android (achat, consommation, appel serveur)
+*   **Principes**:
+    *   Utiliser un `BillingClient` unique (scope application) avec `PurchasesUpdatedListener`.
+    *   Avant d’octroyer les crédits dans l’app, envoyer le `purchaseToken` + `productId` à une **HTTPS Callable** `verifyAndGrantCredits` (Cloud Functions) qui validera l’achat via l’API AndroidPublisher et créditera Firestore.
+    *   Une fois la fonction retournée avec succès, **consommer** l’achat côté client (`consumeAsync`) afin d’autoriser des achats répétés du même produit.
+
+```kotlin
+// Exemple Kotlin (simplifié)
+class BillingManager(
+    private val context: Context,
+    private val onReady: () -> Unit,
+    private val onPurchaseSuccess: (productId: String, purchaseToken: String) -> Unit,
+    private val onError: (Throwable) -> Unit
+) : PurchasesUpdatedListener {
+
+    private val billingClient = BillingClient.newBuilder(context)
+        .setListener(this)
+        .enablePendingPurchases()
+        .build()
+
+    fun start() {
+        billingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(result: BillingResult) {
+                if (result.responseCode == BillingClient.BillingResponseCode.OK) onReady()
+                else onError(IllegalStateException("Billing init: ${result.debugMessage}"))
+            }
+            override fun onBillingServiceDisconnected() { /* retry policy */ }
+        })
+    }
+
+    suspend fun queryProducts(productIds: List<String>): List<ProductDetails> {
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(productIds.map {
+                QueryProductDetailsParams.Product.newBuilder()
+                    .setProductId(it)
+                    .setProductType(BillingClient.ProductType.INAPP)
+                    .build()
+            }).build()
+        val res = billingClient.queryProductDetails(params)
+        return res.productDetailsList.orEmpty()
+    }
+
+    fun launchPurchase(activity: Activity, product: ProductDetails) {
+        val params = BillingFlowParams.newBuilder()
+            .setProductDetailsParamsList(
+                listOf(
+                    BillingFlowParams.ProductDetailsParams.newBuilder()
+                        .setProductDetails(product)
+                        .build()
+                )
+            )
+            .build()
+        billingClient.launchBillingFlow(activity, params)
+    }
+
+    override fun onPurchasesUpdated(result: BillingResult, purchases: MutableList<Purchase>?) {
+        if (result.responseCode != BillingClient.BillingResponseCode.OK || purchases.isNullOrEmpty()) return
+        purchases.filter { it.products.isNotEmpty() && it.purchaseState == Purchase.PurchaseState.PURCHASED }
+            .forEach { purchase ->
+                val productId = purchase.products.first()
+                val token = purchase.purchaseToken
+                // Envoyer au backend pour vérification + crédit
+                onPurchaseSuccess(productId, token)
+            }
+    }
+
+    fun consume(token: String, onConsumed: () -> Unit, onFail: (Throwable) -> Unit) {
+        val params = ConsumeParams.newBuilder().setPurchaseToken(token).build()
+        billingClient.consumeAsync(params) { billingResult, _ ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) onConsumed()
+            else onFail(IllegalStateException("Consume: ${billingResult.debugMessage}"))
+        }
+    }
+}
+```
+
+*   **Appel de la callable après achat** (exemple, côté Android, pseudo‑code):
+
+```kotlin
+// Après onPurchasesUpdated => onPurchaseSuccess(productId, token)
+FirebaseFunctions.getInstance()
+    .getHttpsCallable("verifyAndGrantCredits")
+    .call(mapOf("productId" to productId, "purchaseToken" to token))
+    .addOnSuccessListener {
+        // Créditage confirmé côté serveur => consommer l'achat
+        billingManager.consume(token, onConsumed = { /* UI success */ }, onFail = { /* UI error */ })
+    }
+    .addOnFailureListener { e -> /* UI error */ }
+```
+
+### 4. Cloud Functions : vérification serveur et créditage
+*   **Fichiers**: `functions/package.json`, `functions/index.js`
+*   **Dépendances**:
+    *   Ajouter `googleapis` pour appeler l’API AndroidPublisher et `firebase-functions/v2` ou `v1` (selon votre stack actuelle). Exemple avec v1 pour cohérence.
+
+```json
+// functions/package.json (extrait)
+{
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^4.4.0",
+    "googleapis": "^140.0.0"
+  }
+}
+```
+
+```javascript
+// functions/index.js (exemple simplifié)
+const functions = require("firebase-functions/v1");
+const admin = require("firebase-admin");
+const { google } = require("googleapis");
+
+admin.initializeApp();
+const db = admin.firestore();
+
+// Mapping produit -> crédits
+const PRODUCT_CREDITS = {
+  credits_10: 10,
+  credits_50: 50,
+  credits_100: 100,
+};
+
+const PACKAGE_NAME = process.env.ANDROID_PACKAGE_NAME; // ex: com.example.naturepei
+
+exports.verifyAndGrantCredits = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Authentification requise.");
+  }
+  const uid = context.auth.uid;
+  const productId = data?.productId;
+  const purchaseToken = data?.purchaseToken;
+  if (!productId || !purchaseToken) {
+    throw new functions.https.HttpsError("invalid-argument", "productId et purchaseToken requis.");
+  }
+
+  const creditsToGrant = PRODUCT_CREDITS[productId] || 0;
+  if (creditsToGrant <= 0) {
+    throw new functions.https.HttpsError("failed-precondition", "Produit inconnu.");
+  }
+
+  // Idempotence: éviter double-crédit sur le même token
+  const tokenDocRef = db.collection("purchaseTokens").doc(purchaseToken);
+  const tokenSnap = await tokenDocRef.get();
+  if (tokenSnap.exists) {
+    return { alreadyProcessed: true };
+  }
+
+  try {
+    const auth = new google.auth.GoogleAuth({
+      scopes: ["https://www.googleapis.com/auth/androidpublisher"],
+    });
+    const androidpublisher = google.androidpublisher({ version: "v3", auth });
+
+    const { data: purchase } = await androidpublisher.purchases.products.get({
+      packageName: PACKAGE_NAME,
+      productId,
+      token: purchaseToken,
+    });
+
+    // purchase.purchaseState === 0 => ACHETÉ
+    if (purchase?.purchaseState !== 0) {
+      throw new functions.https.HttpsError("failed-precondition", "Achat non valide ou non finalisé.");
+    }
+
+    // Transaction Firestore: créditer l'utilisateur et marquer le token comme traité
+    await db.runTransaction(async (tx) => {
+      const userRef = db.collection("users").doc(uid);
+      const userSnap = await tx.get(userRef);
+      if (!userSnap.exists) {
+        throw new functions.https.HttpsError("not-found", "Utilisateur introuvable.");
+      }
+      tx.update(userRef, {
+        credits: admin.firestore.FieldValue.increment(creditsToGrant),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      tx.set(tokenDocRef, {
+        uid,
+        productId,
+        creditsGranted: creditsToGrant,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    });
+
+    return { success: true, creditsGranted: creditsToGrant };
+  } catch (err) {
+    if (err instanceof functions.https.HttpsError) throw err;
+    throw new functions.https.HttpsError("internal", err.message || "Erreur de vérification d'achat");
+  }
+});
+```
+
+*   **Configuration des identifiants**:
+    *   Créer un compte de service disposant de l’accès Android Publisher au projet Play Console.
+    *   Déployer les identifiants via Google Secret Manager et les lier aux Functions (ou utiliser ADC si le projet Firebase ↔ GCP est correctement configuré).
+    *   Définir la variable d’environnement `ANDROID_PACKAGE_NAME`.
+
+### 5. Sécurité et règles Firestore
+*   Les règles actuelles interdisent l’écriture client sur `users/{uid}` (champ `credits`). Conserver cette politique.
+*   La fonction callable requiert `context.auth` ⇒ l’utilisateur doit être connecté.
+*   Idempotence par `purchaseTokens/{purchaseToken}` empêche les doubles crédits.
+
+### 6. UX et parcours
+*   Afficher un écran/feuille de dialogue « Acheter des crédits » listant les produits retournés par `queryProductDetails`.
+*   Après achat validé et consommé, afficher une confirmation et un rafraîchissement du solde en temps réel (listener Firestore déjà en place en Phase 2).
+*   En cas d’échec de la callable ou de la consommation, indiquer clairement l’état et proposer une relance.
+
+### 7. Déploiement et tests
+*   **Déploiement**: Publier la Function `verifyAndGrantCredits` et configurer les secrets/variables.
+*   **Tests internes**: Utiliser les testeurs de licence et la piste « Test interne ».
+*   **Cas à tester**:
+    *   Achat réussi → crédits augmentés, token marqué, consommation OK.
+    *   Double appel avec même token → pas de double‑crédit (idempotence).
+    *   Produit inconnu → erreur côté serveur.
+    *   Utilisateur non authentifié → erreur `unauthenticated`.
+
+### Résultat attendu à la fin de la Phase 3
+*   Achat de packs de crédits fonctionnel dans l’app.
+*   Validation serveur stricte via Google Play Developer API.
+*   Crédits ajoutés de manière atomique et traçable (doc `purchaseTokens`).
+*   Expérience utilisateur claire (états de chargement, succès, erreurs).
+
+## Liste des tâches pour la Phase 3
+
+*   **À faire**: Créer les produits in‑app (consommables) dans la Play Console.
+*   **À faire**: Ajouter la dépendance Play Billing dans `app/build.gradle.kts`.
+*   **À faire**: Implémenter `BillingClient` (requête produits, achat, callback).
+*   **À faire**: Appeler `verifyAndGrantCredits` avec `productId` + `purchaseToken`.
+*   **À faire**: Consommer l’achat après succès serveur (idempotent côté serveur).
+*   **À faire**: Écrire/déployer la Function `verifyAndGrantCredits` (googleapis + Firestore).
+*   **À faire**: Configurer les secrets/ADC et `ANDROID_PACKAGE_NAME` pour les Functions.
+*   **À faire**: Créer l’UI « Acheter des crédits » et intégrer l’UX d’erreurs/succès.
+*   **À faire**: Tests end‑to‑end sur piste interne (testeurs de licence).
+

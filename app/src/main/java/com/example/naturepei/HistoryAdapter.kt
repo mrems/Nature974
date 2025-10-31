@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import coil.load
 
 class HistoryAdapter(
     private val historyList: MutableList<AnalysisEntry>,
@@ -31,7 +32,7 @@ class HistoryAdapter(
         val optionsButton: ImageButton = itemView.findViewById(R.id.history_item_options_button)
 
         fun bind(entry: AnalysisEntry) {
-            imageView.setImageURI(Uri.parse(entry.imageUri))
+            imageView.load(Uri.parse(entry.imageUri))
             localNameTextView.text = entry.localName
             scientificNameTextView.text = entry.scientificName
             val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())

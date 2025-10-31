@@ -220,6 +220,7 @@ exports.decrementCredits = functionsV1.https.onCall(async (data, context) => {
     throw new functionsV1.https.HttpsError('unauthenticated', 'Authentification requise.');
   }
   const uid = context.auth.uid;
+  console.log(`[decrementCredits] uid=${uid} - début`);
   try {
     await db.runTransaction(async (tx) => {
       const userRef = db.collection('users').doc(uid);
@@ -228,6 +229,7 @@ exports.decrementCredits = functionsV1.https.onCall(async (data, context) => {
         throw new functionsV1.https.HttpsError('not-found', 'Document utilisateur introuvable.');
       }
       const credits = snap.get('credits') || 0;
+      console.log(`[decrementCredits] uid=${uid} - crédits actuels=${credits}`);
       if (credits <= 0) {
         throw new functionsV1.https.HttpsError('failed-precondition', 'Crédits insuffisants.');
       }
@@ -236,9 +238,11 @@ exports.decrementCredits = functionsV1.https.onCall(async (data, context) => {
         updatedAt: FieldValue.serverTimestamp(),
       });
     });
+    console.log(`[decrementCredits] uid=${uid} - succès décrémentation`);
     return { success: true };
   } catch (error) {
     if (error instanceof functionsV1.https.HttpsError) throw error;
+    console.error(`[decrementCredits] uid=${uid} - erreur`, error);
     throw new functionsV1.https.HttpsError('internal', error.message || 'Erreur serveur');
   }
 });
@@ -249,10 +253,13 @@ exports.getCredits = functionsV1.https.onCall(async (data, context) => {
     throw new functionsV1.https.HttpsError('unauthenticated', 'Authentification requise.');
   }
   const uid = context.auth.uid;
+  console.log(`[getCredits] uid=${uid} - début`);
   const snap = await db.collection('users').doc(uid).get();
   if (!snap.exists) {
     throw new functionsV1.https.HttpsError('not-found', 'Document utilisateur introuvable.');
   }
   const dataDoc = snap.data() || {};
-  return { credits: dataDoc.credits || 0 };
+  const credits = dataDoc.credits || 0;
+  console.log(`[getCredits] uid=${uid} - crédits=${credits}`);
+  return { credits };
 });

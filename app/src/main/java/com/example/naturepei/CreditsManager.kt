@@ -10,10 +10,17 @@ object CreditsManager {
      * Lève une exception si non authentifié, crédits insuffisants ou erreur serveur.
      */
     suspend fun decrementOneCredit() {
-        FirebaseFunctions.getInstance()
-            .getHttpsCallable("decrementCredits")
-            .call()
-            .await()
+        try {
+            android.util.Log.d("CreditsManager", "Appel decrementCredits: début")
+            FirebaseFunctions.getInstance()
+                .getHttpsCallable("decrementCredits")
+                .call()
+                .await()
+            android.util.Log.d("CreditsManager", "Appel decrementCredits: succès")
+        } catch (e: Exception) {
+            android.util.Log.e("CreditsManager", "Appel decrementCredits: erreur", e)
+            throw e
+        }
     }
 }
 

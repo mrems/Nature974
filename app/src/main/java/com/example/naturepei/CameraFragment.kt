@@ -363,6 +363,7 @@ class CameraFragment : Fragment() {
         creditsListener = docRef.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
             val credits = snapshot?.getLong("credits")?.toInt() ?: return@addSnapshotListener
+            Log.d("CameraFragment", "Mise à jour crédits temps réel: $credits")
             creditsTextView.text = "$credits"
         }
     }
@@ -464,29 +465,35 @@ class CameraFragment : Fragment() {
     }
 
     private fun openCamera() {
-        try {
-            val cameraId = cameraManager.cameraIdList[0]
-            val characteristics = cameraManager.getCameraCharacteristics(cameraId)
-            
-            sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
-            val displayRotation = requireActivity().windowManager.defaultDisplay.rotation
-            deviceRotation = getOrientation(displayRotation)
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val cameraId = cameraManager.cameraIdList[0]
+                val characteristics = cameraManager.getCameraCharacteristics(cameraId)
 
-            val map: StreamConfigurationMap? = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
+                val displayRotation = requireActivity().windowManager.defaultDisplay.rotation
+                deviceRotation = getOrientation(displayRotation)
 
-            // Optimisation : Choisir une résolution de preview adaptée (720p ou 1080p)
-            previewSize = chooseOptimalSize(map!!.getOutputSizes(SurfaceTexture::class.java))
-            
-            // ImageReader pour la capture photo en haute résolution
-            val captureSize = map.getOutputSizes(android.graphics.ImageFormat.JPEG)[0]
-            imageReader = ImageReader.newInstance(captureSize.width, captureSize.height, android.graphics.ImageFormat.JPEG, 2)
+                val map: StreamConfigurationMap? = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
 
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                return
+                // Optimisation : Choisir une résolution de preview adaptée (720p ou 1080p)
+                previewSize = chooseOptimalSize(map!!.getOutputSizes(SurfaceTexture::class.java))
+
+                // ImageReader pour la capture photo en haute résolution
+                val captureSize = map.getOutputSizes(android.graphics.ImageFormat.JPEG)[0]
+                imageReader = ImageReader.newInstance(captureSize.width, captureSize.height, android.graphics.ImageFormat.JPEG, 2)
+
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    return@launch
+                }
+                withContext(Dispatchers.Main) { // Revenir sur le thread principal pour ouvrir la caméra
+                    cameraManager.openCamera(cameraId, stateCallback, backgroundHandler)
+                }
+            } catch (e: CameraAccessException) {
+                e.printStackTrace()
+            } catch (e: IllegalStateException) {
+                Log.e("CameraFragment", "Cannot open camera: Fragment not attached to activity", e)
             }
-            cameraManager.openCamera(cameraId, stateCallback, backgroundHandler)
-        } catch (e: CameraAccessException) {
-            e.printStackTrace()
         }
     }
     

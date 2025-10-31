@@ -56,6 +56,112 @@ class HistoryListFragment : Fragment() {
         noDataTextView = view.findViewById(R.id.history_no_data_text)
         sharedPrefs = requireContext().getSharedPreferences(AnalysisHistoryManager.PREFS_NAME, android.content.Context.MODE_PRIVATE)
 
+        // Initialiser et attacher l'adaptateur ici avec une liste vide
+        historyRecyclerView.adapter = HistoryAdapter(mutableListOf(), { entry ->
+            // Gérer le clic sur un élément de l'historique
+            val intent = Intent(requireContext(), ResultActivity::class.java).apply {
+                putExtra(ResultActivity.EXTRA_IMAGE_URI, entry.imageUri)
+                putExtra(ResultActivity.EXTRA_LOCAL_NAME, entry.localName)
+                putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, entry.scientificName)
+                putExtra(ResultActivity.EXTRA_TYPE, entry.type)
+                putExtra(ResultActivity.EXTRA_HABITAT, entry.habitat)
+                putExtra(ResultActivity.EXTRA_CHARACTERISTICS, entry.characteristics)
+                putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, entry.localContext)
+                putExtra(ResultActivity.EXTRA_DESCRIPTION, entry.description)
+            }
+            startActivity(intent)
+        }) { entry, itemView ->
+            // Gérer les options via le nouveau bouton
+            val popupMenu = PopupMenu(requireContext(), itemView) // 'itemView' est la vue du bouton
+            popupMenu.menu.apply {
+                add(Menu.NONE, 0, 0, "Delete").setIcon(R.drawable.ic_delete)
+                add(Menu.NONE, 1, 1, "Re-analyze").setIcon(R.drawable.ic_reload)
+            }
+
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    0 -> {
+                        // Option Effacer avec confirmation
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Confirmer la suppression")
+                            .setMessage("Êtes-vous sûr de vouloir supprimer cette fiche d'analyse ?")
+                            .setPositiveButton("Supprimer") { dialog, which ->
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    analysisHistoryManager.deleteAnalysisEntry(entry)
+                                    withContext(Dispatchers.Main) {
+                                        loadHistory()
+                                        Toast.makeText(requireContext(), "Fiche supprimée.", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                            .setNegativeButton("Annuler") { dialog, which ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                        true
+                    }
+                    1 -> {
+                        // Option Re-analyser
+                        val loadingDialog = LoadingDialogFragment()
+                        loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
+
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            val currentUser = FirebaseAuth.getInstance().currentUser
+                            if (currentUser == null) {
+                                withContext(Dispatchers.Main) {
+                                    loadingDialog.dismiss()
+                                    Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
+                                }
+                                Log.e("HistoryListFragment", "Erreur: Ré-analyse appelée sans utilisateur connecté.")
+                                return@launch
+                            }
+                            Log.d("HistoryListFragment", "Utilisateur connecté: ${currentUser.uid}")
+                            // Gating: décrémenter 1 crédit avant ré-analyse
+                            try {
+                                CreditsManager.decrementOneCredit()
+                            } catch (e: Exception) {
+                                withContext(Dispatchers.Main) {
+                                    loadingDialog.dismiss()
+                                    Toast.makeText(requireContext(), "Crédits insuffisants ou non connecté.", Toast.LENGTH_LONG).show()
+                                }
+                                return@launch
+                            }
+
+                            val newResponse = imageAnalyzer.analyzeImage(
+                                Uri.parse(entry.imageUri),
+                                entry.country,
+                                entry.region
+                            )
+
+                            withContext(Dispatchers.Main) {
+                                loadingDialog.dismiss()
+                                if (newResponse != null) {
+                                    val updatedEntry = entry.copy(
+                                        localName = newResponse.localName,
+                                        scientificName = newResponse.scientificName,
+                                        description = "N/C", // Description n'est plus fournie par l'API
+                                        type = newResponse.type,
+                                        habitat = newResponse.habitat,
+                                        characteristics = newResponse.characteristics,
+                                        localContext = newResponse.localContext
+                                    )
+                                    analysisHistoryManager.updateAnalysisEntry(updatedEntry)
+                                    loadHistory()
+                                    Toast.makeText(requireContext(), "Ré-analyse terminée !", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(requireContext(), "Échec de la ré-analyse.", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popupMenu.show()
+            true
+        }
+
         loadHistory()
     }
 
@@ -87,114 +193,7 @@ class HistoryListFragment : Fragment() {
                     val layoutManager = historyRecyclerView.layoutManager
                     val savedState = layoutManager?.onSaveInstanceState()
 
-                    val currentAdapter = historyRecyclerView.adapter as? HistoryAdapter
-                    val adapter = currentAdapter ?: HistoryAdapter(mutableListOf(), { entry ->
-                        val intent = Intent(requireContext(), ResultActivity::class.java).apply {
-                            putExtra(ResultActivity.EXTRA_IMAGE_URI, entry.imageUri)
-                            putExtra(ResultActivity.EXTRA_LOCAL_NAME, entry.localName)
-                            putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, entry.scientificName)
-                            putExtra(ResultActivity.EXTRA_TYPE, entry.type)
-                            putExtra(ResultActivity.EXTRA_HABITAT, entry.habitat)
-                            putExtra(ResultActivity.EXTRA_CHARACTERISTICS, entry.characteristics)
-                            putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, entry.localContext)
-                            putExtra(ResultActivity.EXTRA_DESCRIPTION, entry.description)
-                        }
-                        startActivity(intent)
-                    }) { entry, itemView ->
-                        // Gérer les options via le nouveau bouton
-                        val popupMenu = PopupMenu(requireContext(), itemView) // 'itemView' est la vue du bouton
-                        popupMenu.menu.apply {
-                            add(Menu.NONE, 0, 0, "Delete").setIcon(R.drawable.ic_delete)
-                            add(Menu.NONE, 1, 1, "Re-analyze").setIcon(R.drawable.ic_reload)
-                        }
-
-                        popupMenu.setOnMenuItemClickListener { menuItem ->
-                            when (menuItem.itemId) {
-                                0 -> {
-                                    // Option Effacer avec confirmation
-                                    AlertDialog.Builder(requireContext())
-                                        .setTitle("Confirmer la suppression")
-                                        .setMessage("Êtes-vous sûr de vouloir supprimer cette fiche d'analyse ?")
-                                        .setPositiveButton("Supprimer") { dialog, which ->
-                                            lifecycleScope.launch(Dispatchers.IO) {
-                                                analysisHistoryManager.deleteAnalysisEntry(entry)
-                                                withContext(Dispatchers.Main) {
-                                                    loadHistory()
-                                                    Toast.makeText(requireContext(), "Fiche supprimée.", Toast.LENGTH_SHORT).show()
-                                                }
-                                            }
-                                        }
-                                        .setNegativeButton("Annuler") { dialog, which ->
-                                            dialog.dismiss()
-                                        }
-                                        .show()
-                                    true
-                                }
-                                1 -> {
-                                    // Option Re-analyser
-                                    val loadingDialog = LoadingDialogFragment()
-                                    loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
-
-                                    lifecycleScope.launch(Dispatchers.IO) {
-                                        val currentUser = FirebaseAuth.getInstance().currentUser
-                                        if (currentUser == null) {
-                                            withContext(Dispatchers.Main) {
-                                                loadingDialog.dismiss()
-                                                Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
-                                            }
-                                            Log.e("HistoryListFragment", "Erreur: Ré-analyse appelée sans utilisateur connecté.")
-                                            return@launch
-                                        }
-                                        Log.d("HistoryListFragment", "Utilisateur connecté: ${currentUser.uid}")
-                                        // Gating: décrémenter 1 crédit avant ré-analyse
-                                        try {
-                                            CreditsManager.decrementOneCredit()
-                                        } catch (e: Exception) {
-                                            withContext(Dispatchers.Main) {
-                                                loadingDialog.dismiss()
-                                                Toast.makeText(requireContext(), "Crédits insuffisants ou non connecté.", Toast.LENGTH_LONG).show()
-                                            }
-                                            return@launch
-                                        }
-
-                                        val newResponse = imageAnalyzer.analyzeImage(
-                                            Uri.parse(entry.imageUri),
-                                            entry.country,
-                                            entry.region
-                                        )
-
-                                        withContext(Dispatchers.Main) {
-                                            loadingDialog.dismiss()
-                                            if (newResponse != null) {
-                                                val updatedEntry = entry.copy(
-                                                    localName = newResponse.localName,
-                                                    scientificName = newResponse.scientificName,
-                                                    description = "N/C", // Description n'est plus fournie par l'API
-                                                    type = newResponse.type,
-                                                    habitat = newResponse.habitat,
-                                                    characteristics = newResponse.characteristics,
-                                                    localContext = newResponse.localContext
-                                                )
-                                                analysisHistoryManager.updateAnalysisEntry(updatedEntry)
-                                                loadHistory()
-                                                Toast.makeText(requireContext(), "Ré-analyse terminée !", Toast.LENGTH_SHORT).show()
-                                            } else {
-                                                Toast.makeText(requireContext(), "Échec de la ré-analyse.", Toast.LENGTH_LONG).show()
-                                            }
-                                        }
-                                    }
-                                    true
-                                }
-                                else -> false
-                            }
-                        }
-                        popupMenu.show()
-                        true
-                    }
-
-                    if (currentAdapter == null) {
-                        historyRecyclerView.adapter = adapter
-                    }
+                    val adapter = historyRecyclerView.adapter as HistoryAdapter
 
                     // Mettre à jour les éléments et restaurer la position
                     adapter.updateItems(historyList)
