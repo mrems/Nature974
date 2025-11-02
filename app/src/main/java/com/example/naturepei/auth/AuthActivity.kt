@@ -1,12 +1,19 @@
 package com.example.naturepei.auth
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ImageSpan
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.naturepei.MainActivity
+import com.example.naturepei.R
 import com.example.naturepei.databinding.ActivityAuthBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -29,6 +36,9 @@ class AuthActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
+        // Configuration du texte avec les images inline
+        setupDescriptionWithIcons()
+
         // Configuration de Google Sign-In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(com.example.naturepei.R.string.default_web_client_id))
@@ -48,6 +58,44 @@ class AuthActivity : AppCompatActivity() {
         }
 
         binding.googleSignInButton.setOnClickListener { signInWithGoogle() }
+    }
+
+    private fun setupDescriptionWithIcons() {
+        // On utilise un caractère spécial pour marquer où placer les images
+        val text = "Geronimo c'est l'application qui peut reconnaître toutes les plantes\uFFFC et tous les animaux\uFFFC !!!"
+        val spannableString = SpannableString(text)
+
+        // Trouver la position du premier marqueur (après "plantes")
+        val firstMarkerIndex = text.indexOf('\uFFFC')
+        if (firstMarkerIndex != -1) {
+            val plantDrawable = ContextCompat.getDrawable(this, R.drawable.plant)
+            plantDrawable?.let {
+                val size = (binding.authDescription.textSize * 1.1).toInt()
+                val paddingLeft = (size * 0.3).toInt()
+                it.setBounds(0, 0, size, size)
+                val insetDrawable = InsetDrawable(it, paddingLeft, 0, 0, 0)
+                insetDrawable.setBounds(0, 0, size + paddingLeft, size)
+                val imageSpan = ImageSpan(insetDrawable, ImageSpan.ALIGN_BASELINE)
+                spannableString.setSpan(imageSpan, firstMarkerIndex, firstMarkerIndex + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
+
+        // Trouver la position du deuxième marqueur (après "animaux")
+        val secondMarkerIndex = text.indexOf('\uFFFC', firstMarkerIndex + 1)
+        if (secondMarkerIndex != -1) {
+            val animalDrawable = ContextCompat.getDrawable(this, R.drawable.animal)
+            animalDrawable?.let {
+                val size = (binding.authDescription.textSize * 1.1).toInt()
+                val paddingLeft = (size * 0.3).toInt()
+                it.setBounds(0, 0, size, size)
+                val insetDrawable = InsetDrawable(it, paddingLeft, 0, 0, 0)
+                insetDrawable.setBounds(0, 0, size + paddingLeft, size)
+                val imageSpan = ImageSpan(insetDrawable, ImageSpan.ALIGN_BASELINE)
+                spannableString.setSpan(imageSpan, secondMarkerIndex, secondMarkerIndex + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
+
+        binding.authDescription.text = spannableString
     }
 
     private fun signInWithGoogle() {

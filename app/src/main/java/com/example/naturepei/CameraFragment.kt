@@ -372,13 +372,23 @@ class CameraFragment : Fragment() {
         super.onResume()
         startBackgroundThread()
         phoneOrientationSensor.startListening()
-        if (cameraPreviewTextureView.isAvailable) {
-            openCamera()
+        
+        // Vérifier que les permissions sont accordées avant d'ouvrir la caméra
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if (cameraPreviewTextureView.isAvailable) {
+                openCamera()
+            } else {
+                cameraPreviewTextureView.surfaceTextureListener = textureListener
+            }
         } else {
-            cameraPreviewTextureView.surfaceTextureListener = textureListener
+            // Si la permission n'est pas accordée, afficher un message et retourner à l'authentification
+            Toast.makeText(requireContext(), "Permission caméra requise", Toast.LENGTH_SHORT).show()
         }
-        // plus de rechargement de la dernière image
-        requestLocationPermissions()
+        
+        // Obtenir la localisation si la permission est déjà accordée (sans redemander)
+        if (checkLocationPermissions()) {
+            getLastLocation()
+        }
     }
 
     override fun onPause() {
@@ -416,7 +426,9 @@ class CameraFragment : Fragment() {
 
     private val textureListener = object : TextureView.SurfaceTextureListener {
         override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
-            checkCameraPermission()
+            // Les permissions ont déjà été vérifiées lors de l'onboarding
+            // On peut directement ouvrir la caméra
+            openCamera()
         }
 
         override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
@@ -465,6 +477,12 @@ class CameraFragment : Fragment() {
     }
 
     private fun openCamera() {
+        // Vérifier d'abord que la permission est accordée
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("CameraFragment", "Permission caméra non accordée, impossible d'ouvrir la caméra")
+            return
+        }
+        
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val cameraId = cameraManager.cameraIdList[0]
@@ -483,16 +501,21 @@ class CameraFragment : Fragment() {
                 val captureSize = map.getOutputSizes(android.graphics.ImageFormat.JPEG)[0]
                 imageReader = ImageReader.newInstance(captureSize.width, captureSize.height, android.graphics.ImageFormat.JPEG, 2)
 
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    return@launch
-                }
                 withContext(Dispatchers.Main) { // Revenir sur le thread principal pour ouvrir la caméra
                     cameraManager.openCamera(cameraId, stateCallback, backgroundHandler)
                 }
             } catch (e: CameraAccessException) {
-                e.printStackTrace()
+                Log.e("CameraFragment", "Erreur d'accès à la caméra", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Erreur d'accès à la caméra", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: IllegalStateException) {
                 Log.e("CameraFragment", "Cannot open camera: Fragment not attached to activity", e)
+            } catch (e: Exception) {
+                Log.e("CameraFragment", "Erreur inattendue lors de l'ouverture de la caméra", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Erreur lors de l'ouverture de la caméra", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -567,15 +590,18 @@ class CameraFragment : Fragment() {
         }
     }
 
+    // Cette fonction n'est plus nécessaire car les permissions sont gérées par l'onboarding
+    // Conservée pour compatibilité mais pourrait être supprimée
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
-            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-        } else {
             openCamera()
+        } else {
+            Log.e("CameraFragment", "Permission caméra non accordée")
+            Toast.makeText(requireContext(), "Permission caméra requise", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -648,48 +674,17 @@ class CameraFragment : Fragment() {
                 permission
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestInAppStoragePermissionLauncher.launch(permission)
+            // Permission non accordée - informer l'utilisateur gentiment
+            Toast.makeText(
+                requireContext(),
+                "Permission de lecture de la galerie requise pour cette fonctionnalité",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-    
-
-    // Lanceur d'activité pour la permission de la caméra
-    private val requestCameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            isGranted: Boolean ->
-        if (isGranted) {
-            openCamera()
-        } else {
-            Toast.makeText(requireContext(), "Permission caméra refusée", Toast.LENGTH_SHORT).show()
-            activity?.finish()
-        }
-    }
-
-    
-
-    // Lanceur d'activité pour la permission de stockage (galerie interne)
-    private val requestInAppStoragePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            isGranted: Boolean ->
-        if (!isGranted) {
-            Toast.makeText(requireContext(), "Permission de stockage refusée", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    
-
-    // Lanceur d'activité pour les permissions de localisation
-    private val requestLocationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            permissions ->
-        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
-            // Au moins une permission de localisation est accordée
-            getLastLocation()
-        } else {
-            Toast.makeText(requireContext(), "Permission de localisation refusée. Certaines fonctionnalités pourraient être limitées.", Toast.LENGTH_LONG).show()
-            userCountry = null
-            userRegion = null
-        }
-    }
+    // Les launchers de permissions ne sont plus nécessaires
+    // Les permissions sont gérées par l'OnboardingFragment avant d'arriver ici
 
     private fun checkLocationPermissions(): Boolean {
         val fineLocationGranted = ContextCompat.checkSelfPermission(
@@ -703,13 +698,13 @@ class CameraFragment : Fragment() {
         return fineLocationGranted || coarseLocationGranted
     }
 
+    // Cette fonction n'est plus nécessaire car les permissions sont gérées par l'onboarding
     private fun requestLocationPermissions() {
-        requestLocationPermissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        )
+        // Ne rien faire - les permissions sont déjà gérées
+        // Si nécessaire, on peut simplement obtenir la localisation si la permission est accordée
+        if (checkLocationPermissions()) {
+            getLastLocation()
+        }
     }
 
     private fun getLastLocation() {
@@ -946,6 +941,3 @@ class CameraFragment : Fragment() {
     }
     
 }
-
-
-

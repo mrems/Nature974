@@ -1,7 +1,10 @@
 package com.example.naturepei
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -12,12 +15,69 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewPager: ViewPager2
     private var imageUriForCamera: String? = null
+    private var isOnboardingComplete = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         viewPager = findViewById(R.id.view_pager)
+        
+        // Vérifier si l'onboarding des permissions est nécessaire
+        if (savedInstanceState != null) {
+            isOnboardingComplete = savedInstanceState.getBoolean("onboarding_complete", false)
+        }
+        
+        if (!isOnboardingComplete && needsOnboarding()) {
+            // Afficher l'écran d'onboarding
+            showOnboarding()
+        } else {
+            // Toutes les permissions sont accordées, afficher l'app normale
+            isOnboardingComplete = true
+            setupMainViewPager()
+        }
+    }
+    
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("onboarding_complete", isOnboardingComplete)
+    }
+    
+    private fun needsOnboarding(): Boolean {
+        // Vérifier si la permission caméra (obligatoire) est accordée
+        val cameraGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+        
+        return !cameraGranted
+    }
+    
+    private fun showOnboarding() {
+        // Cacher le ViewPager et afficher l'OnboardingFragment
+        viewPager.visibility = android.view.View.GONE
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, OnboardingFragment.newInstance())
+            .commitNowAllowingStateLoss()
+    }
+    
+    fun onOnboardingCompleted() {
+        isOnboardingComplete = true
+        // Recréer la vue avec le ViewPager normal
+        setupMainViewPager()
+    }
+    
+    private fun setupMainViewPager() {
+        // Retirer le OnboardingFragment s'il existe
+        supportFragmentManager.findFragmentById(R.id.main_container)?.let { fragment ->
+            supportFragmentManager.beginTransaction()
+                .remove(fragment)
+                .commitNowAllowingStateLoss()
+        }
+        
+        // Afficher le ViewPager
+        viewPager.visibility = android.view.View.VISIBLE
+        
         val pagerAdapter = ScreenSlidePagerAdapter(this)
         viewPager.adapter = pagerAdapter
         viewPager.setCurrentItem(1, false) // Définir l'écran central (CameraFragment) comme écran de démarrage
