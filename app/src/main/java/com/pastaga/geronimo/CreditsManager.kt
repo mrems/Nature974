@@ -1,4 +1,4 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import com.google.firebase.functions.FirebaseFunctions
 import kotlinx.coroutines.tasks.await
@@ -23,5 +23,6 @@ object CreditsManager {
         }
     }
 }
+
 
 

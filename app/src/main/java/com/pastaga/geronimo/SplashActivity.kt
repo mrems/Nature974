@@ -1,11 +1,11 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
-import com.example.naturepei.auth.AuthActivity
+import com.pastaga.geronimo.auth.AuthActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class SplashActivity : AppCompatActivity() {
@@ -33,6 +33,7 @@ class SplashActivity : AppCompatActivity() {
         }, SPLASH_DELAY)
     }
 }
+
 
 
 

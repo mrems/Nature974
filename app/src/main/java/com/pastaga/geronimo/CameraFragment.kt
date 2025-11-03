@@ -1,4 +1,4 @@
-package com.example.naturepei
+﻿package com.pastaga.geronimo
 
 import android.Manifest
 import android.app.Activity
@@ -146,8 +146,8 @@ class CameraFragment : Fragment() {
     }
 
     companion object {
-        private const val REQUEST_CAMERA_PERMISSION = 100 // Ce n'est plus nécessaire avec ActivityResultContracts
-        private const val REQUEST_STORAGE_PERMISSION = 101 // Ce n'est plus nécessaire avec ActivityResultContracts
+        private const val REQUEST_CAMERA_PERMISSION = 100 // Ce n'est plus nÃ©cessaire avec ActivityResultContracts
+        private const val REQUEST_STORAGE_PERMISSION = 101 // Ce n'est plus nÃ©cessaire avec ActivityResultContracts
         private const val BACKEND_API_URL = "https://super-abu.com/api/nature-pei/"
         private const val UCROP_REQUEST_CODE = 69
         private const val ARG_IMAGE_URI = "image_uri"
@@ -193,20 +193,20 @@ class CameraFragment : Fragment() {
 
         // Calculer la hauteur du titre + une petite marge en dp
         val density = resources.displayMetrics.density
-        val extraOffset = (34 * density).toInt() // Marge supplémentaire pour ne pas coller au titre, augmentée de 4dp (total 34dp)
-        view.post { // S'assurer que le layout est mesuré avant de calculer la hauteur
+        val extraOffset = (34 * density).toInt() // Marge supplÃ©mentaire pour ne pas coller au titre, augmentÃ©e de 4dp (total 34dp)
+        view.post { // S'assurer que le layout est mesurÃ© avant de calculer la hauteur
             val screenHeight = resources.displayMetrics.heightPixels
-            // Adapter le calcul pour la ImageView, ou utiliser une valeur fixe si l'ImageView n'a pas de bottom défini immédiatement
+            // Adapter le calcul pour la ImageView, ou utiliser une valeur fixe si l'ImageView n'a pas de bottom dÃ©fini immÃ©diatement
             // Pour simplifier, nous allons utiliser une valeur fixe pour la hauteur du titre + marge.
             // Environ 30dp pour la hauteur du titre + 8dp de marginTop = 38dp, plus l'extraOffset
-            val titleHeightDp = 30 // Hauteur estimée du titre en dp
+            val titleHeightDp = 30 // Hauteur estimÃ©e du titre en dp
             val titleHeightPx = (titleHeightDp * density).toInt()
             val desiredHeight = (screenHeight - titleHeightPx - extraOffset) * 2 / 3 // Modifier ici pour 2/3 de la hauteur
-            // Définir la hauteur maximale du bottom sheet pour qu'il ne dépasse pas le titre
+            // DÃ©finir la hauteur maximale du bottom sheet pour qu'il ne dÃ©passe pas le titre
             bottomSheetBehavior.maxHeight = desiredHeight
         }
 
-        // Désactiver le swipe latéral du ViewPager quand la galerie est ouverte
+        // DÃ©sactiver le swipe latÃ©ral du ViewPager quand la galerie est ouverte
         val viewPager = requireActivity().findViewById<ViewPager2>(R.id.view_pager)
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -226,26 +226,26 @@ class CameraFragment : Fragment() {
             .replace(R.id.gallery_sheet_container, GalleryFragment())
             .commitNowAllowingStateLoss()
 
-        // Recevoir l'image choisie depuis GalleryFragment (résultat posté sur parentFragmentManager du child)
+        // Recevoir l'image choisie depuis GalleryFragment (rÃ©sultat postÃ© sur parentFragmentManager du child)
         childFragmentManager.setFragmentResultListener("gallery_result", viewLifecycleOwner) { _, bundle ->
             val uriString = bundle.getString("uri")
             if (uriString != null) {
-                // Laisser la galerie visible le temps que le recadrage s'ouvre, elle sera fermée discrètement ensuite
+                // Laisser la galerie visible le temps que le recadrage s'ouvre, elle sera fermÃ©e discrÃ¨tement ensuite
                 startCrop(Uri.parse(uriString))
             }
         }
 
-        // Affichage temps réel du solde de crédits
+        // Affichage temps rÃ©el du solde de crÃ©dits
         setupCreditsListener()
 
-        // Swipe sur l'écran caméra: distinguer vertical vs horizontal et coopérer avec ViewPager
+        // Swipe sur l'Ã©cran camÃ©ra: distinguer vertical vs horizontal et coopÃ©rer avec ViewPager
         val onTouchListener = View.OnTouchListener { v, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     swipeStartX = event.x
                     swipeStartY = event.y
                     lockedDirection = null
-                    // Empêcher temporairement l'interception par le ViewPager; on la réautorise si geste horizontal
+                    // EmpÃªcher temporairement l'interception par le ViewPager; on la rÃ©autorise si geste horizontal
                     v.parent?.requestDisallowInterceptTouchEvent(true)
                     true
                 }
@@ -270,7 +270,7 @@ class CameraFragment : Fragment() {
                             }
                         } else false
                     } else if (lockedDirection == Direction.VERTICAL) {
-                        // Seuil dynamique en fonction de la densité et du touch slop
+                        // Seuil dynamique en fonction de la densitÃ© et du touch slop
                         val density = resources.displayMetrics.density
                         val verticalTrigger = kotlin.math.max(touchSlop * 2, (48 * density).toInt())
                         if (dy < -verticalTrigger) {
@@ -295,27 +295,27 @@ class CameraFragment : Fragment() {
         overlayLayout.setOnTouchListener(onTouchListener)
         cameraPreviewTextureView.setOnTouchListener(onTouchListener)
 
-        // S'assurer que la permission lecture images est accordée (Android 13+)
+        // S'assurer que la permission lecture images est accordÃ©e (Android 13+)
         ensureGalleryReadPermission()
 
         phoneOrientationSensor = PhoneOrientationSensor(requireContext()) { /* plus de rotation UI */ }
 
-        // Initialisation normale de la caméra si aucune URI n'est fournie
+        // Initialisation normale de la camÃ©ra si aucune URI n'est fournie
         cameraPreviewTextureView.surfaceTextureListener = textureListener
 
         cameraManager = requireActivity().getSystemService(Context.CAMERA_SERVICE) as CameraManager
         captureButton.setOnClickListener { takePicture() }
-        // Supprime l'ouverture du sélecteur de thème
+        // Supprime l'ouverture du sÃ©lecteur de thÃ¨me
         optionsButton.visibility = View.GONE
 
         // Suppression du bouton galerie et de son chargement
 
-        // Retirer les gestuelles custom: le bottom sheet est glissé directement par l'utilisateur
+        // Retirer les gestuelles custom: le bottom sheet est glissÃ© directement par l'utilisateur
 
-        // Si une URI est passée pour la ré-analyse, nous devons lancer l'analyse dans une coroutine.
+        // Si une URI est passÃ©e pour la rÃ©-analyse, nous devons lancer l'analyse dans une coroutine.
         arguments?.getString(ARG_IMAGE_URI)?.let { uriString ->
             val imageUri = Uri.parse(uriString)
-            // Désactiver la capture et analyser directement l'image fournie
+            // DÃ©sactiver la capture et analyser directement l'image fournie
             cameraPreviewTextureView.visibility = View.GONE
             captureButton.visibility = View.GONE
             optionsButton.visibility = View.GONE
@@ -329,22 +329,22 @@ class CameraFragment : Fragment() {
                 when {
                     analysisJob?.isActive == true -> {
                         analysisJob?.cancel()
-                        Toast.makeText(requireContext(), "Analyse annulée.", Toast.LENGTH_SHORT).show()
-                        Log.d("CameraFragment", "Analyse annulée par le bouton retour.")
-                        // Revenir à l'état initial ou à l'écran de recadrage
-                        croppedImageUri = null // Annuler l'URI recadrée
-                        closeCamera() // Fermer la caméra proprement
+                        Toast.makeText(requireContext(), "Analyse annulÃ©e.", Toast.LENGTH_SHORT).show()
+                        Log.d("CameraFragment", "Analyse annulÃ©e par le bouton retour.")
+                        // Revenir Ã  l'Ã©tat initial ou Ã  l'Ã©cran de recadrage
+                        croppedImageUri = null // Annuler l'URI recadrÃ©e
+                        closeCamera() // Fermer la camÃ©ra proprement
                         // openCamera() // Ne pas appeler openCamera() ici, laisser onResume le faire.
                         cameraPreviewTextureView.visibility = View.VISIBLE
                         captureButton.visibility = View.VISIBLE
                         // optionsButton.visibility = View.VISIBLE // Si vous voulez le re-montrer
                     }
-                    // Gérer si UCrop est visible (l'ActivityResultLauncher d'UCrop gère déjà le retour)
-                    // Pour UCrop, le simple fait d'appeler super.handleOnBackPressed() ou de laisser la gestion par défaut
-                    // devrait revenir à l'activité appelante (CameraFragment) avec RESULT_CANCELED.
-                    // Il n'y a pas de moyen direct de savoir si UCrop est "actif" de l'extérieur.
-                    // La meilleure approche est de simplement ne pas intercepter si on sait qu'on a lancé UCrop.
-                    // Pour l'instant, on laisse UCrop gérer son propre retour.
+                    // GÃ©rer si UCrop est visible (l'ActivityResultLauncher d'UCrop gÃ¨re dÃ©jÃ  le retour)
+                    // Pour UCrop, le simple fait d'appeler super.handleOnBackPressed() ou de laisser la gestion par dÃ©faut
+                    // devrait revenir Ã  l'activitÃ© appelante (CameraFragment) avec RESULT_CANCELED.
+                    // Il n'y a pas de moyen direct de savoir si UCrop est "actif" de l'extÃ©rieur.
+                    // La meilleure approche est de simplement ne pas intercepter si on sait qu'on a lancÃ© UCrop.
+                    // Pour l'instant, on laisse UCrop gÃ©rer son propre retour.
                     else -> {
                         isEnabled = false
                         requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -363,7 +363,7 @@ class CameraFragment : Fragment() {
         creditsListener = docRef.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
             val credits = snapshot?.getLong("credits")?.toInt() ?: return@addSnapshotListener
-            Log.d("CameraFragment", "Mise à jour crédits temps réel: $credits")
+            Log.d("CameraFragment", "Mise Ã  jour crÃ©dits temps rÃ©el: $credits")
             creditsTextView.text = "$credits"
         }
     }
@@ -373,7 +373,7 @@ class CameraFragment : Fragment() {
         startBackgroundThread()
         phoneOrientationSensor.startListening()
         
-        // Vérifier que les permissions sont accordées avant d'ouvrir la caméra
+        // VÃ©rifier que les permissions sont accordÃ©es avant d'ouvrir la camÃ©ra
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             if (cameraPreviewTextureView.isAvailable) {
                 openCamera()
@@ -381,11 +381,11 @@ class CameraFragment : Fragment() {
                 cameraPreviewTextureView.surfaceTextureListener = textureListener
             }
         } else {
-            // Si la permission n'est pas accordée, afficher un message et retourner à l'authentification
-            Toast.makeText(requireContext(), "Permission caméra requise", Toast.LENGTH_SHORT).show()
+            // Si la permission n'est pas accordÃ©e, afficher un message et retourner Ã  l'authentification
+            Toast.makeText(requireContext(), "Permission camÃ©ra requise", Toast.LENGTH_SHORT).show()
         }
         
-        // Obtenir la localisation si la permission est déjà accordée (sans redemander)
+        // Obtenir la localisation si la permission est dÃ©jÃ  accordÃ©e (sans redemander)
         if (checkLocationPermissions()) {
             getLastLocation()
         }
@@ -422,17 +422,17 @@ class CameraFragment : Fragment() {
         imageReader.close()
     }
 
-    // Sélecteur de thème supprimé
+    // SÃ©lecteur de thÃ¨me supprimÃ©
 
     private val textureListener = object : TextureView.SurfaceTextureListener {
         override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
-            // Les permissions ont déjà été vérifiées lors de l'onboarding
-            // On peut directement ouvrir la caméra
+            // Les permissions ont dÃ©jÃ  Ã©tÃ© vÃ©rifiÃ©es lors de l'onboarding
+            // On peut directement ouvrir la camÃ©ra
             openCamera()
         }
 
         override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
-            // Gérer les changements de taille ici si nécessaire
+            // GÃ©rer les changements de taille ici si nÃ©cessaire
         }
 
         override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
@@ -440,7 +440,7 @@ class CameraFragment : Fragment() {
         }
 
         override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
-            // Appelé à chaque mise à jour de l'aperçu
+            // AppelÃ© Ã  chaque mise Ã  jour de l'aperÃ§u
         }
     }
 
@@ -448,13 +448,13 @@ class CameraFragment : Fragment() {
         override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
             super.onCaptureCompleted(session, request, result)
             lifecycleScope.launch(Dispatchers.IO) { // Appeler suspend fun dans une coroutine
-                analyzeImageWithGemini() // Démarrer l'analyse une fois l'image recadrée
+                analyzeImageWithGemini() // DÃ©marrer l'analyse une fois l'image recadrÃ©e
             }
         }
 
         override fun onCaptureFailed(session: CameraCaptureSession, request: CaptureRequest, failure: CaptureFailure) {
             super.onCaptureFailed(session, request, failure)
-            Log.e("CameraFragment", "Photo capturée échouée: ${failure.reason}")
+            Log.e("CameraFragment", "Photo capturÃ©e Ã©chouÃ©e: ${failure.reason}")
         }
     }
 
@@ -477,9 +477,9 @@ class CameraFragment : Fragment() {
     }
 
     private fun openCamera() {
-        // Vérifier d'abord que la permission est accordée
+        // VÃ©rifier d'abord que la permission est accordÃ©e
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            Log.e("CameraFragment", "Permission caméra non accordée, impossible d'ouvrir la caméra")
+            Log.e("CameraFragment", "Permission camÃ©ra non accordÃ©e, impossible d'ouvrir la camÃ©ra")
             return
         }
         
@@ -494,51 +494,51 @@ class CameraFragment : Fragment() {
 
                 val map: StreamConfigurationMap? = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
 
-                // Optimisation : Choisir une résolution de preview adaptée (720p ou 1080p)
+                // Optimisation : Choisir une rÃ©solution de preview adaptÃ©e (720p ou 1080p)
                 previewSize = chooseOptimalSize(map!!.getOutputSizes(SurfaceTexture::class.java))
 
-                // ImageReader pour la capture photo en haute résolution
+                // ImageReader pour la capture photo en haute rÃ©solution
                 val captureSize = map.getOutputSizes(android.graphics.ImageFormat.JPEG)[0]
                 imageReader = ImageReader.newInstance(captureSize.width, captureSize.height, android.graphics.ImageFormat.JPEG, 2)
 
-                withContext(Dispatchers.Main) { // Revenir sur le thread principal pour ouvrir la caméra
+                withContext(Dispatchers.Main) { // Revenir sur le thread principal pour ouvrir la camÃ©ra
                     cameraManager.openCamera(cameraId, stateCallback, backgroundHandler)
                 }
             } catch (e: CameraAccessException) {
-                Log.e("CameraFragment", "Erreur d'accès à la caméra", e)
+                Log.e("CameraFragment", "Erreur d'accÃ¨s Ã  la camÃ©ra", e)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Erreur d'accès à la caméra", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Erreur d'accÃ¨s Ã  la camÃ©ra", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: IllegalStateException) {
                 Log.e("CameraFragment", "Cannot open camera: Fragment not attached to activity", e)
             } catch (e: Exception) {
-                Log.e("CameraFragment", "Erreur inattendue lors de l'ouverture de la caméra", e)
+                Log.e("CameraFragment", "Erreur inattendue lors de l'ouverture de la camÃ©ra", e)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Erreur lors de l'ouverture de la caméra", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Erreur lors de l'ouverture de la camÃ©ra", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
     
     /**
-     * Choisit une taille de preview optimale pour éviter le lag
-     * Cible 1080p max pour la fluidité
+     * Choisit une taille de preview optimale pour Ã©viter le lag
+     * Cible 1080p max pour la fluiditÃ©
      */
     private fun chooseOptimalSize(sizes: Array<Size>): Size {
         val preferredWidth = 1920 // 1080p
         val preferredHeight = 1080
         
-        // Trier par aire pour avoir les tailles de la plus petite à la plus grande
+        // Trier par aire pour avoir les tailles de la plus petite Ã  la plus grande
         val sortedSizes = sizes.sortedBy { it.width * it.height }
         
-        // Chercher la taille la plus proche de 1080p sans dépasser
+        // Chercher la taille la plus proche de 1080p sans dÃ©passer
         val optimalSize = sortedSizes.lastOrNull { 
             it.width <= preferredWidth && it.height <= preferredHeight 
         } ?: sortedSizes.firstOrNull { 
-            it.width <= 1280 && it.height <= 720 // Fallback à 720p
+            it.width <= 1280 && it.height <= 720 // Fallback Ã  720p
         } ?: sortedSizes[0] // Dernier recours
         
-        Log.d("CameraFragment", "Taille de preview sélectionnée: ${optimalSize.width}x${optimalSize.height}")
+        Log.d("CameraFragment", "Taille de preview sÃ©lectionnÃ©e: ${optimalSize.width}x${optimalSize.height}")
         return optimalSize
     }
 
@@ -567,22 +567,22 @@ class CameraFragment : Fragment() {
                     if (cameraDevice == null) return
                     captureSession = cameraCaptureSession
                     try {
-                        // Optimisations pour la fluidité
+                        // Optimisations pour la fluiditÃ©
                         previewRequestBuilder!!.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
                         previewRequestBuilder!!.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
                         
-                        // Limiter le FPS pour réduire la charge CPU (optionnel)
+                        // Limiter le FPS pour rÃ©duire la charge CPU (optionnel)
                         // previewRequestBuilder!!.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, android.util.Range(30, 30))
                         
                         captureSession!!.setRepeatingRequest(previewRequestBuilder!!.build(), null, backgroundHandler)
-                        Log.d("CameraFragment", "Session de preview configurée avec succès")
+                        Log.d("CameraFragment", "Session de preview configurÃ©e avec succÃ¨s")
                     } catch (e: CameraAccessException) {
                         e.printStackTrace()
                     }
                 }
 
                 override fun onConfigureFailed(cameraCaptureSession: CameraCaptureSession) {
-                    Toast.makeText(requireContext(), "Échec de la configuration de la session de capture.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Ã‰chec de la configuration de la session de capture.", Toast.LENGTH_SHORT).show()
                 }
             }, null)
         } catch (e: CameraAccessException) {
@@ -590,8 +590,8 @@ class CameraFragment : Fragment() {
         }
     }
 
-    // Cette fonction n'est plus nécessaire car les permissions sont gérées par l'onboarding
-    // Conservée pour compatibilité mais pourrait être supprimée
+    // Cette fonction n'est plus nÃ©cessaire car les permissions sont gÃ©rÃ©es par l'onboarding
+    // ConservÃ©e pour compatibilitÃ© mais pourrait Ãªtre supprimÃ©e
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -600,8 +600,8 @@ class CameraFragment : Fragment() {
         ) {
             openCamera()
         } else {
-            Log.e("CameraFragment", "Permission caméra non accordée")
-            Toast.makeText(requireContext(), "Permission caméra requise", Toast.LENGTH_SHORT).show()
+            Log.e("CameraFragment", "Permission camÃ©ra non accordÃ©e")
+            Toast.makeText(requireContext(), "Permission camÃ©ra requise", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -615,14 +615,14 @@ class CameraFragment : Fragment() {
             captureBuilder.addTarget(imageReader.surface)
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
 
-            // Obtenir l'orientation actuelle du téléphone depuis le capteur
+            // Obtenir l'orientation actuelle du tÃ©lÃ©phone depuis le capteur
             val currentOrientation = phoneOrientationSensor.getDeviceOrientation()
             
-            // Calculer l'orientation JPEG finale (orientation capteur - orientation téléphone inversée)
-            // Inversion car les axes sont inversés par rapport à l'orientation EXIF
+            // Calculer l'orientation JPEG finale (orientation capteur - orientation tÃ©lÃ©phone inversÃ©e)
+            // Inversion car les axes sont inversÃ©s par rapport Ã  l'orientation EXIF
             val rotation = (sensorOrientation - currentOrientation + 360) % 360
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotation)
-            Log.d("CameraFragment", "Device orientation: $currentOrientation°, Sensor orientation: $sensorOrientation°, Final JPEG_ORIENTATION: $rotation°")
+            Log.d("CameraFragment", "Device orientation: ${currentOrientation}°, Sensor orientation: ${sensorOrientation}°, Final JPEG_ORIENTATION: ${rotation}°")
 
             imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler)
 
@@ -648,7 +648,7 @@ class CameraFragment : Fragment() {
         }
         val savedUri = Uri.fromFile(file)
         image.close()
-        Log.d("CameraFragment", "Image enregistrée sous: $savedUri")
+        Log.d("CameraFragment", "Image enregistrÃ©e sous: $savedUri")
         startCrop(savedUri)
     }
 
@@ -674,17 +674,17 @@ class CameraFragment : Fragment() {
                 permission
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // Permission non accordée - informer l'utilisateur gentiment
+            // Permission non accordÃ©e - informer l'utilisateur gentiment
             Toast.makeText(
                 requireContext(),
-                "Permission de lecture de la galerie requise pour cette fonctionnalité",
+                "Permission de lecture de la galerie requise pour cette fonctionnalitÃ©",
                 Toast.LENGTH_SHORT
             ).show()
         }
     }
 
-    // Les launchers de permissions ne sont plus nécessaires
-    // Les permissions sont gérées par l'OnboardingFragment avant d'arriver ici
+    // Les launchers de permissions ne sont plus nÃ©cessaires
+    // Les permissions sont gÃ©rÃ©es par l'OnboardingFragment avant d'arriver ici
 
     private fun checkLocationPermissions(): Boolean {
         val fineLocationGranted = ContextCompat.checkSelfPermission(
@@ -698,10 +698,10 @@ class CameraFragment : Fragment() {
         return fineLocationGranted || coarseLocationGranted
     }
 
-    // Cette fonction n'est plus nécessaire car les permissions sont gérées par l'onboarding
+    // Cette fonction n'est plus nÃ©cessaire car les permissions sont gÃ©rÃ©es par l'onboarding
     private fun requestLocationPermissions() {
-        // Ne rien faire - les permissions sont déjà gérées
-        // Si nécessaire, on peut simplement obtenir la localisation si la permission est accordée
+        // Ne rien faire - les permissions sont dÃ©jÃ  gÃ©rÃ©es
+        // Si nÃ©cessaire, on peut simplement obtenir la localisation si la permission est accordÃ©e
         if (checkLocationPermissions()) {
             getLastLocation()
         }
@@ -720,13 +720,13 @@ class CameraFragment : Fragment() {
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.e("CameraFragment", "Erreur lors de la récupération de la localisation: ${e.message}")
+                    Log.e("CameraFragment", "Erreur lors de la rÃ©cupÃ©ration de la localisation: ${e.message}")
                     userCountry = null
                     userRegion = null
                 }
         } else {
-            // Les permissions ne sont pas accordées, on ne devrait pas appeler getLastLocation sans vérification
-            // Cette branche ne devrait pas être atteinte si checkLocationPermissions est bien gérée avant.
+            // Les permissions ne sont pas accordÃ©es, on ne devrait pas appeler getLastLocation sans vÃ©rification
+            // Cette branche ne devrait pas Ãªtre atteinte si checkLocationPermissions est bien gÃ©rÃ©e avant.
             userCountry = null
             userRegion = null
         }
@@ -740,14 +740,14 @@ class CameraFragment : Fragment() {
                 if (!addresses.isNullOrEmpty()) {
                     userCountry = addresses[0].countryName
                     userRegion = addresses[0].adminArea
-                    Log.d("CameraFragment", "Localisation obtenue: Pays = $userCountry, Région = $userRegion")
+                    Log.d("CameraFragment", "Localisation obtenue: Pays = $userCountry, RÃ©gion = $userRegion")
                 } else {
-                    Log.d("CameraFragment", "Aucune adresse trouvée pour la localisation.")
+                    Log.d("CameraFragment", "Aucune adresse trouvÃ©e pour la localisation.")
                     userCountry = null
                     userRegion = null
                 }
             } catch (e: IOException) {
-                Log.e("CameraFragment", "Erreur de géocodage: ${e.message}")
+                Log.e("CameraFragment", "Erreur de gÃ©ocodage: ${e.message}")
                 userCountry = null
                 userRegion = null
             }
@@ -755,11 +755,11 @@ class CameraFragment : Fragment() {
     }
 
     private fun startCrop(sourceUri: Uri) {
-        Log.d("CameraFragment", "startCrop: Démarrage du recadrage pour URI: $sourceUri")
+        Log.d("CameraFragment", "startCrop: DÃ©marrage du recadrage pour URI: $sourceUri")
         val photoFile: File? = try {
             createImageFile()
         } catch (ex: IOException) {
-            Log.e("CameraFragment", "startCrop: Erreur lors de la création du fichier image pour le recadrage.", ex)
+            Log.e("CameraFragment", "startCrop: Erreur lors de la crÃ©ation du fichier image pour le recadrage.", ex)
             null
         }
         photoFile?.also { file ->
@@ -790,11 +790,11 @@ class CameraFragment : Fragment() {
                 .withMaxResultSize(800, 800)
                 .getIntent(requireContext())
             uCropActivityResultLauncher.launch(uCropIntent)
-            // Fermer la galerie discrètement en arrière-plan juste après l'ouverture du recadrage
+            // Fermer la galerie discrÃ¨tement en arriÃ¨re-plan juste aprÃ¨s l'ouverture du recadrage
             view?.postDelayed({ closeBottomSheet() }, 150)
         } ?: run {
-            Log.e("CameraFragment", "startCrop: Impossible de créer un fichier pour l'URI de destination.")
-            Toast.makeText(requireContext(), "Erreur: Impossible de préparer le recadrage.", Toast.LENGTH_LONG).show()
+            Log.e("CameraFragment", "startCrop: Impossible de crÃ©er un fichier pour l'URI de destination.")
+            Toast.makeText(requireContext(), "Erreur: Impossible de prÃ©parer le recadrage.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -802,8 +802,8 @@ class CameraFragment : Fragment() {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir: File? = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         if (storageDir == null) {
-            Log.e("CameraFragment", "createImageFile: Le répertoire de stockage externe est null.")
-            throw IOException("Impossible d'accéder au répertoire de stockage externe.")
+            Log.e("CameraFragment", "createImageFile: Le rÃ©pertoire de stockage externe est null.")
+            throw IOException("Impossible d'accÃ©der au rÃ©pertoire de stockage externe.")
         }
         if (!storageDir.exists()) {
             storageDir.mkdirs()
@@ -823,10 +823,10 @@ class CameraFragment : Fragment() {
                 val resultUri = UCrop.getOutput(data)
                 Log.d("CameraFragment", "Result URI: $resultUri")
                 croppedImageUri = resultUri
-                // Fermer la galerie discrètement en arrière-plan pendant l'analyse
+                // Fermer la galerie discrÃ¨tement en arriÃ¨re-plan pendant l'analyse
                 closeBottomSheet()
                 lifecycleScope.launch(Dispatchers.IO) {
-                analyzeImageWithGemini() // Démarrer l'analyse une fois l'image recadrée
+                analyzeImageWithGemini() // DÃ©marrer l'analyse une fois l'image recadrÃ©e
                 }
             }
         } else if (result.resultCode == UCrop.RESULT_ERROR) {
@@ -837,8 +837,8 @@ class CameraFragment : Fragment() {
                 Toast.makeText(requireContext(), "Erreur de recadrage: ${cropError?.message}", Toast.LENGTH_LONG).show()
             }
         } else { // Annulation du recadrage (Activity.RESULT_CANCELED)
-            Log.d("CameraFragment", "Recadrage annulé.")
-            croppedImageUri = null // Nettoyer l'URI de l'image recadrée
+            Log.d("CameraFragment", "Recadrage annulÃ©.")
+            croppedImageUri = null // Nettoyer l'URI de l'image recadrÃ©e
             // Ne pas appeler openCamera() ici, laisser onResume le faire.
             cameraPreviewTextureView.visibility = View.VISIBLE
             captureButton.visibility = View.VISIBLE
@@ -846,7 +846,7 @@ class CameraFragment : Fragment() {
         }
     }
 
-    // Méthode pour démarrer l'analyse de l'image (déjà existante)
+    // MÃ©thode pour dÃ©marrer l'analyse de l'image (dÃ©jÃ  existante)
     private suspend fun analyzeImageWithGemini(imageUri: Uri? = null) {
         val loadingDialog = LoadingDialogFragment()
         loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
@@ -860,27 +860,27 @@ class CameraFragment : Fragment() {
                     if (currentUser == null) {
                         withContext(Dispatchers.Main) {
                             loadingDialog.dismiss()
-                            Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(), "Utilisateur non connectÃ©. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
                         }
-                        Log.e("CameraFragment", "Erreur: analyzeImageWithGemini appelé sans utilisateur connecté.")
+                        Log.e("CameraFragment", "Erreur: analyzeImageWithGemini appelÃ© sans utilisateur connectÃ©.")
                         return@launch
                     }
-                    Log.d("CameraFragment", "Utilisateur connecté: ${currentUser.uid}")
-                    // Gating: décrémenter 1 crédit côté serveur avant l'analyse
+                    Log.d("CameraFragment", "Utilisateur connectÃ©: ${currentUser.uid}")
+                    // Gating: dÃ©crÃ©menter 1 crÃ©dit cÃ´tÃ© serveur avant l'analyse
                     try {
                         CreditsManager.decrementOneCredit()
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
                             loadingDialog.dismiss()
-                            Toast.makeText(requireContext(), "Crédits insuffisants ou non connecté.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(), "CrÃ©dits insuffisants ou non connectÃ©.", Toast.LENGTH_LONG).show()
                         }
                         return@launch
                     }
-                    // Analyser directement via l'URI; le backend gère le prompt et le traitement
+                    // Analyser directement via l'URI; le backend gÃ¨re le prompt et le traitement
                     val response = imageAnalyzer.analyzeImage(uri, userCountry, userRegion)
 
                     if (!currentCoroutineContext().isActive) {
-                        Log.d("CameraFragment", "Analyse annulée avant la mise à jour UI.")
+                        Log.d("CameraFragment", "Analyse annulÃ©e avant la mise Ã  jour UI.")
                         return@launch
                     }
 
@@ -913,15 +913,15 @@ class CameraFragment : Fragment() {
                             )
                             AnalysisHistoryManager(requireContext()).saveAnalysisEntry(analysisEntry)
 
-                            Log.d("CameraFragment", "Réponse Gemini: ${response.localName}, ${response.scientificName}, ${response.type}") // Ajusté pour les nouveaux champs
-                            Toast.makeText(requireContext(), "Analyse terminée !", Toast.LENGTH_SHORT).show()
+                            Log.d("CameraFragment", "RÃ©ponse Gemini: ${response.localName}, ${response.scientificName}, ${response.type}") // AjustÃ© pour les nouveaux champs
+                            Toast.makeText(requireContext(), "Analyse terminÃ©e !", Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(requireContext(), "Aucune réponse de l\'API.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(), "Aucune rÃ©ponse de l\'API.", Toast.LENGTH_LONG).show()
                         }
                     }
                 } catch (e: Exception) {
                     if (!currentCoroutineContext().isActive) {
-                        Log.d("CameraFragment", "Exception attrapée mais coroutine déjà annulée.")
+                        Log.d("CameraFragment", "Exception attrapÃ©e mais coroutine dÃ©jÃ  annulÃ©e.")
                         return@launch
                     }
                     withContext(Dispatchers.Main) {
@@ -929,7 +929,7 @@ class CameraFragment : Fragment() {
                         Toast.makeText(requireContext(), "Erreur lors de l\'analyse: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 } finally {
-                    // S'assurer que la boîte de dialogue est fermée même si annulée ou erreur
+                    // S'assurer que la boÃ®te de dialogue est fermÃ©e mÃªme si annulÃ©e ou erreur
                     withContext(Dispatchers.Main) {
                         if (loadingDialog.isAdded) {
                             loadingDialog.dismiss()
@@ -938,9 +938,9 @@ class CameraFragment : Fragment() {
                     }
                 }
             }
-        } ?: withContext(Dispatchers.Main) { // Utiliser withContext pour les opérations UI sur le thread principal
+        } ?: withContext(Dispatchers.Main) { // Utiliser withContext pour les opÃ©rations UI sur le thread principal
             loadingDialog.dismiss()
-            Toast.makeText(requireContext(), "Aucune image à analyser. Veuillez en capturer une ou en sélectionner une dans la galerie.", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Aucune image Ã  analyser. Veuillez en capturer une ou en sÃ©lectionner une dans la galerie.", Toast.LENGTH_LONG).show()
         }
     }
 

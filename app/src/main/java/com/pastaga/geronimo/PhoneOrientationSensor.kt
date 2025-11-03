@@ -1,4 +1,4 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import android.content.Context
 import android.hardware.Sensor
@@ -78,3 +78,5 @@ class PhoneOrientationSensor(private val context: Context, private val listener:
         // Not used for this purpose
     }
 }
+
+

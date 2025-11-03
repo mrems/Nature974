@@ -1,4 +1,4 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import android.content.ContentUris
 import android.net.Uri
@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,13 +17,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class GalleryFragment : Fragment(), GalleryAdapter.OnImageClickListener {
+class GalleryBottomSheetFragment : BottomSheetDialogFragment(), GalleryAdapter.OnImageClickListener {
 
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var adapter: GalleryAdapter
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		return inflater.inflate(R.layout.fragment_gallery, container, false)
+		return inflater.inflate(R.layout.bottom_sheet_gallery, container, false)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,7 +63,7 @@ class GalleryFragment : Fragment(), GalleryAdapter.OnImageClickListener {
 				val id = cursor.getLong(idColumn)
 				imageUris.add(ContentUris.withAppendedId(collection, id))
 				count++
-				if (count >= 300) break
+				if (count >= 300) break // Limiter pour performance
 			}
 		}
 		return imageUris
@@ -71,8 +71,10 @@ class GalleryFragment : Fragment(), GalleryAdapter.OnImageClickListener {
 
 	override fun onImageClicked(uri: Uri) {
 		parentFragmentManager.setFragmentResult("gallery_result", bundleOf("uri" to uri.toString()))
+		dismiss()
 	}
 }
+
 
 
 

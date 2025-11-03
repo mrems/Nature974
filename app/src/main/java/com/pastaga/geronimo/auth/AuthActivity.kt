@@ -1,4 +1,4 @@
-package com.example.naturepei.auth
+package com.pastaga.geronimo.auth
 
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -14,9 +14,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.naturepei.MainActivity
-import com.example.naturepei.R
-import com.example.naturepei.databinding.ActivityAuthBinding
+import com.pastaga.geronimo.MainActivity
+import com.pastaga.geronimo.R
+import com.pastaga.geronimo.databinding.ActivityAuthBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -43,7 +43,7 @@ class AuthActivity : AppCompatActivity() {
 
         // Configuration de Google Sign-In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(com.example.naturepei.R.string.default_web_client_id))
+            .requestIdToken(getString(com.pastaga.geronimo.R.string.default_web_client_id))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -131,3 +131,4 @@ class AuthActivity : AppCompatActivity() {
         finish()
     }
 }
+

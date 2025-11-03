@@ -1,4 +1,4 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import android.net.Uri
 import android.os.Bundle
@@ -140,4 +140,5 @@ class ResultActivity : AppCompatActivity() {
         const val EXTRA_DESCRIPTION = "description"
     }
 }
+
 

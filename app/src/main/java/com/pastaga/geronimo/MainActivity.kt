@@ -1,4 +1,4 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -143,3 +143,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+

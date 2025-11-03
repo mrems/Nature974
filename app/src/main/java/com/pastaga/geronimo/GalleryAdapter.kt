@@ -1,4 +1,4 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -42,6 +42,7 @@ class GalleryAdapter(private val listener: OnImageClickListener) :
 		override fun areContentsTheSame(oldItem: Uri, newItem: Uri): Boolean = oldItem == newItem
 	}
 }
+
 
 
 

@@ -1,4 +1,4 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import android.content.Intent
 import android.net.Uri
@@ -129,3 +129,4 @@ class LastAnalysisFragment : Fragment() {
         }
     }
 }
+

@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.naturepei"
+    namespace = "com.pastaga.geronimo"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.naturepei"
+        applicationId = "com.pastaga.geronimo"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

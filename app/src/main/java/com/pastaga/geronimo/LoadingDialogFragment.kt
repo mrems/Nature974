@@ -1,4 +1,4 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import android.app.Dialog
 import android.graphics.Color
@@ -51,4 +51,5 @@ class LoadingDialogFragment : DialogFragment() {
         )
     }
 }
+
 

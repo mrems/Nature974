@@ -1,4 +1,4 @@
-package com.example.naturepei
+package com.pastaga.geronimo
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -72,4 +72,5 @@ class AnalysisHistoryManager(context: Context) {
         }
     }
 }
+
 
