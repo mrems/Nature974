@@ -5,7 +5,9 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="32dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <ImageView
         android:id="@+id/onboarding_icon"
@@ -37,16 +39,21 @@
         android:gravity="center"
         android:lineSpacingExtra="4dp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/request_permission_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Accepter"
-        android:paddingStart="48dp"
-        android:paddingEnd="48dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:textSize="16sp" />
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_badge_style"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
 </LinearLayout>
 

@@ -201,7 +201,7 @@ class CameraFragment : Fragment() {
             // Environ 30dp pour la hauteur du titre + 8dp de marginTop = 38dp, plus l'extraOffset
             val titleHeightDp = 30 // Hauteur estimée du titre en dp
             val titleHeightPx = (titleHeightDp * density).toInt()
-            val desiredHeight = screenHeight - titleHeightPx - extraOffset
+            val desiredHeight = (screenHeight - titleHeightPx - extraOffset) * 2 / 3 // Modifier ici pour 2/3 de la hauteur
             // Définir la hauteur maximale du bottom sheet pour qu'il ne dépasse pas le titre
             bottomSheetBehavior.maxHeight = desiredHeight
         }
@@ -766,12 +766,23 @@ class CameraFragment : Fragment() {
             val destinationUri = Uri.fromFile(file)
             Log.d("CameraFragment", "startCrop: URI de destination pour le recadrage: $destinationUri")
             val uCropOptions = UCrop.Options()
-            uCropOptions.setHideBottomControls(true)
+            uCropOptions.setHideBottomControls(false)
             uCropOptions.setFreeStyleCropEnabled(false)
-            uCropOptions.setCropGridColumnCount(0)
-            uCropOptions.setCropGridRowCount(0)
-            uCropOptions.setDimmedLayerColor(ContextCompat.getColor(requireContext(), android.R.color.white))
-            uCropOptions.setRootViewBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+            uCropOptions.setCropGridColumnCount(3)
+            uCropOptions.setCropGridRowCount(3)
+            uCropOptions.setShowCropGrid(true)
+            uCropOptions.setShowCropFrame(true)
+            uCropOptions.setCropGridStrokeWidth(2)
+            uCropOptions.setCropFrameStrokeWidth(4)
+            uCropOptions.setDimmedLayerColor(ContextCompat.getColor(requireContext(), R.color.white))
+            uCropOptions.setRootViewBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+            uCropOptions.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.white))
+            uCropOptions.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.white))
+            uCropOptions.setToolbarWidgetColor(ContextCompat.getColor(requireContext(), R.color.black))
+            uCropOptions.setActiveControlsWidgetColor(ContextCompat.getColor(requireContext(), R.color.black))
+            uCropOptions.setCropFrameColor(ContextCompat.getColor(requireContext(), R.color.black))
+            uCropOptions.setCropGridColor(ContextCompat.getColor(requireContext(), R.color.black))
+            uCropOptions.setToolbarTitle("Recadrer l'image")
 
             val uCropIntent = UCrop.of(sourceUri, destinationUri)
                 .withOptions(uCropOptions)

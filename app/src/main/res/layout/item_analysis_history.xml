@@ -22,7 +22,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="30dp"
             android:background="@android:color/darker_gray"/>
 
         <LinearLayout
@@ -31,21 +31,46 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/history_item_local_name"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="?android:textColorPrimary"
-                android:maxLines="1"
-                android:ellipsize="end"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/history_item_local_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:textColorPrimary"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+                <TextView
+                    android:id="@+id/history_item_tutorial_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EXEMPLE"
+                    android:background="@drawable/badge_exemple"
+                    android:paddingStart="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="4dp"
+                    android:textColor="@color/badge_text"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/history_item_scientific_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="italic"
                 android:textColor="?android:textColorSecondary"
                 android:maxLines="1"
@@ -55,19 +80,10 @@
                 android:id="@+id/history_item_timestamp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="?android:textColorSecondary"/>
 
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/history_item_options_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_three_dots_vertical"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Menu d'options"
-            android:padding="12dp"/>
 
     </LinearLayout>
 

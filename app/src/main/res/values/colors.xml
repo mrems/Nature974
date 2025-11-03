@@ -30,6 +30,7 @@
     <color name="badge_introduit_background">#FF9800</color>
     <color name="badge_nc_background">#9E9E9E</color>
     <color name="badge_text">#FFFFFF</color>
+    <color name="gold">#B8860B</color>
 
 </resources>
 

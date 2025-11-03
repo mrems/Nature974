@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ImageSpan
+import android.text.style.StyleSpan
+import android.graphics.Typeface
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -65,12 +67,18 @@ class AuthActivity : AppCompatActivity() {
         val text = "Geronimo c'est l'application qui peut reconnaître toutes les plantes\uFFFC et tous les animaux\uFFFC !!!"
         val spannableString = SpannableString(text)
 
+        // Mettre "Geronimo" en gras
+        val geronimoEnd = text.indexOf(" ")
+        if (geronimoEnd != -1) {
+            spannableString.setSpan(StyleSpan(Typeface.BOLD), 0, geronimoEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+
         // Trouver la position du premier marqueur (après "plantes")
         val firstMarkerIndex = text.indexOf('\uFFFC')
         if (firstMarkerIndex != -1) {
             val plantDrawable = ContextCompat.getDrawable(this, R.drawable.plant)
             plantDrawable?.let {
-                val size = (binding.authDescription.textSize * 1.1).toInt()
+                val size = (binding.authDescription.textSize * 1).toInt()
                 val paddingLeft = (size * 0.3).toInt()
                 it.setBounds(0, 0, size, size)
                 val insetDrawable = InsetDrawable(it, paddingLeft, 0, 0, 0)
@@ -85,7 +93,7 @@ class AuthActivity : AppCompatActivity() {
         if (secondMarkerIndex != -1) {
             val animalDrawable = ContextCompat.getDrawable(this, R.drawable.animal)
             animalDrawable?.let {
-                val size = (binding.authDescription.textSize * 1.1).toInt()
+                val size = (binding.authDescription.textSize * 1).toInt()
                 val paddingLeft = (size * 0.3).toInt()
                 it.setBounds(0, 0, size, size)
                 val insetDrawable = InsetDrawable(it, paddingLeft, 0, 0, 0)

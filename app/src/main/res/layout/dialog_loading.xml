@@ -17,12 +17,12 @@
         android:background="@drawable/loading_dialog_background"
         android:elevation="8dp">
 
-        <!-- Icône de nature -->
+        <!-- Icône Geronimo -->
         <ImageView
             android:id="@+id/loading_leaf_icon"
-            android:layout_width="128dp"
-            android:layout_height="128dp"
-            android:src="@drawable/geronimo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/geronimo_app"
             android:contentDescription="@string/app_name"
             android:layout_marginBottom="24dp" />
 
@@ -31,20 +31,30 @@
             android:id="@+id/loading_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Analyse de l'image en cours..."
+            android:text="Analyse en cours..."
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/loading_text_primary"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Description -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Identification de votre photo"
+            android:textSize="14sp"
+            android:textColor="@color/black"
             android:gravity="center"
             android:layout_marginBottom="32dp" />
 
         <!-- Barre de progression moderne -->
         <ProgressBar
             android:id="@+id/loading_progress_bar"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:indeterminate="true"
-            android:indeterminateTint="@color/splash_background_light" />
+            android:indeterminateTint="@color/black" />
 
     </LinearLayout>
 

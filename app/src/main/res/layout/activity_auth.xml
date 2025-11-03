@@ -8,6 +8,8 @@
     android:gravity="center"
     android:padding="32dp"
     android:background="@color/white"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context=".auth.AuthActivity">
 
     <TextView
@@ -18,8 +20,19 @@
         android:textSize="48sp"
         android:textStyle="bold"
         android:textColor="@color/black"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="0dp"
         android:gravity="center" />
+
+    <ImageView
+        android:id="@+id/auth_illustration"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/illustration"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="Illustration de l'application" />
 
     <TextView
         android:id="@+id/auth_description"
@@ -28,22 +41,26 @@
         android:text="Geronimo c'est l'application qui peut reconnaître toutes les plantes et tous les animaux"
         android:textSize="22sp"
         android:textColor="@color/black"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
         android:lineSpacingExtra="4dp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/googleSignInButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Commencer"
-        android:textColor="#2196F3"
-        android:paddingStart="48dp"
-        android:paddingEnd="48dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:textSize="16sp" />
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_badge_style"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
 </LinearLayout>

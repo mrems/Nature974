@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment
  */
 class OnboardingFragment : Fragment() {
 
+    private lateinit var iconImageView: ImageView
     private lateinit var titleTextView: TextView
     private lateinit var descriptionTextView: TextView
     private lateinit var requestButton: Button
@@ -31,6 +33,7 @@ class OnboardingFragment : Fragment() {
         val permission: String,
         val title: String,
         val description: String,
+        val iconRes: Int,
         val required: Boolean = true
     )
     
@@ -69,6 +72,7 @@ class OnboardingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        iconImageView = view.findViewById(R.id.onboarding_icon)
         titleTextView = view.findViewById(R.id.onboarding_title)
         descriptionTextView = view.findViewById(R.id.onboarding_description)
         requestButton = view.findViewById(R.id.request_permission_button)
@@ -91,6 +95,7 @@ class OnboardingFragment : Fragment() {
                     permission = Manifest.permission.CAMERA,
                     title = "Permission Caméra",
                     description = "Cette application a besoin d'accéder à votre caméra pour capturer et analyser des photos de plantes et d'animaux.",
+                    iconRes = R.drawable.camera,
                     required = true
                 )
             )
@@ -105,7 +110,8 @@ class OnboardingFragment : Fragment() {
                     permission = "LOCATION", // Identifiant spécial pour gérer les deux permissions
                     title = "Permission Localisation",
                     description = "L'accès à votre localisation permet d'améliorer la précision de l'identification des espèces en fonction de votre région.",
-                    required = false
+                    iconRes = R.drawable.localisation,
+                    required = true
                 )
             )
         }
@@ -123,7 +129,8 @@ class OnboardingFragment : Fragment() {
                     permission = storagePermission,
                     title = "Permission Galerie",
                     description = "L'accès à vos photos vous permet d'analyser des images existantes depuis votre galerie.",
-                    required = false
+                    iconRes = R.drawable.stockage,
+                    required = true
                 )
             )
         }
@@ -146,6 +153,7 @@ class OnboardingFragment : Fragment() {
         val permissionInfo = permissionsToRequest[currentPermissionIndex]
         
         // Mettre à jour l'UI
+        iconImageView.setImageResource(permissionInfo.iconRes)
         titleTextView.text = permissionInfo.title
         descriptionTextView.text = permissionInfo.description
         requestButton.text = "Accepter"
@@ -196,13 +204,45 @@ class OnboardingFragment : Fragment() {
     }
     
     private fun onOnboardingComplete() {
-        // Vérifier que la permission caméra (obligatoire) est accordée
+        // Vérifier que toutes les permissions obligatoires sont accordées
+        val missingPermissions = mutableListOf<String>()
+        
+        // Vérifier la caméra
         if (!isPermissionGranted(Manifest.permission.CAMERA)) {
+            missingPermissions.add("caméra")
+        }
+        
+        // Vérifier la localisation
+        val locationGranted = isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION) ||
+                              isPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (!locationGranted) {
+            missingPermissions.add("localisation")
+        }
+        
+        // Vérifier le stockage
+        val storagePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+        if (!isPermissionGranted(storagePermission)) {
+            missingPermissions.add("galerie")
+        }
+        
+        // Si des permissions manquent, recommencer l'onboarding
+        if (missingPermissions.isNotEmpty()) {
+            val message = if (missingPermissions.size == 1) {
+                "La permission ${missingPermissions[0]} est obligatoire pour utiliser cette application."
+            } else {
+                "Les permissions suivantes sont obligatoires : ${missingPermissions.joinToString(", ")}."
+            }
+            
             Toast.makeText(
                 requireContext(),
-                "La permission caméra est obligatoire pour utiliser cette application.",
+                message,
                 Toast.LENGTH_LONG
             ).show()
+            
             // Retourner au début
             currentPermissionIndex = 0
             buildPermissionsList()

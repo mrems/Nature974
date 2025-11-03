@@ -108,9 +108,9 @@ class ResultActivity : AppCompatActivity() {
         val cardCharacteristics = infoCardsContainer.getChildAt(1)
         val cardReunionContext = infoCardsContainer.getChildAt(2)
 
-        setupInfoCard(cardHabitat, R.drawable.ic_habitat, "Habitat", entry.habitat)
-        setupInfoCard(cardCharacteristics, R.drawable.ic_characteristics, "Caractéristiques", entry.characteristics)
-        setupInfoCard(cardReunionContext, R.drawable.ic_reunion_context, "Contexte local", entry.localContext)
+        setupInfoCard(cardHabitat, R.drawable.tipi, "Habitat", entry.habitat)
+        setupInfoCard(cardCharacteristics, R.drawable.regle, "Caractéristiques", entry.characteristics)
+        setupInfoCard(cardReunionContext, R.drawable.local, "Contexte local", entry.localContext)
     }
 
     private fun setupInfoCard(cardView: View, iconResId: Int, title: String, content: String?) {

@@ -40,10 +40,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|top"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="18dp"
             android:layout_marginStart="16dp"
             android:src="@drawable/title"
-            android:maxWidth="160dp"
+            android:maxWidth="140dp"
             android:adjustViewBounds="true" />
 
         <!-- Conteneur pour le compteur de crédits (chiffre + icône) -->
@@ -61,9 +61,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/gold"
                 android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:shadowColor="#80000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4" />
 
             <ImageView
                 android:layout_width="36dp"
@@ -88,7 +92,7 @@
                 android:background="@drawable/camera_icon"
                 android:contentDescription="Bouton de capture"
                 android:padding="0dp"
-            android:alpha="0.5"
+            android:alpha="0.8"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -117,8 +121,8 @@
             android:background="@drawable/bg_gallery_handle"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:visibility="gone">
             <View
                 android:layout_width="40dp"

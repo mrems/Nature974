@@ -75,6 +75,9 @@ class MainActivity : AppCompatActivity() {
                 .commitNowAllowingStateLoss()
         }
         
+        // Créer la fiche d'exemple au premier lancement
+        createTutorialEntryIfFirstLaunch()
+        
         // Afficher le ViewPager
         viewPager.visibility = android.view.View.VISIBLE
         
@@ -82,6 +85,35 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = pagerAdapter
         viewPager.setCurrentItem(1, false) // Définir l'écran central (CameraFragment) comme écran de démarrage
         viewPager.setOffscreenPageLimit(1) // Garder les fragments adjacents en mémoire pour des transitions plus fluides
+    }
+    
+    private fun createTutorialEntryIfFirstLaunch() {
+        val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val isFirstLaunch = prefs.getBoolean("is_first_launch", true)
+        
+        if (isFirstLaunch) {
+            // Créer une fiche d'exemple éducative
+            val tutorialEntry = AnalysisEntry(
+                imageUri = "android.resource://$packageName/${R.drawable.illustration}",
+                localName = "Nom commun",
+                scientificName = "Nom scientifique",
+                type = "Origine",
+                habitat = "Cette section vous indique où l'espèce vit naturellement. Vous y trouverez des informations sur son environnement préféré.",
+                characteristics = "Ici vous découvrirez les traits distinctifs qui vous aident à identifier l'espèce. Les détails visuels importants y sont décrits.",
+                localContext = "Des informations spécifiques à votre région apparaissent ici. Vous saurez si l'espèce est protégée ou si elle présente des particularités locales.",
+                country = null,
+                region = null,
+                description = "Ceci est un exemple de fiche d'analyse",
+                timestamp = System.currentTimeMillis(),
+                isTutorial = true
+            )
+            
+            val historyManager = AnalysisHistoryManager(this)
+            historyManager.saveAnalysisEntry(tutorialEntry)
+            
+            // Marquer que ce n'est plus le premier lancement
+            prefs.edit().putBoolean("is_first_launch", false).apply()
+        }
     }
 
     fun navigateToCameraWithImage(imageUri: String) {

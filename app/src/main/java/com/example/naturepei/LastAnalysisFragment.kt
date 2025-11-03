@@ -26,6 +26,7 @@ class LastAnalysisFragment : Fragment() {
     private lateinit var lastAnalysisLocalNameTextView: TextView
     private lateinit var lastAnalysisScientificNameTextView: TextView
     private lateinit var lastAnalysisTypeBadge: TextView
+    private lateinit var lastAnalysisTutorialBadge: TextView
     private lateinit var lastAnalysisContentLayout: LinearLayout
     private lateinit var lastAnalysisInfoCardsContainer: LinearLayout
 
@@ -49,6 +50,7 @@ class LastAnalysisFragment : Fragment() {
         lastAnalysisLocalNameTextView = view.findViewById(R.id.last_analysis_local_name)
         lastAnalysisScientificNameTextView = view.findViewById(R.id.last_analysis_scientific_name)
         lastAnalysisTypeBadge = view.findViewById(R.id.last_analysis_type_badge)
+        lastAnalysisTutorialBadge = view.findViewById(R.id.last_analysis_tutorial_badge)
         lastAnalysisContentLayout = view.findViewById(R.id.last_analysis_content)
         lastAnalysisInfoCardsContainer = view.findViewById(R.id.last_analysis_info_cards_container)
 
@@ -76,13 +78,23 @@ class LastAnalysisFragment : Fragment() {
                     lastAnalysisLocalNameTextView.text = entry.localName
                     lastAnalysisScientificNameTextView.text = entry.scientificName
 
+                    // Afficher le badge EXEMPLE pour les fiches tutorielles
+                    lastAnalysisTutorialBadge.visibility = if (entry.isTutorial) View.VISIBLE else View.GONE
+                    
                     lastAnalysisTypeBadge.text = entry.type ?: "N/C"
                     lastAnalysisTypeBadge.visibility = if (entry.type != null && entry.type != "N/C") View.VISIBLE else View.GONE
-                    entry.type?.let { typeValue ->
-                        when {
-                            typeValue.contains("endémique", ignoreCase = true) -> lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_endemique)
-                            typeValue.contains("introduit", ignoreCase = true) -> lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_introduit)
-                            else -> lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc)
+                    
+                    // Pour les fiches tutorielles, utiliser le badge vert "Origine"
+                    if (entry.isTutorial) {
+                        lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_origine)
+                    } else {
+                        // Pour les vraies analyses, utiliser la logique habituelle
+                        entry.type?.let { typeValue ->
+                            when {
+                                typeValue.contains("endémique", ignoreCase = true) -> lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_endemique)
+                                typeValue.contains("introduit", ignoreCase = true) -> lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_introduit)
+                                else -> lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc)
+                            }
                         }
                     }
 
@@ -90,9 +102,9 @@ class LastAnalysisFragment : Fragment() {
                     val cardCharacteristics = lastAnalysisInfoCardsContainer.getChildAt(1)
                     val cardReunionContext = lastAnalysisInfoCardsContainer.getChildAt(2)
 
-                    setupInfoCard(cardHabitat, R.drawable.ic_habitat, "Habitat", entry.habitat)
-                    setupInfoCard(cardCharacteristics, R.drawable.ic_characteristics, "Caractéristiques", entry.characteristics)
-                    setupInfoCard(cardReunionContext, R.drawable.ic_reunion_context, "Contexte local", entry.localContext)
+                    setupInfoCard(cardHabitat, R.drawable.tipi, "Habitat", entry.habitat)
+                    setupInfoCard(cardCharacteristics, R.drawable.regle, "Caractéristiques", entry.characteristics)
+                    setupInfoCard(cardReunionContext, R.drawable.local, "Contexte local", entry.localContext)
 
                 } else {
                     lastAnalysisContentLayout.visibility = View.GONE

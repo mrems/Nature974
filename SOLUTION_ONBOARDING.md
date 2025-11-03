@@ -147,3 +147,7 @@ Pour tester la solution :
 
 La solution résout complètement les problèmes de crash au démarrage en centralisant la gestion des permissions dans un fragment dédié. Le flux est maintenant stable, prévisible et offre une meilleure expérience utilisateur.
 
+
+
+
+
