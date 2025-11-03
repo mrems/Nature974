@@ -8,8 +8,6 @@
     android:gravity="center"
     android:padding="32dp"
     android:background="@color/white"
-    android:clipChildren="false"
-    android:clipToPadding="false"
     tools:context=".auth.AuthActivity">
 
     <TextView
@@ -26,8 +24,8 @@
     <ImageView
         android:id="@+id/auth_illustration"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:src="@drawable/illustration"
+        android:layout_height="300dp"
+        android:src="@drawable/bienvenue"
         android:scaleType="fitCenter"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
@@ -39,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Geronimo c'est l'application qui peut reconnaître toutes les plantes et tous les animaux"
-        android:textSize="22sp"
+        android:textSize="16sp"
         android:textColor="@color/black"
         android:layout_marginBottom="32dp"
         android:layout_marginStart="8dp"

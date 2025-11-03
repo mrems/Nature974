@@ -33,8 +33,15 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Forcer la suppression de l'ActionBar
+        supportActionBar?.hide()
+        
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        
+        // Désactiver toutes les animations de transition
+        overridePendingTransition(0, 0)
 
         firebaseAuth = FirebaseAuth.getInstance()
 
@@ -64,7 +71,7 @@ class AuthActivity : AppCompatActivity() {
 
     private fun setupDescriptionWithIcons() {
         // On utilise un caractère spécial pour marquer où placer les images
-        val text = "Geronimo c'est l'application qui peut reconnaître toutes les plantes\uFFFC et tous les animaux\uFFFC !!!"
+        val text = "Geronimo l'application qui peut reconnaître toutes les plantes\uFFFC et tous les animaux\uFFFC !!!"
         val spannableString = SpannableString(text)
 
         // Mettre "Geronimo" en gras
@@ -109,6 +116,16 @@ class AuthActivity : AppCompatActivity() {
     private fun signInWithGoogle() {
         val signInIntent = googleSignInClient.signInIntent
         googleSignInLauncher.launch(signInIntent)
+        // Désactiver l'animation lors du lancement
+        overridePendingTransition(0, 0)
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // Désactiver l'animation au retour de Google Sign In
+        overridePendingTransition(0, 0)
+        // Forcer la suppression de l'ActionBar au cas où elle réapparaîtrait
+        supportActionBar?.hide()
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
@@ -116,7 +133,7 @@ class AuthActivity : AppCompatActivity() {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Connexion Google réussie.", Toast.LENGTH_SHORT).show()
+                    // Connexion réussie, transition vers MainActivity (pas besoin de Toast)
                     navigateToMainActivity()
                 } else {
                     Toast.makeText(this, "Échec de l'authentification Firebase avec Google: ${task.exception?.message}", Toast.LENGTH_LONG).show()
