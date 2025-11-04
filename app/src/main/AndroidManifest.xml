@@ -30,7 +30,14 @@
         </activity>
 
         <activity
-            android:name=".auth.AuthActivity"
+            android:name=".IntroOnboardingActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Geronimo.Auth">
+        </activity>
+
+        <activity
+            android:name=".GoogleSignInActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Geronimo.Auth">

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
-import com.pastaga.geronimo.auth.AuthActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class SplashActivity : AppCompatActivity() {
@@ -25,8 +24,18 @@ class SplashActivity : AppCompatActivity() {
                 // Utilisateur déjà connecté, aller à l'écran principal
                 intent = Intent(this, MainActivity::class.java)
             } else {
-                // Pas d'utilisateur connecté, aller à l'écran d'authentification
-                intent = Intent(this, AuthActivity::class.java)
+                // Pas d'utilisateur connecté
+                // Vérifier si l'intro a déjà été vue
+                val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+                val introCompleted = prefs.getBoolean("intro_completed", false)
+                
+                if (introCompleted) {
+                    // Intro déjà vue, aller directement à la connexion Google
+                    intent = Intent(this, GoogleSignInActivity::class.java)
+                } else {
+                    // Premier lancement, montrer l'intro
+                    intent = Intent(this, IntroOnboardingActivity::class.java)
+                }
             }
             startActivity(intent)
             finish()

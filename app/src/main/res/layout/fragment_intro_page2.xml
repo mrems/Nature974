@@ -1,43 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
     android:padding="32dp"
-    android:background="@color/white"
-    tools:context=".auth.AuthActivity">
+    android:background="@color/white">
 
     <TextView
-        android:id="@+id/auth_title"
+        android:id="@+id/page2_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bienvenue"
-        android:textSize="48sp"
+        android:text="Identifiez facilement"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="@color/black"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="24dp"
         android:gravity="center" />
 
     <ImageView
-        android:id="@+id/auth_illustration"
+        android:id="@+id/page2_illustration"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:src="@drawable/bienvenue"
+        android:src="@drawable/photo"
         android:scaleType="fitCenter"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:contentDescription="Illustration de l'application" />
+        android:contentDescription="Illustration identification par photo" />
 
     <TextView
-        android:id="@+id/auth_description"
+        android:id="@+id/page2_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Geronimo c'est l'application qui peut reconnaître toutes les plantes et tous les animaux"
-        android:textSize="16sp"
+        android:text="Il suffit de prendre une photo pour que Geronimo identifie l'animal ou la plante."
+        android:textSize="18sp"
         android:textColor="@color/black"
         android:layout_marginBottom="32dp"
         android:layout_marginStart="8dp"
@@ -46,10 +43,10 @@
         android:lineSpacingExtra="4dp" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/googleSignInButton"
+        android:id="@+id/page2_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Commencer"
+        android:text="Suivant"
         android:textColor="#FFFFFF"
         android:background="@drawable/button_badge_style"
         android:paddingStart="40dp"
@@ -62,3 +59,4 @@
         android:layout_marginBottom="16dp" />
 
 </LinearLayout>
+

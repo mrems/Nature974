@@ -1,0 +1,63 @@
+package com.pastaga.geronimo
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+
+class IntroOnboardingActivity : AppCompatActivity() {
+
+    private lateinit var viewPager: ViewPager2
+    private lateinit var dotsIndicator: View
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // Forcer la suppression de l'ActionBar
+        supportActionBar?.hide()
+        
+        setContentView(R.layout.activity_intro_onboarding)
+        
+        viewPager = findViewById(R.id.intro_view_pager)
+        
+        val adapter = IntroScreenSlidePagerAdapter(this)
+        viewPager.adapter = adapter
+        
+        // Désactiver le swipe pour contrôler manuellement la navigation
+        viewPager.isUserInputEnabled = false
+    }
+    
+    fun goToNextPage() {
+        val currentItem = viewPager.currentItem
+        if (currentItem < 3) {
+            viewPager.setCurrentItem(currentItem + 1, true)
+        }
+    }
+    
+    fun goToGoogleSignIn() {
+        // Lancer directement la connexion Google
+        // Ne PAS appeler finish() pour permettre le retour en arrière si l'utilisateur annule
+        // Ne PAS marquer intro_completed ici - on le fera après connexion réussie
+        val intent = Intent(this, GoogleSignInActivity::class.java)
+        startActivity(intent)
+    }
+    
+    private inner class IntroScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+        override fun getItemCount(): Int = 4
+        
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> IntroPage1Fragment()
+                1 -> IntroPage2Fragment()
+                2 -> IntroPage3Fragment()
+                3 -> IntroPage4Fragment()
+                else -> throw IllegalStateException("Invalid position")
+            }
+        }
+    }
+}
+

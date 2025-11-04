@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/page3_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Explorez la Nature "
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginBottom="24dp"
+        android:gravity="center" />
+
+    <ImageView
+        android:id="@+id/page3_illustration"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:src="@drawable/voyage"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="Illustration compagnon de voyage" />
+
+    <TextView
+        android:id="@+id/page3_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Votre compagnon d'aventures, idéal en voyage ou en balade, il reconnait tout, partout !!!"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/page3_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Suivant"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_badge_style"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>
+
