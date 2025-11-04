@@ -65,10 +65,28 @@ class LastAnalysisFragment : Fragment() {
 
     private fun loadLastAnalysis() {
         lifecycleScope.launch(Dispatchers.IO) {
+            // Charger la dernière fiche consultée (analyse, ré-analyse ou consultation historique)
+            var entry = analysisHistoryManager.getLastViewedCard()
             val history = analysisHistoryManager.getAnalysisHistory()
+            // Vérifier si la dernière fiche consultée existe toujours dans l'historique
+            if (entry != null && history.none { it.imageUri == entry!!.imageUri }) {
+                // Si elle n'existe plus, trouver la première fiche non-tutorielle dans l'historique
+                entry = history.firstOrNull { !it.isTutorial }
+                if (entry != null) {
+                    analysisHistoryManager.saveLastViewedCard(entry)
+                } else {
+                    // Si aucune fiche n'existe, utiliser une fiche exemple par défaut
+                    entry = history.firstOrNull { it.isTutorial }
+                    if (entry == null) {
+                        // Si aucune fiche tutorielle n'existe, on pourrait en créer une par défaut ici si nécessaire
+                        // Pour l'instant, on laisse vide si aucune fiche tutorielle n'est présente
+                    } else {
+                        analysisHistoryManager.saveLastViewedCard(entry)
+                    }
+                }
+            }
             withContext(Dispatchers.Main) {
-                if (history.isNotEmpty()) {
-                    val entry = history[0]
+                if (entry != null) {
                     lastEntry = entry
                     lastAnalysisContentLayout.visibility = View.VISIBLE
 
@@ -107,8 +125,37 @@ class LastAnalysisFragment : Fragment() {
                     setupInfoCard(cardReunionContext, R.drawable.local, "Contexte local", entry.localContext)
 
                 } else {
-                    lastAnalysisContentLayout.visibility = View.GONE
-                    lastEntry = null
+                    // Si aucune fiche n'est trouvée, chercher une fiche tutorielle par défaut
+                    val tutorialEntry = history.firstOrNull { it.isTutorial }
+                    if (tutorialEntry != null) {
+                        lastEntry = tutorialEntry
+                        lastAnalysisContentLayout.visibility = View.VISIBLE
+
+                        tutorialEntry.imageUri.let { uriString ->
+                            lastAnalysisImageView.setImageURI(Uri.parse(uriString))
+                        }
+                        lastAnalysisLocalNameTextView.text = tutorialEntry.localName
+                        lastAnalysisScientificNameTextView.text = tutorialEntry.scientificName
+
+                        // Afficher le badge EXEMPLE pour les fiches tutorielles
+                        lastAnalysisTutorialBadge.visibility = View.VISIBLE
+                        
+                        lastAnalysisTypeBadge.text = tutorialEntry.type ?: "N/C"
+                        lastAnalysisTypeBadge.visibility = if (tutorialEntry.type != null && tutorialEntry.type != "N/C") View.VISIBLE else View.GONE
+                        
+                        lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_origine)
+
+                        val cardHabitat = lastAnalysisInfoCardsContainer.getChildAt(0)
+                        val cardCharacteristics = lastAnalysisInfoCardsContainer.getChildAt(1)
+                        val cardReunionContext = lastAnalysisInfoCardsContainer.getChildAt(2)
+
+                        setupInfoCard(cardHabitat, R.drawable.tipi, "Habitat", tutorialEntry.habitat)
+                        setupInfoCard(cardCharacteristics, R.drawable.regle, "Caractéristiques", tutorialEntry.characteristics)
+                        setupInfoCard(cardReunionContext, R.drawable.local, "Contexte local", tutorialEntry.localContext)
+                    } else {
+                        lastAnalysisContentLayout.visibility = View.GONE
+                        lastEntry = null
+                    }
                 }
             }
         }

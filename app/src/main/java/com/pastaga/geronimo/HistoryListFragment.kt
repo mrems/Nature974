@@ -19,6 +19,7 @@ import android.net.Uri
 import android.widget.Toast
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class HistoryListFragment : Fragment() {
 
@@ -58,6 +59,10 @@ class HistoryListFragment : Fragment() {
         // Initialiser et attacher l'adaptateur ici avec une liste vide
         historyRecyclerView.adapter = HistoryAdapter(mutableListOf(), { entry ->
             // Gérer le clic sur un élément de l'historique
+            // Sauvegarder cette fiche comme dernière consultée
+            lifecycleScope.launch(Dispatchers.IO) {
+                analysisHistoryManager.saveLastViewedCard(entry)
+            }
             val intent = Intent(requireContext(), ResultActivity::class.java).apply {
                 putExtra(ResultActivity.EXTRA_IMAGE_URI, entry.imageUri)
                 putExtra(ResultActivity.EXTRA_LOCAL_NAME, entry.localName)
@@ -122,9 +127,27 @@ class HistoryListFragment : Fragment() {
                                 characteristics = newResponse.characteristics,
                                 localContext = newResponse.localContext
                             )
-                            analysisHistoryManager.updateAnalysisEntry(updatedEntry)
-                            loadHistory()
-                            Toast.makeText(requireContext(), "Ré-analyse terminée !", Toast.LENGTH_SHORT).show()
+                            
+                            // Mettre à jour l'historique de manière synchrone dans un thread IO
+                            withContext(Dispatchers.IO) {
+                                analysisHistoryManager.updateAnalysisEntry(updatedEntry)
+                                analysisHistoryManager.saveLastViewedCard(updatedEntry)
+                            }
+                            
+                            // Ouvrir ResultActivity avec les nouveaux résultats
+                            val intent = Intent(requireContext(), ResultActivity::class.java).apply {
+                                putExtra(ResultActivity.EXTRA_IMAGE_URI, entry.imageUri)
+                                putExtra(ResultActivity.EXTRA_LOCAL_NAME, newResponse.localName)
+                                putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, newResponse.scientificName)
+                                putExtra(ResultActivity.EXTRA_TYPE, newResponse.type)
+                                putExtra(ResultActivity.EXTRA_HABITAT, newResponse.habitat)
+                                putExtra(ResultActivity.EXTRA_CHARACTERISTICS, newResponse.characteristics)
+                                putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, newResponse.localContext)
+                                putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C")
+                            }
+                            startActivity(intent)
+                            
+                            // L'historique sera rechargé automatiquement par onResume() au retour
                         } else {
                             Toast.makeText(requireContext(), "Échec de la ré-analyse.", Toast.LENGTH_LONG).show()
                         }
@@ -136,15 +159,27 @@ class HistoryListFragment : Fragment() {
             dialogView.findViewById<View>(R.id.option_delete).setOnClickListener {
                 bottomSheetDialog.dismiss()
                 
-                AlertDialog.Builder(requireContext())
+                MaterialAlertDialogBuilder(requireContext(), R.style.Theme_Geronimo_Dialog)
                     .setTitle("Confirmer la suppression")
                     .setMessage("Êtes-vous sûr de vouloir supprimer cette fiche d'analyse ?")
                     .setPositiveButton("Supprimer") { dialog, which ->
                         lifecycleScope.launch(Dispatchers.IO) {
+                            val lastViewedCard = analysisHistoryManager.getLastViewedCard()
+                            val isLastViewed = lastViewedCard != null && lastViewedCard.imageUri == entry.imageUri
                             analysisHistoryManager.deleteAnalysisEntry(entry)
+                            if (isLastViewed) {
+                                // Si la fiche supprimée est la dernière consultée, trouver la suivante dans l'historique
+                                val updatedHistory = analysisHistoryManager.getAnalysisHistory()
+                                val newLastViewed = updatedHistory.firstOrNull { !it.isTutorial } ?: updatedHistory.firstOrNull { it.isTutorial }
+                                if (newLastViewed != null) {
+                                    analysisHistoryManager.saveLastViewedCard(newLastViewed)
+                                } else {
+                                    // Si l'historique est vide, effacer la dernière consultée
+                                    sharedPrefs?.edit()?.remove(AnalysisHistoryManager.KEY_LAST_VIEWED_CARD)?.commit()
+                                }
+                            }
                             withContext(Dispatchers.Main) {
                                 loadHistory()
-                                Toast.makeText(requireContext(), "Fiche supprimée.", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }

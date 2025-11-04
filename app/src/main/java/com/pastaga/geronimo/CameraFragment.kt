@@ -448,7 +448,7 @@ class CameraFragment : Fragment() {
         override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
             super.onCaptureCompleted(session, request, result)
             lifecycleScope.launch(Dispatchers.IO) { // Appeler suspend fun dans une coroutine
-                analyzeImageWithGemini() // DÃ©marrer l'analyse une fois l'image recadrÃ©e
+                // analyzeImageWithGemini() // L'analyse est dÃ©sormais appelÃ©e aprÃ¨s le recadrage rÃ©ussi
             }
         }
 
@@ -826,7 +826,7 @@ class CameraFragment : Fragment() {
                 // Fermer la galerie discrÃ¨tement en arriÃ¨re-plan pendant l'analyse
                 closeBottomSheet()
                 lifecycleScope.launch(Dispatchers.IO) {
-                analyzeImageWithGemini() // DÃ©marrer l'analyse une fois l'image recadrÃ©e
+                analyzeImageWithGemini(resultUri) // Passer resultUri directement
                 }
             }
         } else if (result.resultCode == UCrop.RESULT_ERROR) {
@@ -911,10 +911,12 @@ class CameraFragment : Fragment() {
                                 region = userRegion,
                                 description = "N/C" // Description n'est plus fournie par l'API, utiliser N/C
                             )
-                            AnalysisHistoryManager(requireContext()).saveAnalysisEntry(analysisEntry)
+                            val historyManager = AnalysisHistoryManager(requireContext())
+                            historyManager.saveAnalysisEntry(analysisEntry)
+                            // Sauvegarder cette fiche comme dernière consultée
+                            historyManager.saveLastViewedCard(analysisEntry)
 
                             Log.d("CameraFragment", "RÃ©ponse Gemini: ${response.localName}, ${response.scientificName}, ${response.type}") // AjustÃ© pour les nouveaux champs
-                            Toast.makeText(requireContext(), "Analyse terminÃ©e !", Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(requireContext(), "Aucune rÃ©ponse de l\'API.", Toast.LENGTH_LONG).show()
                         }

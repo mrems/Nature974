@@ -70,6 +70,29 @@
         <item name="android:listPreferredItemPaddingRight">8dp</item>
     </style>
 
+    <style name="Theme.Geronimo.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="colorSurface">@android:color/white</item>
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="colorOnSurface">@android:color/black</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/CustomAlertDialogTitleTextStyle</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/CustomAlertDialogBodyTextStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/CustomAlertDialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/CustomAlertDialogButton</item>
+    </style>
+
+    <style name="CustomAlertDialogTitleTextStyle" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="CustomAlertDialogBodyTextStyle" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="CustomAlertDialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
 </resources>
 
 

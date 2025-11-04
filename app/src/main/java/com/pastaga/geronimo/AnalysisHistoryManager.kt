@@ -29,9 +29,12 @@ class AnalysisHistoryManager(context: Context) {
     companion object {
         const val PREFS_NAME: String = "naturepei_analysis_history"
         const val KEY_HISTORY_LIST: String = "history_list"
+        const val KEY_LAST_VIEWED_CARD: String = "last_viewed_card"
     }
 
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    val sharedPreferencesPublic: SharedPreferences
+        get() = sharedPreferences
     private val gson = Gson()
 
     fun saveAnalysisEntry(entry: AnalysisEntry) {
@@ -68,7 +71,23 @@ class AnalysisHistoryManager(context: Context) {
         if (index != -1) {
             historyList[index] = updatedEntry
             val json = gson.toJson(historyList)
-            sharedPreferences.edit().putString(KEY_HISTORY_LIST, json).apply()
+            sharedPreferences.edit().putString(KEY_HISTORY_LIST, json).commit() // Utiliser commit() pour une sauvegarde synchrone
+        }
+    }
+
+    // Sauvegarder la dernière fiche consultée
+    fun saveLastViewedCard(entry: AnalysisEntry) {
+        val json = gson.toJson(entry)
+        sharedPreferences.edit().putString(KEY_LAST_VIEWED_CARD, json).commit() // Utiliser commit() pour une sauvegarde synchrone
+    }
+
+    // Récupérer la dernière fiche consultée
+    fun getLastViewedCard(): AnalysisEntry? {
+        val json = sharedPreferences.getString(KEY_LAST_VIEWED_CARD, null)
+        return if (json != null) {
+            gson.fromJson(json, AnalysisEntry::class.java)
+        } else {
+            null
         }
     }
 }
