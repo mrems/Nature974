@@ -497,9 +497,10 @@ class CameraFragment : Fragment() {
                 // Optimisation : Choisir une rÃ©solution de preview adaptÃ©e (720p ou 1080p)
                 previewSize = chooseOptimalSize(map!!.getOutputSizes(SurfaceTexture::class.java))
 
-                // ImageReader pour la capture photo en haute rÃ©solution
-                val captureSize = map.getOutputSizes(android.graphics.ImageFormat.JPEG)[0]
+                // ImageReader pour la capture photo avec taille modÃ©rÃ©e (~2048px bord long)
+                val captureSize = chooseOptimalCaptureSize(map.getOutputSizes(android.graphics.ImageFormat.JPEG))
                 imageReader = ImageReader.newInstance(captureSize.width, captureSize.height, android.graphics.ImageFormat.JPEG, 2)
+                Log.d("CameraFragment", "Taille de capture sÃ©lectionnÃ©e: ${captureSize.width}x${captureSize.height}")
 
                 withContext(Dispatchers.Main) { // Revenir sur le thread principal pour ouvrir la camÃ©ra
                     cameraManager.openCamera(cameraId, stateCallback, backgroundHandler)
@@ -528,17 +529,38 @@ class CameraFragment : Fragment() {
         val preferredWidth = 1920 // 1080p
         val preferredHeight = 1080
         
-        // Trier par aire pour avoir les tailles de la plus petite Ã  la plus grande
+        // Trier par aire pour avoir les tailles de la plus petite Ã  la plus grande
         val sortedSizes = sizes.sortedBy { it.width * it.height }
         
         // Chercher la taille la plus proche de 1080p sans dÃ©passer
         val optimalSize = sortedSizes.lastOrNull { 
             it.width <= preferredWidth && it.height <= preferredHeight 
         } ?: sortedSizes.firstOrNull { 
-            it.width <= 1280 && it.height <= 720 // Fallback Ã  720p
+            it.width <= 1280 && it.height <= 720 // Fallback Ã  720p
         } ?: sortedSizes[0] // Dernier recours
         
         Log.d("CameraFragment", "Taille de preview sÃ©lectionnÃ©e: ${optimalSize.width}x${optimalSize.height}")
+        return optimalSize
+    }
+    
+    /**
+     * Choisit une taille de capture modÃ©rÃ©e pour Ã©conomiser mÃ©moire et bande passante
+     * Cible ~2048px pour le bord long
+     */
+    private fun chooseOptimalCaptureSize(sizes: Array<Size>): Size {
+        val maxDimension = 2048
+        
+        // Trier par aire pour avoir les tailles de la plus petite Ã  la plus grande
+        val sortedSizes = sizes.sortedBy { it.width * it.height }
+        
+        // Chercher la taille la plus proche de 2048px sans dÃ©passer
+        val optimalSize = sortedSizes.lastOrNull { 
+            it.width <= maxDimension && it.height <= maxDimension 
+        } ?: sortedSizes.firstOrNull { 
+            it.width <= 1600 && it.height <= 1600 // Fallback
+        } ?: sortedSizes[0] // Dernier recours
+        
+        Log.d("CameraFragment", "Taille de capture optimale: ${optimalSize.width}x${optimalSize.height}")
         return optimalSize
     }
 
@@ -787,7 +809,7 @@ class CameraFragment : Fragment() {
             val uCropIntent = UCrop.of(sourceUri, destinationUri)
                 .withOptions(uCropOptions)
                 .withAspectRatio(1F, 1F)
-                .withMaxResultSize(800, 800)
+                .withMaxResultSize(600, 600)
                 .getIntent(requireContext())
             uCropActivityResultLauncher.launch(uCropIntent)
             // Fermer la galerie discrÃ¨tement en arriÃ¨re-plan juste aprÃ¨s l'ouverture du recadrage

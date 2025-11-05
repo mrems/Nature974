@@ -57,7 +57,36 @@ class ImageAnalyzer(private val context: Context) {
         return "```json\n${systemPrompt}\n\n${userQuery}\n```"
     }
 
+    /**
+     * Redimensionne un bitmap pour que son bord long ne dépasse pas maxDimension
+     */
+    private fun resizeBitmap(bitmap: Bitmap, maxDimension: Int = 1280): Bitmap {
+        val width = bitmap.width
+        val height = bitmap.height
+        
+        // Si l'image est déjà assez petite, pas besoin de la redimensionner
+        if (width <= maxDimension && height <= maxDimension) {
+            return bitmap
+        }
+        
+        // Calculer le ratio de redimensionnement
+        val ratio = if (width > height) {
+            maxDimension.toFloat() / width.toFloat()
+        } else {
+            maxDimension.toFloat() / height.toFloat()
+        }
+        
+        val newWidth = (width * ratio).toInt()
+        val newHeight = (height * ratio).toInt()
+        
+        Log.d("ImageAnalyzer", "Redimensionnement: ${width}x${height} -> ${newWidth}x${newHeight}")
+        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+    }
+    
     private fun bitmapToBase64(bitmap: Bitmap, mimeType: String): String {
+        // Redimensionner le bitmap avant encodage pour réduire la taille
+        val resizedBitmap = resizeBitmap(bitmap, 1280)
+        
         val byteArrayOutputStream = ByteArrayOutputStream()
         val format = when (mimeType) {
             "image/jpeg" -> Bitmap.CompressFormat.JPEG
@@ -65,8 +94,14 @@ class ImageAnalyzer(private val context: Context) {
             else -> Bitmap.CompressFormat.JPEG // Default to JPEG
         }
         // Optimisation : Réduire à 60% pour l'analyse IA (suffisant pour la reconnaissance)
-        bitmap.compress(format, 60, byteArrayOutputStream)
+        resizedBitmap.compress(format, 40, byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
+        
+        // Libérer la mémoire du bitmap redimensionné si différent de l'original
+        if (resizedBitmap != bitmap) {
+            resizedBitmap.recycle()
+        }
+        
         return Base64.encodeToString(byteArray, Base64.NO_WRAP)
     }
 
