@@ -85,7 +85,7 @@ class ImageAnalyzer(private val context: Context) {
     
     private fun bitmapToBase64(bitmap: Bitmap, mimeType: String): String {
         // Redimensionner le bitmap avant encodage pour réduire la taille
-        val resizedBitmap = resizeBitmap(bitmap, 1280)
+        val resizedBitmap = resizeBitmap(bitmap, 600) // Définit la taille maximale pour l'analyse à 600x600 pixels
         
         val byteArrayOutputStream = ByteArrayOutputStream()
         val format = when (mimeType) {

@@ -788,7 +788,7 @@ class CameraFragment : Fragment() {
             val destinationUri = Uri.fromFile(file)
             Log.d("CameraFragment", "startCrop: URI de destination pour le recadrage: $destinationUri")
             val uCropOptions = UCrop.Options()
-            uCropOptions.setHideBottomControls(false)
+            uCropOptions.setHideBottomControls(true) // Cacher les contrôles inférieurs (rotation et scale)
             uCropOptions.setFreeStyleCropEnabled(false)
             uCropOptions.setCropGridColumnCount(3)
             uCropOptions.setCropGridRowCount(3)
@@ -796,12 +796,12 @@ class CameraFragment : Fragment() {
             uCropOptions.setShowCropFrame(true)
             uCropOptions.setCropGridStrokeWidth(2)
             uCropOptions.setCropFrameStrokeWidth(4)
-            uCropOptions.setDimmedLayerColor(ContextCompat.getColor(requireContext(), R.color.white))
-            uCropOptions.setRootViewBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+            uCropOptions.setDimmedLayerColor(ContextCompat.getColor(requireContext(), R.color.dimmed_background)) // Utilise le noir semi-transparent
+            uCropOptions.setRootViewBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black)) // Fond noir pour la zone de recadrage
             uCropOptions.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.white))
             uCropOptions.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.white))
-            uCropOptions.setToolbarWidgetColor(ContextCompat.getColor(requireContext(), R.color.black))
-            uCropOptions.setActiveControlsWidgetColor(ContextCompat.getColor(requireContext(), R.color.black))
+            uCropOptions.setToolbarWidgetColor(ContextCompat.getColor(requireContext(), R.color.black)) // Couleur des boutons de la barre d'outils en noir
+            uCropOptions.setActiveControlsWidgetColor(ContextCompat.getColor(requireContext(), R.color.black)) // Couleur des contrôles actifs en noir
             uCropOptions.setCropFrameColor(ContextCompat.getColor(requireContext(), R.color.black))
             uCropOptions.setCropGridColor(ContextCompat.getColor(requireContext(), R.color.black))
             uCropOptions.setToolbarTitle("Recadrer l'image")
@@ -809,7 +809,6 @@ class CameraFragment : Fragment() {
             val uCropIntent = UCrop.of(sourceUri, destinationUri)
                 .withOptions(uCropOptions)
                 .withAspectRatio(1F, 1F)
-                .withMaxResultSize(600, 600)
                 .getIntent(requireContext())
             uCropActivityResultLauncher.launch(uCropIntent)
             // Fermer la galerie discrÃ¨tement en arriÃ¨re-plan juste aprÃ¨s l'ouverture du recadrage
