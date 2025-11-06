@@ -12,11 +12,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Identifiez facilement"
-        android:textSize="32sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:layout_marginBottom="24dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:maxLines="1"
+        android:singleLine="true" />
 
     <ImageView
         android:id="@+id/page2_illustration"

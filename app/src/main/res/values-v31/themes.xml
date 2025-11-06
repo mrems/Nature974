@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ : on conserve tout le thème d'origine et on ajoute les attributs SplashScreen -->
+    <style name="Theme.Geronimo" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Couleurs principales (identiques au thème base) -->
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="colorPrimaryVariant">@android:color/white</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Barres système (identiques au thème base) -->
+        <item name="android:statusBarColor">@android:color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <!-- Styles personnalisés (identiques au thème base) -->
+        <item name="popupMenuStyle">@style/CustomPopupMenu</item>
+        <item name="android:popupMenuStyle">@style/CustomPopupMenu</item>
+
+        <!-- Attributs SplashScreen Android 12+ -->
+        <item name="android:windowSplashScreenBackground">@android:color/white</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/transparent_splash_icon</item>
+        <item name="android:windowSplashScreenBrandingImage">@null</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.Geronimo.Splash" parent="Theme.AppCompat.NoActionBar">
+        <!-- Barres système (identiques au thème base) -->
+        <item name="android:statusBarColor">@android:color/white</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:windowBackground">@android:color/white</item>
+
+        <!-- Attributs SplashScreen Android 12+ -->
+        <item name="android:windowSplashScreenBackground">@android:color/white</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/transparent_splash_icon</item>
+        <item name="android:windowSplashScreenBrandingImage">@null</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+    </style>
+</resources>
+
+

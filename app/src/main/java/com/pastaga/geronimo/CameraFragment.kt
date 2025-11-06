@@ -526,21 +526,59 @@ class CameraFragment : Fragment() {
      * Cible 1080p max pour la fluiditÃ©
      */
     private fun chooseOptimalSize(sizes: Array<Size>): Size {
-        val preferredWidth = 1920 // 1080p
-        val preferredHeight = 1080
-        
-        // Trier par aire pour avoir les tailles de la plus petite Ã  la plus grande
-        val sortedSizes = sizes.sortedBy { it.width * it.height }
-        
-        // Chercher la taille la plus proche de 1080p sans dÃ©passer
-        val optimalSize = sortedSizes.lastOrNull { 
-            it.width <= preferredWidth && it.height <= preferredHeight 
-        } ?: sortedSizes.firstOrNull { 
-            it.width <= 1280 && it.height <= 720 // Fallback Ã  720p
-        } ?: sortedSizes[0] // Dernier recours
-        
-        Log.d("CameraFragment", "Taille de preview sÃ©lectionnÃ©e: ${optimalSize.width}x${optimalSize.height}")
-        return optimalSize
+        val preferredLongEdge = 1920 // cible ~1080p
+        val ratio16by9 = 16.0 / 9.0
+        val tolerance = 0.06 // ~\u00b13.3%
+
+        fun aspectRatio(s: Size): Double {
+            val longEdge = maxOf(s.width, s.height).toDouble()
+            val shortEdge = minOf(s.width, s.height).toDouble()
+            return longEdge / shortEdge
+        }
+
+        // 1) Pr\u00e9f\u00e9rer 16:9 <= preferredLongEdge
+        val candidates169 = sizes.filter { s ->
+            val r = aspectRatio(s)
+            val longEdge = maxOf(s.width, s.height)
+            Math.abs(r - ratio16by9) <= tolerance && longEdge <= preferredLongEdge
+        }.sortedBy { it.width * it.height }
+
+        if (candidates169.isNotEmpty()) {
+            val pick = candidates169.last()
+            Log.d("CameraFragment", "Preview 16:9 s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
+            return pick
+        }
+
+        // 2) Fallback 4:3 <= preferredLongEdge
+        val ratio4by3 = 4.0 / 3.0
+        val candidates43 = sizes.filter { s ->
+            val r = aspectRatio(s)
+            val longEdge = maxOf(s.width, s.height)
+            Math.abs(r - ratio4by3) <= tolerance && longEdge <= preferredLongEdge
+        }.sortedBy { it.width * it.height }
+
+        if (candidates43.isNotEmpty()) {
+            val pick = candidates43.last()
+            Log.d("CameraFragment", "Preview 4:3 s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
+            return pick
+        }
+
+        // 3) Exclure les formats carr\u00e9s si possible, sinon prendre la plus grande <= preferredLongEdge
+        val nonSquare = sizes.filter { s ->
+            val r = aspectRatio(s)
+            val longEdge = maxOf(s.width, s.height)
+            Math.abs(r - 1.0) > 0.05 && longEdge <= preferredLongEdge
+        }.sortedBy { it.width * it.height }
+        if (nonSquare.isNotEmpty()) {
+            val pick = nonSquare.last()
+            Log.d("CameraFragment", "Preview non-carr\u00e9e s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
+            return pick
+        }
+
+        // 4) Dernier recours: plus grande r\u00e9solution disponible
+        val fallback = sizes.maxByOrNull { it.width * it.height } ?: sizes[0]
+        Log.d("CameraFragment", "Preview fallback s\u00e9lectionn\u00e9e: ${fallback.width}x${fallback.height}")
+        return fallback
     }
     
     /**
@@ -548,20 +586,61 @@ class CameraFragment : Fragment() {
      * Cible ~2048px pour le bord long
      */
     private fun chooseOptimalCaptureSize(sizes: Array<Size>): Size {
-        val maxDimension = 2048
-        
-        // Trier par aire pour avoir les tailles de la plus petite Ã  la plus grande
-        val sortedSizes = sizes.sortedBy { it.width * it.height }
-        
-        // Chercher la taille la plus proche de 2048px sans dÃ©passer
-        val optimalSize = sortedSizes.lastOrNull { 
-            it.width <= maxDimension && it.height <= maxDimension 
-        } ?: sortedSizes.firstOrNull { 
-            it.width <= 1600 && it.height <= 1600 // Fallback
-        } ?: sortedSizes[0] // Dernier recours
-        
-        Log.d("CameraFragment", "Taille de capture optimale: ${optimalSize.width}x${optimalSize.height}")
-        return optimalSize
+        val maxLongEdge = 2048
+        val ratio16by9 = 16.0 / 9.0
+        val ratio4by3 = 4.0 / 3.0
+        val tolerance = 0.06
+
+        fun aspectRatio(s: Size): Double {
+            val longEdge = maxOf(s.width, s.height).toDouble()
+            val shortEdge = minOf(s.width, s.height).toDouble()
+            return longEdge / shortEdge
+        }
+
+        // 1) Pr\u00e9f\u00e9rer 16:9 avec bord long <= 2048
+        val candidates169 = sizes.filter { s ->
+            val r = aspectRatio(s)
+            val longEdge = maxOf(s.width, s.height)
+            Math.abs(r - ratio16by9) <= tolerance && longEdge <= maxLongEdge
+        }.sortedBy { it.width * it.height }
+
+        if (candidates169.isNotEmpty()) {
+            val pick = candidates169.last()
+            Log.d("CameraFragment", "Capture 16:9 s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
+            return pick
+        }
+
+        // 2) Fallback 4:3 avec bord long <= 2048 (mais PAS carr\u00e9)
+        val candidates43 = sizes.filter { s ->
+            val r = aspectRatio(s)
+            val longEdge = maxOf(s.width, s.height)
+            Math.abs(r - ratio4by3) <= tolerance && longEdge <= maxLongEdge
+        }.sortedBy { it.width * it.height }
+
+        if (candidates43.isNotEmpty()) {
+            val pick = candidates43.last()
+            Log.d("CameraFragment", "Capture 4:3 s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
+            return pick
+        }
+
+        // 3) Exclure autant que possible les sorties carr\u00e9es
+        val nonSquare = sizes.filter { s ->
+            val r = aspectRatio(s)
+            val longEdge = maxOf(s.width, s.height)
+            Math.abs(r - 1.0) > 0.05 && longEdge <= maxLongEdge
+        }.sortedBy { it.width * it.height }
+        if (nonSquare.isNotEmpty()) {
+            val pick = nonSquare.last()
+            Log.d("CameraFragment", "Capture non-carr\u00e9e s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
+            return pick
+        }
+
+        // 4) Dernier recours: plus grande r\u00e9solution non-carr\u00e9e, sinon n'importe laquelle
+        val anyNonSquare = sizes.filter { s -> Math.abs(aspectRatio(s) - 1.0) > 0.05 }
+        val fallback = (anyNonSquare.maxByOrNull { it.width * it.height }
+            ?: sizes.maxByOrNull { it.width * it.height }) ?: sizes[0]
+        Log.d("CameraFragment", "Capture fallback s\u00e9lectionn\u00e9e: ${fallback.width}x${fallback.height}")
+        return fallback
     }
 
     private fun getOrientation(rotation: Int): Int {
@@ -789,10 +868,10 @@ class CameraFragment : Fragment() {
             Log.d("CameraFragment", "startCrop: URI de destination pour le recadrage: $destinationUri")
             val uCropOptions = UCrop.Options()
             uCropOptions.setHideBottomControls(true) // Cacher les contrôles inférieurs (rotation et scale)
-            uCropOptions.setFreeStyleCropEnabled(false)
+            uCropOptions.setFreeStyleCropEnabled(false) // Désactiver le recadrage libre pour assurer un ratio fixe
             uCropOptions.setCropGridColumnCount(3)
             uCropOptions.setCropGridRowCount(3)
-            uCropOptions.setShowCropGrid(true)
+            uCropOptions.setShowCropGrid(false) // Désactiver le quadrillage
             uCropOptions.setShowCropFrame(true)
             uCropOptions.setCropGridStrokeWidth(2)
             uCropOptions.setCropFrameStrokeWidth(4)
@@ -802,14 +881,15 @@ class CameraFragment : Fragment() {
             uCropOptions.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.white))
             uCropOptions.setToolbarWidgetColor(ContextCompat.getColor(requireContext(), R.color.black)) // Couleur des boutons de la barre d'outils en noir
             uCropOptions.setActiveControlsWidgetColor(ContextCompat.getColor(requireContext(), R.color.black)) // Couleur des contrôles actifs en noir
-            uCropOptions.setCropFrameColor(ContextCompat.getColor(requireContext(), R.color.black))
-            uCropOptions.setCropGridColor(ContextCompat.getColor(requireContext(), R.color.black))
+            uCropOptions.setCropFrameColor(ContextCompat.getColor(requireContext(), R.color.white))
+            uCropOptions.setCropGridColor(ContextCompat.getColor(requireContext(), R.color.white))
             uCropOptions.setToolbarTitle("Recadrer l'image")
 
             val uCropIntent = UCrop.of(sourceUri, destinationUri)
                 .withOptions(uCropOptions)
                 .withAspectRatio(1F, 1F)
                 .getIntent(requireContext())
+
             uCropActivityResultLauncher.launch(uCropIntent)
             // Fermer la galerie discrÃ¨tement en arriÃ¨re-plan juste aprÃ¨s l'ouverture du recadrage
             view?.postDelayed({ closeBottomSheet() }, 150)

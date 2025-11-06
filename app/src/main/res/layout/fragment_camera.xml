@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|top"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="26dp"
             android:layout_marginEnd="16dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:text="5"
                 android:textColor="@color/gold"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:shadowColor="#80000000"
                 android:shadowDx="2"
@@ -70,8 +70,8 @@
                 android:shadowRadius="4" />
 
             <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_marginStart="4dp"
                 android:src="@drawable/compteur_icon" />
 
