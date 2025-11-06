@@ -33,12 +33,12 @@
         android:id="@+id/page2_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Il suffit de prendre une photo pour que Geronimo identifie l'animal ou la plante."
+        android:text="Il suffit de prendre une photo pour avoir une réponse en quelques secondes"
         android:textSize="18sp"
         android:textColor="@color/black"
         android:layout_marginBottom="32dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:gravity="center"
         android:lineSpacingExtra="4dp" />
 
