@@ -89,6 +89,11 @@ class CameraFragment : Fragment() {
 
     private lateinit var cameraPreviewTextureView: TextureView
 
+    private var cameraOpening: Boolean = false
+    private var cameraStarted: Boolean = false
+    private var cameraOpenRetryCount: Int = 0
+    private val maxCameraOpenRetries: Int = 1
+
     private var currentPhotoUri: Uri? = null
     private var croppedImageUri: Uri? = null
     private var imageFile: File? = null
@@ -419,7 +424,14 @@ class CameraFragment : Fragment() {
         captureSession = null // Explicitly nullify
         cameraDevice?.close()
         cameraDevice = null
-        imageReader.close()
+        if (this::imageReader.isInitialized) {
+            try {
+                imageReader.close()
+            } catch (_: Throwable) {}
+        }
+        cameraOpening = false
+        cameraStarted = false
+        cameraOpenRetryCount = 0
     }
 
     // SÃ©lecteur de thÃ¨me supprimÃ©
@@ -428,6 +440,9 @@ class CameraFragment : Fragment() {
         override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
             // Les permissions ont dÃ©jÃ  Ã©tÃ© vÃ©rifiÃ©es lors de l'onboarding
             // On peut directement ouvrir la camÃ©ra
+            if (backgroundHandler == null) {
+                startBackgroundThread()
+            }
             openCamera()
         }
 
@@ -461,18 +476,30 @@ class CameraFragment : Fragment() {
     private val stateCallback = object : CameraDevice.StateCallback() {
         override fun onOpened(camera: CameraDevice) {
             cameraDevice = camera
+            cameraOpening = false
+            cameraStarted = true
+            cameraOpenRetryCount = 0
             createCameraPreviewSession()
         }
 
         override fun onDisconnected(camera: CameraDevice) {
             camera.close()
             cameraDevice = null
+            cameraOpening = false
+            cameraStarted = false
         }
 
         override fun onError(camera: CameraDevice, error: Int) {
             camera.close()
             cameraDevice = null
-            activity?.finish()
+            cameraOpening = false
+            cameraStarted = false
+            if (cameraOpenRetryCount < maxCameraOpenRetries && isAdded && view != null) {
+                cameraOpenRetryCount++
+                view?.postDelayed({ openCamera() }, 300)
+            } else {
+                Toast.makeText(requireContext(), "Erreur caméra. Réessayez.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -482,6 +509,11 @@ class CameraFragment : Fragment() {
             Log.e("CameraFragment", "Permission camÃ©ra non accordÃ©e, impossible d'ouvrir la camÃ©ra")
             return
         }
+        if (cameraOpening || cameraStarted) {
+            Log.d("CameraFragment", "Ouverture camÃ©ra déjà en cours ou déjà démarrée.")
+            return
+        }
+        cameraOpening = true
         
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -516,6 +548,11 @@ class CameraFragment : Fragment() {
                 Log.e("CameraFragment", "Erreur inattendue lors de l'ouverture de la camÃ©ra", e)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "Erreur lors de l'ouverture de la camÃ©ra", Toast.LENGTH_SHORT).show()
+                }
+            } finally {
+                if (!cameraStarted) {
+                    // Si l'ouverture n'a pas abouti jusqu'ici, relÃ¢cher le flag pour permettre un retry
+                    cameraOpening = false
                 }
             }
         }
@@ -683,7 +720,13 @@ class CameraFragment : Fragment() {
                 }
 
                 override fun onConfigureFailed(cameraCaptureSession: CameraCaptureSession) {
-                    Toast.makeText(requireContext(), "Ã‰chec de la configuration de la session de capture.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Ã‰chec de la configuration de la caméra.", Toast.LENGTH_SHORT).show()
+                    // Petit retry contrÃ´lÃ© pour certaines devices donnant un "Ã©cran vert" ou un Ã©chec sporadique
+                    if (cameraOpenRetryCount < maxCameraOpenRetries && isAdded && view != null) {
+                        cameraOpenRetryCount++
+                        closeCamera()
+                        view?.postDelayed({ openCamera() }, 300)
+                    }
                 }
             }, null)
         } catch (e: CameraAccessException) {
