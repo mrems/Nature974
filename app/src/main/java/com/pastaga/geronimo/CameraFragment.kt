@@ -195,6 +195,13 @@ class CameraFragment : Fragment() {
         appTitleImageView = view.findViewById(R.id.app_title_image_view)
 
         creditsTextView = view.findViewById(R.id.credits_text_view)
+        
+        // Clic sur le compteur de crédits pour ouvrir l'écran d'achat
+        val creditsContainer = view.findViewById<LinearLayout>(R.id.credits_container)
+        creditsContainer.setOnClickListener {
+            val intent = Intent(requireContext(), PurchaseActivity::class.java)
+            startActivity(intent)
+        }
 
         // Calculer la hauteur du titre + une petite marge en dp
         val density = resources.displayMetrics.density
@@ -1010,13 +1017,16 @@ class CameraFragment : Fragment() {
                         return@launch
                     }
                     Log.d("CameraFragment", "Utilisateur connectÃ©: ${currentUser.uid}")
-                    // Gating: dÃ©crÃ©menter 1 crÃ©dit cÃ´tÃ© serveur avant l'analyse
+                    // Gating: décrémenter 1 crédit côté serveur avant l'analyse.
+                    // Si les crédits sont à 0 (ou autre erreur liée aux crédits), on redirige vers l'écran d'abonnement.
                     try {
                         CreditsManager.decrementOneCredit()
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
                             loadingDialog.dismiss()
-                            Toast.makeText(requireContext(), "CrÃ©dits insuffisants ou non connectÃ©.", Toast.LENGTH_LONG).show()
+                            // Rediriger vers la page d'abonnement quand les crédits sont épuisés
+                            val intent = Intent(requireContext(), PurchaseActivity::class.java)
+                            startActivity(intent)
                         }
                         return@launch
                     }

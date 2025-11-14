@@ -98,13 +98,16 @@ class HistoryListFragment : Fragment() {
                         return@launch
                     }
                     Log.d("HistoryListFragment", "Utilisateur connecté: ${currentUser.uid}")
-                    // Gating: décrémenter 1 crédit avant ré-analyse
+                    // Gating: décrémenter 1 crédit avant ré-analyse.
+                    // Si les crédits sont à 0 (ou autre erreur liée aux crédits), on redirige vers l'écran d'abonnement.
                     try {
                         CreditsManager.decrementOneCredit()
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
                             loadingDialog.dismiss()
-                            Toast.makeText(requireContext(), "Crédits insuffisants ou non connecté.", Toast.LENGTH_LONG).show()
+                            // Rediriger vers la page d'abonnement quand les crédits sont épuisés
+                            val intent = Intent(requireContext(), PurchaseActivity::class.java)
+                            startActivity(intent)
                         }
                         return@launch
                     }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#80000000"
@@ -15,16 +16,15 @@
         android:orientation="vertical"
         android:gravity="center"
         android:background="@drawable/loading_dialog_background"
-        android:elevation="8dp">
+        android:elevation="8dp"
+        android:padding="32dp">
 
-        <!-- Icône Geronimo -->
-        <ImageView
-            android:id="@+id/loading_leaf_icon"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/geronimo_app"
-            android:contentDescription="@string/app_name"
-            android:layout_marginBottom="24dp" />
+        <!-- Animation Lottie -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loading_lottie_animation"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginBottom="0dp" />
 
         <!-- Titre principal -->
         <TextView
@@ -45,16 +45,7 @@
             android:text="Identification de votre photo"
             android:textSize="14sp"
             android:textColor="@color/black"
-            android:gravity="center"
-            android:layout_marginBottom="32dp" />
-
-        <!-- Barre de progression moderne -->
-        <ProgressBar
-            android:id="@+id/loading_progress_bar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:indeterminate="true"
-            android:indeterminateTint="@color/black" />
+            android:gravity="center" />
 
     </LinearLayout>
 

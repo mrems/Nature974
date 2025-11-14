@@ -9,20 +9,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
+import com.airbnb.lottie.LottieAnimationView
 
 class LoadingDialogFragment : DialogFragment() {
+
+    private var lottieAnimation: LottieAnimationView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Désactiver le comportement de fermeture par défaut
         isCancelable = false
         val view = inflater.inflate(R.layout.dialog_loading, container, false)
         
-        // Ajouter une animation de pulsation à l'icône de feuille
-        val leafIcon = view.findViewById<ImageView>(R.id.loading_leaf_icon)
-        val pulseAnimation = AnimationUtils.loadAnimation(context, R.anim.pulse_animation)
-        leafIcon?.startAnimation(pulseAnimation)
+        // Charger l'animation Lottie depuis res/raw/loading.json
+        lottieAnimation = view.findViewById<LottieAnimationView>(R.id.loading_lottie_animation)
+        lottieAnimation?.apply {
+            try {
+                // Charger le fichier JSON depuis res/raw/
+                setAnimation(R.raw.loading)
+                repeatCount = com.airbnb.lottie.LottieDrawable.INFINITE
+                playAnimation()
+            } catch (e: Exception) {
+                android.util.Log.e("LoadingDialog", "Erreur lors du chargement de l'animation Lottie", e)
+            }
+        }
         
         // Ajouter une animation d'entrée au conteneur principal
         val contentLayout = view.findViewById<ViewGroup>(R.id.loading_content_layout)
@@ -49,6 +59,13 @@ class LoadingDialogFragment : DialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
+    }
+    
+    override fun onDestroyView() {
+        // Arrêter l'animation pour libérer les ressources
+        lottieAnimation?.cancelAnimation()
+        lottieAnimation = null
+        super.onDestroyView()
     }
 }
 

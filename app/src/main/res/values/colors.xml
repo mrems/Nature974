@@ -33,6 +33,18 @@
     <color name="gold">#B8860B</color>
     <color name="dimmed_background">#80000000</color> <!-- Noir semi-transparent pour assombrir le fond -->
 
+    <!-- Couleurs pour les cartes d'offres -->
+    <color name="offer_starter_primary">#4CAF50</color>
+    <color name="offer_starter_light">#E8F5E9</color>
+    <color name="offer_pro_primary">#2196F3</color>
+    <color name="offer_pro_light">#E3F2FD</color>
+    <color name="offer_premium_primary">#FF6F00</color>
+    <color name="offer_premium_light">#FFF3E0</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_shadow">#1A000000</color>
+    <color name="price_text">#212121</color>
+    <color name="subtitle_text">#757575</color>
+
 </resources>
 
 

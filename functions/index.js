@@ -5,16 +5,23 @@
 const express = require("express");
 const cors = require("cors");
 const { onRequest } = require("firebase-functions/v2/https");
-const { defineSecret } = require("firebase-functions/params");
+const { defineSecret, defineString } = require("firebase-functions/params");
 const functions = require("firebase-functions");
 const functionsV1 = require("firebase-functions/v1");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { google } = require("googleapis");
+const { Buffer } = require('buffer'); // <-- AJOUTER CETTE LIGNE
 
 const admin = require('firebase-admin');
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 initializeApp();
 const db = getFirestore();
+
+// Charger les variables d'environnement depuis .env en développement local
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 // Région (Paris)
 const REGION = "europe-west9"; 
@@ -26,6 +33,7 @@ app.use(express.json({ limit: "15mb" }));
 
 // Déclaration du secret Firebase pour la clé Gemini
 const GEMINI_API_KEY = defineSecret("GEMINI_API_KEY");
+const ANDROID_PACKAGE_NAME = defineString("ANDROID_PACKAGE_NAME");
 
 // Utilitaire: transformer base64 en part compatible Gemini
 function base64ToGenerativePart(base64EncodedImage, mimeType) {
@@ -263,3 +271,194 @@ exports.getCredits = functionsV1.https.onCall(async (data, context) => {
   console.log(`[getCredits] uid=${uid} - crédits=${credits}`);
   return { credits };
 });
+
+// Mapping produit -> crédits (à aligner avec Play Console)
+const PRODUCT_CREDITS = {
+  credits_10: 10,
+  credits_50: 50,
+  credits_100: 100,
+};
+
+// Nom du package Android, fourni via variable d'environnement Functions
+// Récupéré via paramètre Firebase (.env.*), pas via legacy config
+
+// Callable: vérifie l'achat via AndroidPublisher et crédite l'utilisateur
+exports.verifyAndGrantCredits = functionsV1.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functionsV1.https.HttpsError('unauthenticated', 'Authentification requise.');
+  }
+  const uid = context.auth.uid;
+  const productId = data?.productId;
+  const purchaseToken = data?.purchaseToken;
+
+  if (!productId || !purchaseToken) {
+    throw new functionsV1.https.HttpsError('invalid-argument', 'productId et purchaseToken requis.');
+  }
+  const creditsToGrant = PRODUCT_CREDITS[productId] || 0;
+  if (creditsToGrant <= 0) {
+    throw new functionsV1.https.HttpsError('failed-precondition', 'Produit inconnu.');
+  }
+  if (!ANDROID_PACKAGE_NAME.value()) {
+    console.error('ANDROID_PACKAGE_NAME non défini dans les variables d’environnement Functions.');
+    throw new functionsV1.https.HttpsError('failed-precondition', 'Configuration serveur manquante.');
+  }
+
+  const tokenDocRef = db.collection('purchaseTokens').doc(purchaseToken);
+  const tokenSnap = await tokenDocRef.get();
+  if (tokenSnap.exists) {
+    console.log(`[verifyAndGrantCredits] token déjà traité: ${purchaseToken}`);
+    return { alreadyProcessed: true };
+  }
+
+  try {
+    const auth = new google.auth.GoogleAuth({
+      scopes: ['https://www.googleapis.com/auth/androidpublisher'],
+    });
+    const androidpublisher = google.androidpublisher({ version: 'v3', auth });
+
+    const { data: purchase } = await androidpublisher.purchases.products.get({
+      packageName: ANDROID_PACKAGE_NAME.value(),
+      productId,
+      token: purchaseToken,
+    });
+
+    // purchase.purchaseState === 0 => acheté
+    if (purchase?.purchaseState !== 0) {
+      console.warn(`[verifyAndGrantCredits] Achat non valide pour token=${purchaseToken}:`, purchase);
+      throw new functionsV1.https.HttpsError('failed-precondition', 'Achat non valide ou non finalisé.');
+    }
+
+    await db.runTransaction(async (tx) => {
+      const userRef = db.collection('users').doc(uid);
+      const userSnap = await tx.get(userRef);
+      if (!userSnap.exists) {
+        throw new functionsV1.https.HttpsError('not-found', 'Utilisateur introuvable.');
+      }
+      tx.update(userRef, {
+        credits: FieldValue.increment(creditsToGrant),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+      tx.set(tokenDocRef, {
+        uid,
+        productId,
+        creditsGranted: creditsToGrant,
+        createdAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    console.log(`[verifyAndGrantCredits] uid=${uid} - +${creditsToGrant} crédits accordés pour ${productId}`);
+    return { success: true, creditsGranted: creditsToGrant };
+  } catch (err) {
+    if (err instanceof functionsV1.https.HttpsError) throw err;
+    console.error('[verifyAndGrantCredits] Erreur serveur:', err);
+    throw new functionsV1.https.HttpsError('internal', err.message || 'Erreur de vérification d’achat');
+  }
+});
+
+// Importez votre configuration d'authentification Google Play Developer ici
+// Pour une implémentation complète, vous devrez gérer l'authentification avec une clé de service
+// et utiliser une bibliothèque cliente pour l'API Google Play Developer.
+// Ceci est une SIMPLIFICATION.
+
+// ----------------------------------------------------------------------
+// Configuration de l'authentification Google Play Developer API
+// ----------------------------------------------------------------------
+
+const packageName = 'com.pastaga.geronimo'; // <<< REMPLACEZ PAR LE PACKAGE DE VOTRE APP
+
+// ----------------------------------------------------------------------
+// Fonction Firebase pour la vérification des abonnements
+// ----------------------------------------------------------------------
+
+exports.verifyAndGrantSubscription = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
+    }
+
+    const { productId, purchaseToken } = data;
+
+    if (!productId || !purchaseToken) {
+        throw new functions.https.HttpsError('invalid-argument', 'The function must be called with productId and purchaseToken.');
+    }
+
+    try {
+        // Préparer le client AndroidPublisher à la demande (lazy), pour éviter les erreurs d'init au chargement
+        const encoded = process.env.PLAYSTORE_SERVICE_ACCOUNT_KEY;
+        if (!encoded) {
+            console.error('PLAYSTORE_SERVICE_ACCOUNT_KEY manquant dans les variables d’environnement.');
+            throw new functions.https.HttpsError('failed-precondition', 'Configuration serveur manquante.');
+        }
+        let credentials;
+        try {
+            credentials = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
+        } catch (e) {
+            console.error('PLAYSTORE_SERVICE_ACCOUNT_KEY invalide (Base64 ou JSON).');
+            throw new functions.https.HttpsError('failed-precondition', 'Clé de service invalide.');
+        }
+        const auth = new google.auth.GoogleAuth({
+            credentials,
+            scopes: ['https://www.googleapis.com/auth/androidpublisher']
+        });
+        const androidpublisher = google.androidpublisher({
+            version: 'v3',
+            auth
+        });
+
+        // --- Étape 2: Vérifier l'achat auprès de Google Play ---
+        const subscriptionResponse = await androidpublisher.purchases.subscriptions.get({
+            packageName: packageName,
+            subscriptionId: productId,
+            token: purchaseToken
+        });
+
+        const subscription = subscriptionResponse.data;
+
+        // Vérifiez le statut de l'abonnement
+        // Un abonnement est actif si purchaseState est PURCHASES_PURCHASED (0)
+        // et qu'il n'est pas expiré (expiryTimeMillis > Date.now())
+        const isSubscriptionValid = subscription.purchaseState === 0 &&
+                                    subscription.expiryTimeMillis > Date.now();
+
+        if (isSubscriptionValid) {
+            // --- Étape 3: Mettre à jour le statut de l'utilisateur dans votre base de données ---
+            const userId = context.auth.uid;
+            const now = admin.firestore.FieldValue.serverTimestamp();
+
+            await admin.firestore().collection('users').doc(userId).set({
+                isPremium: true,
+                subscriptionId: productId,
+                purchaseToken: purchaseToken,
+                subscriptionStartDate: new Date(parseInt(subscription.startTimeMillis)),
+                subscriptionExpiryDate: new Date(parseInt(subscription.expiryTimeMillis)),
+                autoRenewing: subscription.autoRenewing,
+                // Ajoutez ici la logique pour les requêtes si elles se réinitialisent mensuellement
+                // Par exemple : requestsRemaining: getRequestsForProduct(productId),
+                //               requestsLastReset: now,
+            }, { merge: true });
+
+            return { status: 'success', message: 'Subscription verified and granted.' };
+        } else {
+            throw new functions.https.HttpsError('permission-denied', 'Subscription is not active or valid.');
+        }
+
+    } catch (error) {
+        console.error('Error verifying subscription:', error);
+        // Distinguer les erreurs pour un meilleur débogage côté client si nécessaire
+        if (error.code === 404) { // Not found - token invalid or expired
+             throw new functions.https.HttpsError('not-found', 'Subscription not found or invalid token.');
+        }
+        throw new functions.https.HttpsError('internal', 'Unable to verify subscription.', error.message);
+    }
+});
+
+// Ajoutez ici une fonction utilitaire si vous avez besoin de mapper les IDs de produits aux quotas de requêtes
+/*
+function getRequestsForProduct(productId) {
+    switch (productId) {
+        case 'pack_requetes_25': return 25;
+        case 'pack_requetes_100': return 100;
+        case 'pack_500': return 500;
+        default: return 0;
+    }
+}
+*/

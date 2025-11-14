@@ -13,8 +13,8 @@ android {
         applicationId = "com.pastaga.geronimo"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 4
+        versionName = "1.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -98,4 +98,10 @@ dependencies {
 
     // Dépendances pour Google Sign-In
     implementation("com.google.android.gms:play-services-auth:20.7.0") // Vérifiez la dernière version stable
+    
+    // Google Play Billing (Phase 3)
+    implementation("com.android.billingclient:billing-ktx:6.2.1")
+    
+    // Lottie pour les animations
+    implementation("com.airbnb.android:lottie:6.1.0")
 }

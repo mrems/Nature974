@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Geronimo</string>
+    <string name="loading">Chargement...</string>
+    <string name="choose_credits_pack">Choisissez un pack de crédits</string>
+    <string name="choose_subscription">Choisissez un abonnement</string>
+    <string name="verifying_purchase">Vérification de l\'achat...</string>
+    <string name="purchase_success">Achat confirmé</string>
+    <string name="subscription_success">Abonnement activé</string>
+    <string name="already_subscribed">Vous avez déjà un abonnement actif</string>
+    
+    <!-- Offres d'abonnement -->
+    <string name="offer_title">Subscription plan</string>
+    <string name="offer_starter_title">Aventurier</string>
+    <string name="offer_starter_queries">25 identifications</string>
+    <string name="offer_starter_price">3,99€</string>
+    <string name="offer_pro_title">Explorateur</string>
+    <string name="offer_pro_queries">100 identifications</string>
+    <string name="offer_pro_price">9,99€</string>
+    <string name="offer_pro_badge">Populaire</string>
+    <string name="offer_premium_title">Expert</string>
+    <string name="offer_premium_queries">500 identifications</string>
+    <string name="offer_premium_price">29,99€</string>
+    <string name="offer_premium_badge">Meilleure valeur</string>
+    <string name="per_month">/mois</string>
 </resources>
 
 
