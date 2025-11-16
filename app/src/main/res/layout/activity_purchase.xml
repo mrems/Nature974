@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp"
-                android:background="@color/offer_starter_light">
+                android:background="@drawable/bg_offer_starter_gradient">
 
                 <!-- Contenu à gauche -->
                 <LinearLayout
@@ -142,7 +142,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp"
-                android:background="@color/offer_pro_light">
+                android:background="@drawable/bg_offer_pro_gradient">
 
                 <!-- Contenu à gauche -->
                 <LinearLayout
@@ -244,7 +244,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp"
-                android:background="@color/offer_premium_light">
+                android:background="@drawable/bg_offer_premium_gradient">
 
                 <!-- Contenu à gauche -->
                 <LinearLayout
