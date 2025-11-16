@@ -88,7 +88,7 @@ dependencies {
     implementation("com.github.yalantis:ucrop:2.2.8") // Nouvelle dépendance uCrop
 
     // Importez la Firebase BoM (Bill of Materials)
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
 
     // Ajoutez les dépendances Firebase que vous utilisez dans votre application
     implementation("com.google.firebase:firebase-auth-ktx")

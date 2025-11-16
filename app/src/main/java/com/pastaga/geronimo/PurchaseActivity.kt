@@ -3,7 +3,6 @@ package com.pastaga.geronimo
 import android.os.Bundle
 import android.view.View
 import androidx.cardview.widget.CardView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -15,11 +14,13 @@ import com.pastaga.geronimo.billing.BillingManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.graphics.Color
+import android.view.WindowManager
+import androidx.core.view.WindowCompat
 
 class PurchaseActivity : AppCompatActivity() {
 
     private lateinit var billingManager: BillingManager
-    private lateinit var progress: ProgressBar
     private lateinit var btn10: View
     private lateinit var btn50: View
     private lateinit var btn100: View
@@ -29,9 +30,18 @@ class PurchaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Définir la couleur de la barre d'état et de la barre de navigation
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = Color.parseColor("#DD000000") // Noir avec opacité 87%
+        window.navigationBarColor = Color.parseColor("#DD000000") // Noir avec opacité 87%
+
+        // Définir les éléments de la barre d'état et de navigation en blanc
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = false
+
         setContentView(R.layout.activity_purchase)
 
-        progress = findViewById(R.id.progress)
         btn10 = findViewById(R.id.btn10)
         btn50 = findViewById(R.id.btn50)
         btn100 = findViewById(R.id.btn100)
@@ -52,7 +62,6 @@ class PurchaseActivity : AppCompatActivity() {
             },
             onError = { e -> 
                 // Erreur Billing
-                progress.visibility = View.GONE
                 setButtonsEnabled(true)
             }
         )
@@ -74,7 +83,6 @@ class PurchaseActivity : AppCompatActivity() {
     }
 
     private suspend fun loadProducts() {
-        progress.visibility = View.VISIBLE
         val details = withContext(Dispatchers.IO) {
             billingManager.queryProducts(productIds)
         }
@@ -89,7 +97,6 @@ class PurchaseActivity : AppCompatActivity() {
             // Exemple: Si l'abonnement est actif, vous pouvez désactiver les boutons d'achat
             if (purchase.products.any { it in productIds }) {
                 setButtonsEnabled(false)
-                progress.visibility = View.GONE
                 // Vous pourriez vouloir faire une vérification backend ici aussi pour être sûr de l'état de l'abonnement
             }
         }
@@ -100,7 +107,6 @@ class PurchaseActivity : AppCompatActivity() {
             idToDetails[id] = pd
         }
         updateButtonLabels()
-        progress.visibility = View.GONE
         setButtonsEnabled(true)
     }
 
@@ -120,7 +126,6 @@ class PurchaseActivity : AppCompatActivity() {
 
     private suspend fun verifyAndGrant(productId: String, token: String) {
         setButtonsEnabled(false)
-        progress.visibility = View.VISIBLE
         try {
             // Pour les abonnements, nous n'appelons PAS consume() côté client.
             // La vérification et l'octroi de l'accès se font entièrement côté serveur.
@@ -139,12 +144,10 @@ class PurchaseActivity : AppCompatActivity() {
                     onFail = { /* journaliser mais ne pas bloquer l'UI */ }
                 )
             }
-            progress.visibility = View.GONE
             setButtonsEnabled(true)
             // Abonnement activé avec succès
             // TODO: Rafraîchir l'état de l'utilisateur/UI après un achat d'abonnement réussi
         } catch (e: Exception) {
-            progress.visibility = View.GONE
             setButtonsEnabled(true)
             // Erreur de vérification de l'abonnement
         }

@@ -168,6 +168,7 @@ class LastAnalysisFragment : Fragment() {
 
         if (content != null && content != "N/C") {
             icon.setImageResource(iconResId)
+            icon.visibility = View.VISIBLE
             titleTextView.text = title
             contentTextView.text = content
             cardView.visibility = View.VISIBLE
