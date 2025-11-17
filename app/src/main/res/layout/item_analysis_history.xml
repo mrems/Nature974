@@ -42,9 +42,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="?android:textColorPrimary"
+                    android:fontFamily="@font/kalam_regular"
+                    android:letterSpacing="0.05"
+                    android:layout_marginBottom="-4dp"
                     android:maxLines="1"
                     android:ellipsize="end"/>
 

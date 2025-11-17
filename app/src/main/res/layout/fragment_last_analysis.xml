@@ -68,16 +68,19 @@
                         android:id="@+id/last_analysis_local_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="28sp"
+                        android:textSize="30sp"
                         android:textStyle="bold"
-                        android:textColor="@color/text_title_detail"
+                        android:fontFamily="@font/kalam_regular"
+                        android:letterSpacing="0.03"
+                        android:layout_marginBottom="-4dp"
+                        android:lineSpacingMultiplier="0.7"
                         tools:text="Tangue" />
 
                     <TextView
                         android:id="@+id/last_analysis_scientific_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="italic"
                         tools:text="Tenrec ecaudatus" />
 

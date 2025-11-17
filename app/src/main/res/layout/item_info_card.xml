@@ -9,14 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
+        app:cardElevation="2dp"
         android:layout_marginBottom="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -37,19 +40,23 @@
                     android:id="@+id/title_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#616161" />
+                    android:fontFamily="@font/kalam_regular"
+                    android:letterSpacing="0.03"
+                    android:lineSpacingMultiplier="0.7"
+                    android:layout_marginBottom="-4dp" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/content_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="?android:attr/textColorSecondary"
-                android:lineSpacingMultiplier="1.25"
-                android:layout_marginTop="4dp" />
+                android:textSize="16sp"
+                android:lineSpacingMultiplier=".9"
+                android:layout_marginTop="0dp"
+                android:fontFamily="@font/kalam_regular"
+                android:letterSpacing="0.05"/>
 
         </LinearLayout>
 
