@@ -50,10 +50,6 @@
                             android:layout_height="wrap_content"
                             android:textSize="30sp"
                             android:textStyle="bold"
-                            android:fontFamily="@font/kalam_regular"
-                            android:letterSpacing="0.03"
-                            android:layout_marginBottom="-4dp"
-                            android:lineSpacingMultiplier="0.7"
                             tools:text="Tamarin des Hauts" />
 
                         <TextView

@@ -68,12 +68,8 @@
                         android:id="@+id/last_analysis_local_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="30sp"
+                        android:textSize="28sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/kalam_regular"
-                        android:letterSpacing="0.03"
-                        android:layout_marginBottom="-4dp"
-                        android:lineSpacingMultiplier="0.7"
                         tools:text="Tangue" />
 
                     <TextView
