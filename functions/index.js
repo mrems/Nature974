@@ -125,9 +125,29 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
     );
     const geminiCallStartTime = Date.now();
     try {
+      // Récupérer le nombre de tokens du prompt (image + texte)
+      const { totalTokens: promptTokens } = await model.countTokens([geminiPrompt, imagePart]);
+      console.log(`[${new Date().toISOString()}] Jetons du prompt (entrée): ${promptTokens}`);
+
       result = await model.generateContent([geminiPrompt, imagePart]);
       response = await result.response;
       text = response.text();
+      const usageMetadata = response.usageMetadata;
+      if (usageMetadata) {
+        console.log(`[${new Date().toISOString()}] Détail des jetons consommés:`);
+        console.log(`[${new Date().toISOString()}]   - Prompt total (entrée): ${usageMetadata.promptTokenCount}`);
+        if (usageMetadata.promptTokensDetails) {
+          const textTokens = usageMetadata.promptTokensDetails.find(d => d.modality === 'TEXT')?.tokenCount || 0;
+          const imageTokens = usageMetadata.promptTokensDetails.find(d => d.modality === 'IMAGE')?.tokenCount || 0;
+          console.log(`[${new Date().toISOString()}]     - Texte du prompt: ${textTokens}`);
+          console.log(`[${new Date().toISOString()}]     - Image du prompt: ${imageTokens}`);
+        }
+        console.log(`[${new Date().toISOString()}]   - Réponse JSON (sortie): ${usageMetadata.candidatesTokenCount}`);
+        console.log(`[${new Date().toISOString()}]   - Jetons de pensée (internes): ${usageMetadata.thoughtsTokenCount || 0}`);
+        console.log(`[${new Date().toISOString()}]   - TOTAL FACTURABLE: ${usageMetadata.totalTokenCount}`);
+      }
+      console.log(`[${new Date().toISOString()}] Réponse brute de Gemini (objet complet):`, JSON.stringify(response, null, 2));
+      console.log(`[${new Date().toISOString()}] Texte extrait de Gemini (brut):`, text);
       console.log(
         `[${new Date().toISOString()}] Fin de l'appel à l'API Gemini: ${Date.now() - geminiCallStartTime} ms. Temps écoulé depuis le début: ${Date.now() - startTime} ms.`
       );
@@ -210,7 +230,7 @@ exports.onUserCreate = functionsV1.auth.user().onCreate(async (user) => {
   try {
     await db.collection('users').doc(uid).set({
       email: email || null,
-      credits: 5,
+      credits: 10,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -274,9 +294,9 @@ exports.getCredits = functionsV1.https.onCall(async (data, context) => {
 
 // Mapping produit -> crédits (à aligner avec Play Console)
 const PRODUCT_CREDITS = {
-  credits_10: 10,
-  credits_50: 50,
+  credits_25: 25,
   credits_100: 100,
+  credits_500: 500,
 };
 
 // Nom du package Android, fourni via variable d'environnement Functions
@@ -462,3 +482,4 @@ function getRequestsForProduct(productId) {
     }
 }
 */
+

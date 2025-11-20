@@ -54,6 +54,14 @@ class LastAnalysisFragment : Fragment() {
         lastAnalysisContentLayout = view.findViewById(R.id.last_analysis_content)
         lastAnalysisInfoCardsContainer = view.findViewById(R.id.last_analysis_info_cards_container)
 
+        lastAnalysisImageView.setOnClickListener {
+            lastEntry?.imageUri?.let { uriString ->
+                val intent = Intent(requireContext(), FullScreenImageActivity::class.java).apply {
+                    putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, uriString)
+                }
+                startActivity(intent)
+            }
+        }
 
         loadLastAnalysis()
     }

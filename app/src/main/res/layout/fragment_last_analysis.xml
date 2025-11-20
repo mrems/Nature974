@@ -13,18 +13,22 @@
         android:orientation="vertical"
         android:id="@+id/last_analysis_content">
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="wrap_content"
             android:background="@color/white">
 
             <ImageView
                 android:id="@+id/last_analysis_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:background="@color/white"
                 android:contentDescription="Image de la dernière analyse"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintDimensionRatio="3:2" />
 
             <TextView
                 android:id="@+id/last_analysis_tutorial_badge"
@@ -39,11 +43,12 @@
                 android:textColor="@color/badge_text"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_gravity="top|end"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_margin="16dp"
                 android:visibility="gone"/>
 
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

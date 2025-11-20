@@ -84,6 +84,7 @@ import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.widget.ImageView
+import android.widget.Button
  
 class CameraFragment : Fragment() {
 
@@ -134,16 +135,15 @@ class CameraFragment : Fragment() {
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
     private lateinit var creditsTextView: TextView
-    
-    
 
+    private lateinit var feedbackButton: Button
+ 
     // Variables pour la localisation
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userCountry: String? = null
     private var userRegion: String? = null
     private var creditsListener: ListenerRegistration? = null
-    
-
+ 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageAnalyzer = ImageAnalyzer(requireContext())
@@ -195,6 +195,19 @@ class CameraFragment : Fragment() {
         appTitleImageView = view.findViewById(R.id.app_title_image_view)
 
         creditsTextView = view.findViewById(R.id.credits_text_view)
+        
+        feedbackButton = view.findViewById(R.id.feedback_button)
+        feedbackButton.setOnClickListener { 
+            val emailBody = "Ecrivez ici un commentaire concernant l'application Geronimo ( bugs, suggestions, expérience, etc...)  Merci !! "
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:mat_mail@ymail.com?subject=" + Uri.encode("FeedBack Geronimo") + "&body=" + Uri.encode(emailBody))
+            }
+            if (intent.resolveActivity(requireActivity().packageManager) != null) {
+                startActivity(intent)
+            } else {
+                Toast.makeText(requireContext(), "Aucun client email installÃ©.", Toast.LENGTH_SHORT).show()
+            }
+        }
         
         // Clic sur le compteur de crédits pour ouvrir l'écran d'achat
         val creditsContainer = view.findViewById<LinearLayout>(R.id.credits_container)
@@ -377,6 +390,13 @@ class CameraFragment : Fragment() {
             val credits = snapshot?.getLong("credits")?.toInt() ?: return@addSnapshotListener
             Log.d("CameraFragment", "Mise Ã  jour crÃ©dits temps rÃ©el: $credits")
             creditsTextView.text = "$credits"
+
+            // Mise à jour de la visibilité du bouton de feedback
+            if (credits < 5) {
+                feedbackButton.visibility = View.VISIBLE
+            } else {
+                feedbackButton.visibility = View.GONE
+            }
         }
     }
 

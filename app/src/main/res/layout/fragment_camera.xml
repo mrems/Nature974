@@ -46,6 +46,25 @@
             android:maxWidth="140dp"
             android:adjustViewBounds="true" />
 
+        <Button
+            android:id="@+id/feedback_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|top"
+            android:layout_marginTop="76dp" 
+            android:layout_marginStart="16dp"
+            android:text="FeedBack"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/design_default_color_primary_dark"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:paddingVertical="8dp"
+            android:textSize="14sp"
+            android:elevation="4dp"
+            />
+
         <!-- Conteneur pour le compteur de crédits (chiffre + icône) -->
         <LinearLayout
             android:id="@+id/credits_container"
