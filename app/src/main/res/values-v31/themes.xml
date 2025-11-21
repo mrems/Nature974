@@ -6,8 +6,8 @@
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryVariant">@android:color/white</item>
         <item name="colorOnPrimary">@color/black</item>
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorSecondary">@color/offer_pro_primary</item>
+        <item name="colorSecondaryVariant">@color/offer_pro_primary</item>
         <item name="colorOnSecondary">@color/black</item>
 
         <!-- Barres système (identiques au thème base) -->

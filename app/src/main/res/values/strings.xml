@@ -8,22 +8,24 @@
     <string name="purchase_success">Achat confirmé</string>
     <string name="subscription_success">Abonnement activé</string>
     <string name="already_subscribed">Vous avez déjà un abonnement actif</string>
-    
-    <!-- Offres d'abonnement -->
-    <string name="offer_title">Subscription plan</string>
-    <string name="offer_starter_title">Aventurier</string>
-    <string name="offer_starter_queries">25 identifications</string>
-    <string name="offer_starter_price">3,99€</string>
-    <string name="offer_starter_badge">Nouveau</string>
-    <string name="offer_pro_title">Explorateur</string>
-    <string name="offer_pro_queries">100 identifications</string>
-    <string name="offer_pro_price">9,99€</string>
-    <string name="offer_pro_badge">Populaire</string>
-    <string name="offer_premium_title">Expert</string>
-    <string name="offer_premium_queries">500 identifications</string>
-    <string name="offer_premium_price">29,99€</string>
-    <string name="offer_premium_badge">Meilleure valeur</string>
+
+    <!-- Nouveau texte pour la page d'abonnement -->
+    <string name="unlock_adventure_title">Unlock Your Adventure!</string>
+    <string name="choose_plan_description">Choose your plan and start exploring nature.</string>
+    <string name="geronimo_splash_content_description">Image du personnage Geronimo</string>
+    <string name="geronimo_title_content_description">Titre Geronimo</string>
+
+    <!-- Offres d'abonnement mises à jour -->
+    <string name="offer_50_identifications">50 crédits</string>
+    <string name="offer_50_price">$7.99</string>
+    <string name="offer_100_identifications">100 crédits</string>
+    <string name="offer_100_price">$14.99</string>
+    <string name="offer_100_badge">MOST POPULAR</string>
+    <string name="offer_300_identifications">300 crédits</string>
+    <string name="offer_300_price">$29.99</string>
     <string name="per_month">/mois</string>
+    <string name="button_continue">Continue</string>
+    <string name="payment_info">Cancel anytime from your Google Play account</string>
 </resources>
 
 

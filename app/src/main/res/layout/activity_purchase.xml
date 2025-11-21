@@ -1,335 +1,329 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DD000000"
-    android:fillViewport="true">
+    android:background="@drawable/gradient_background"
+    tools:context=".PurchaseActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
     android:orientation="vertical"
-        android:padding="20dp">
+            android:gravity="center_horizontal"
+            android:paddingBottom="20dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
-        <!-- En-tête -->
+            <!-- Image geronimo_splash.png ajoutée ici -->
+            <ImageView
+                android:id="@+id/geronimo_splash_image_view"
+                android:layout_width="200dp" 
+                android:layout_height="300dp" 
+                android:src="@drawable/geronimo_splash"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:layout_marginTop="0dp"
+                android:contentDescription="@string/geronimo_splash_content_description" />
+            <!-- Ajustez la largeur et la hauteur de l'image geronimo_splash selon vos besoins -->
+
+            <!-- Remplacé par ImageView pour title.png -->
+            <ImageView
+                android:id="@+id/geronimo_title_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:src="@drawable/title"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:layout_marginTop="-8dp"
+                android:contentDescription="@string/geronimo_title_content_description" />
+
         <TextView
-            android:layout_width="match_parent"
+                android:id="@+id/unlock_adventure_title"
+                android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/offer_title"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:layout_marginBottom="30dp" />
+                android:text="@string/unlock_adventure_title"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_dark_gray"
+                android:layout_marginTop="0dp" />
 
-        <!-- Carte Offre 1 - Starter -->
-        <androidx.cardview.widget.CardView
-        android:id="@+id/btn10"
-        android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/choose_plan_description"
+                android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground">
+                android:text="@string/choose_plan_description"
+                android:textSize="16sp"
+                android:textColor="@color/text_medium_gray"
+                android:gravity="center"
+                android:layout_marginTop="0dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginEnd="64dp" />
 
-            <LinearLayout
+            <RadioGroup
+                android:id="@+id/offer_radio_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:background="@drawable/bg_offer_starter_gradient">
+                android:orientation="vertical"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="16dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-                <!-- Contenu à gauche -->
-                <LinearLayout
-                    android:layout_width="0dp"
+                <!-- 50 identifications / mois -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_50_identifications"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="4dp">
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    android:layout_marginBottom="8dp">
 
-                    <!-- Badge "Nouveau" -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/offer_starter_badge"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:background="@drawable/bg_offer_badge_starter"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
-                        android:layout_marginBottom="8dp" />
-
-                    <!-- Titre -->
-                    <TextView
+                    <!-- Réduit le padding pour diminuer la hauteur des cases -->
+                    <LinearLayout
+                        android:id="@+id/linear_layout_50_identifications"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/offer_starter_title"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/offer_starter_primary"
-                        android:elevation="4dp"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
+                        android:gravity="center_vertical">
 
-                    <!-- Nombre de requêtes -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/offer_starter_queries"
-                        android:textSize="14sp"
-                        android:textColor="@color/subtitle_text"
-                        android:layout_marginBottom="12dp" />
+                        <RadioButton
+                            android:id="@+id/radio_50_identifications"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/custom_radio_button_selector"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:background="@android:color/transparent"
+                            android:theme="@style/NoRippleRadioButton"/>
 
-                    <!-- Prix -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="0dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/offer_50_identifications"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_dark_gray" />
+
+                        </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                            android:gravity="end|center_vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/offer_starter_price"
-                            android:textSize="24sp"
+                                android:text="@string/offer_50_price"
+                                android:textSize="16sp"
                             android:textStyle="bold"
-                            android:textColor="@color/offer_starter_primary"
-                            android:elevation="4dp" />
+                                android:textColor="@color/text_dark_gray" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/per_month"
                             android:textSize="12sp"
-                            android:textColor="@color/subtitle_text"
+                                android:textColor="@color/text_medium_gray"
                             android:layout_marginStart="4dp" />
                     </LinearLayout>
-                </LinearLayout>
-
-                <!-- Image à droite -->
-                <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="140dp"
-                    android:src="@drawable/card1"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center_vertical"
-                    android:elevation="6dp"
-                    android:contentDescription="@string/offer_starter_title" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Carte Offre 2 - Pro (Populaire) -->
-        <androidx.cardview.widget.CardView
-        android:id="@+id/btn50"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="12dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground">
+                <!-- 100 identifications / mois (Highlighted with background) -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_100_identifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    android:layout_marginBottom="8dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:background="@drawable/bg_offer_pro_gradient">
+                    <LinearLayout
+                        android:id="@+id/linear_layout_100_identifications"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
+                        android:gravity="center_vertical">
 
-                <!-- Contenu à gauche -->
+                        <RadioButton
+                            android:id="@+id/radio_100_identifications"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/custom_radio_button_selector"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:background="@android:color/transparent"
+                            android:theme="@style/NoRippleRadioButton"/>
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:layout_gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="4dp">
+                            android:layout_marginStart="0dp">
 
-                    <!-- Badge "Populaire" -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/offer_pro_badge"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:background="@drawable/bg_offer_badge"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
-                        android:layout_marginBottom="8dp" />
+                                android:text="@string/offer_100_identifications"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_dark_gray" />
 
-                    <!-- Titre -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/offer_pro_title"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/offer_pro_primary"
-                        android:elevation="4dp"
-                        android:layout_marginBottom="8dp" />
+                        </LinearLayout>
 
-                    <!-- Nombre de requêtes -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/offer_pro_queries"
-                        android:textSize="14sp"
-                        android:textColor="@color/subtitle_text"
-                        android:layout_marginBottom="12dp" />
-
-                    <!-- Prix -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                            android:gravity="end|center_vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/offer_pro_price"
-                            android:textSize="24sp"
+                                android:text="@string/offer_100_price"
+                                android:textSize="16sp"
                             android:textStyle="bold"
-                            android:textColor="@color/offer_pro_primary"
-                            android:elevation="4dp" />
+                                android:textColor="@color/text_dark_gray" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/per_month"
                             android:textSize="12sp"
-                            android:textColor="@color/subtitle_text"
+                                android:textColor="@color/text_medium_gray"
                             android:layout_marginStart="4dp" />
                     </LinearLayout>
-                </LinearLayout>
-
-                <!-- Image à droite -->
-                <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="140dp"
-                    android:src="@drawable/card2"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center_vertical"
-                    android:elevation="6dp"
-                    android:contentDescription="@string/offer_pro_title" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Carte Offre 3 - Premium (Meilleure valeur) -->
-        <androidx.cardview.widget.CardView
-        android:id="@+id/btn100"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground">
+                <!-- 300 identifications / mois -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_300_identifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    android:layout_marginBottom="8dp">
 
             <LinearLayout
+                android:id="@+id/linear_layout_300_identifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="16dp"
-                android:background="@drawable/bg_offer_premium_gradient">
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
+                        android:gravity="center_vertical">
 
-                <!-- Contenu à gauche -->
+                        <RadioButton
+                            android:id="@+id/radio_300_identifications"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/custom_radio_button_selector"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:background="@android:color/transparent"
+                            android:theme="@style/NoRippleRadioButton"/>
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:layout_gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="4dp">
+                            android:layout_marginStart="0dp">
 
-                    <!-- Badge "Meilleure valeur" -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/offer_premium_badge"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:background="@drawable/bg_offer_badge_premium"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
-                        android:layout_marginBottom="8dp" />
+                                android:text="@string/offer_300_identifications"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_dark_gray" />
 
-                    <!-- Titre -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/offer_premium_title"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/offer_premium_primary"
-                        android:elevation="4dp"
-                        android:layout_marginBottom="8dp" />
+                        </LinearLayout>
 
-                    <!-- Nombre de requêtes -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/offer_premium_queries"
-                        android:textSize="14sp"
-                        android:textColor="@color/subtitle_text"
-                        android:layout_marginBottom="12dp" />
-
-                    <!-- Prix -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                            android:gravity="end|center_vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/offer_premium_price"
-                            android:textSize="24sp"
+                                android:text="@string/offer_300_price"
+                                android:textSize="16sp"
                             android:textStyle="bold"
-                            android:textColor="@color/offer_premium_primary"
-                            android:elevation="4dp" />
+                                android:textColor="@color/text_dark_gray" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/per_month"
                             android:textSize="12sp"
-                            android:textColor="@color/subtitle_text"
+                                android:textColor="@color/text_medium_gray"
                             android:layout_marginStart="4dp" />
                     </LinearLayout>
-                </LinearLayout>
-
-                <!-- Image à droite -->
-                <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="140dp"
-                    android:src="@drawable/card3"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center_vertical"
-                    android:elevation="6dp"
-                    android:contentDescription="@string/offer_premium_title" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/continue_button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/button_continue"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/offer_pro_primary"
+                app:cornerRadius="12dp" />
+
+            <TextView
+                android:id="@+id/payment_info_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center_horizontal"
+                android:text="@string/payment_info"
+                android:textSize="14sp"
+                android:textColor="@color/text_light_gray"
+                android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 

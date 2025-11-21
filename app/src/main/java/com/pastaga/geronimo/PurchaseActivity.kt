@@ -17,13 +17,28 @@ import kotlinx.coroutines.withContext
 import android.graphics.Color
 import android.view.WindowManager
 import androidx.core.view.WindowCompat
+import android.widget.Button
+import android.widget.RadioGroup
+import android.widget.RadioButton
+import androidx.core.content.ContextCompat
+import android.widget.LinearLayout
 
 class PurchaseActivity : AppCompatActivity() {
 
     private lateinit var billingManager: BillingManager
-    private lateinit var btn10: View
-    private lateinit var btn50: View
-    private lateinit var btn100: View
+    private lateinit var card50Identifications: CardView
+    private lateinit var card100Identifications: CardView
+    private lateinit var card300Identifications: CardView
+    private lateinit var continueButton: Button
+    private lateinit var offerRadioGroup: RadioGroup // Référence au RadioGroup
+    private lateinit var radio50Identifications: RadioButton
+    private lateinit var radio100Identifications: RadioButton
+    private lateinit var radio300Identifications: RadioButton
+    private lateinit var linearLayout50Identifications: LinearLayout
+    private lateinit var linearLayout100Identifications: LinearLayout
+    private lateinit var linearLayout300Identifications: LinearLayout
+
+    private var selectedProductId: String? = null
 
     private val productIds = listOf("pack_requetes_25", "pack_requetes_100", "pack_500")
     private val idToDetails = mutableMapOf<String, ProductDetails>()
@@ -31,22 +46,92 @@ class PurchaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Définir la couleur de la barre d'état et de la barre de navigation
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = Color.parseColor("#DD000000") // Noir avec opacité 87%
-        window.navigationBarColor = Color.parseColor("#DD000000") // Noir avec opacité 87%
+        window.statusBarColor = ContextCompat.getColor(this, R.color.background_light_gray) // Utiliser la couleur définie
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.background_light_gray) // Utiliser la couleur définie
 
-        // Définir les éléments de la barre d'état et de navigation en blanc
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = false
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = true
 
         setContentView(R.layout.activity_purchase)
 
-        btn10 = findViewById(R.id.btn10)
-        btn50 = findViewById(R.id.btn50)
-        btn100 = findViewById(R.id.btn100)
+        card50Identifications = findViewById(R.id.card_50_identifications)
+        card100Identifications = findViewById(R.id.card_100_identifications)
+        card300Identifications = findViewById(R.id.card_300_identifications)
+        continueButton = findViewById(R.id.continue_button)
+        offerRadioGroup = findViewById(R.id.offer_radio_group) // Initialisation du RadioGroup
+        radio50Identifications = findViewById(R.id.radio_50_identifications)
+        radio100Identifications = findViewById(R.id.radio_100_identifications)
+        radio300Identifications = findViewById(R.id.radio_300_identifications)
 
-        setButtonsEnabled(false)
+        linearLayout50Identifications = findViewById(R.id.linear_layout_50_identifications)
+        linearLayout100Identifications = findViewById(R.id.linear_layout_100_identifications)
+        linearLayout300Identifications = findViewById(R.id.linear_layout_300_identifications)
+
+        // Gestion des clics sur les cartes pour cocher le RadioButton correspondant
+        card50Identifications.setOnClickListener {
+            radio50Identifications.isChecked = true
+            // Manuellement déclencher le changement si le RadioGroup n'est pas informé
+            offerRadioGroup.check(R.id.radio_50_identifications)
+        }
+        card100Identifications.setOnClickListener {
+            radio100Identifications.isChecked = true
+            // Manuellement déclencher le changement si le RadioGroup n'est pas informé
+            offerRadioGroup.check(R.id.radio_100_identifications)
+        }
+        card300Identifications.setOnClickListener {
+            radio300Identifications.isChecked = true
+            // Manuellement déclencher le changement si le RadioGroup n'est pas informé
+            offerRadioGroup.check(R.id.radio_300_identifications)
+        }
+
+        // Gestion de la sélection des cartes via le RadioGroup
+        offerRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            // Désélectionner manuellement tous les RadioButton
+            radio50Identifications.isChecked = false
+            radio100Identifications.isChecked = false
+            radio300Identifications.isChecked = false
+
+            val selectedCardId: Int = when (checkedId) {
+                R.id.radio_50_identifications -> {
+                    radio50Identifications.isChecked = true // Cochez le bouton radio correspondant
+                    R.id.card_50_identifications
+                }
+                R.id.radio_100_identifications -> {
+                    radio100Identifications.isChecked = true // Cochez le bouton radio correspondant
+                    R.id.card_100_identifications
+                }
+                R.id.radio_300_identifications -> {
+                    radio300Identifications.isChecked = true // Cochez le bouton radio correspondant
+                    R.id.card_300_identifications
+                }
+                else -> -1 // Aucune sélection
+            }
+            val selectedCard = findViewById<CardView>(selectedCardId)
+            
+            selectedProductId = when (checkedId) {
+                R.id.radio_50_identifications -> "pack_requetes_25"
+                R.id.radio_100_identifications -> "pack_requetes_100"
+                R.id.radio_300_identifications -> "pack_500"
+                else -> null
+            }
+            updateOfferCardAppearance(selectedCard)
+            setContinueButtonEnabled(selectedProductId != null)
+        }
+
+        // Présélectionner l'option 100 crédits par défaut *après* que le listener soit configuré
+        offerRadioGroup.check(R.id.radio_100_identifications)
+        // Appliquer les styles initiaux après la présélection
+        updateOfferCardAppearance(findViewById<CardView>(R.id.card_100_identifications))
+
+        // Listener pour le bouton Continuer
+        continueButton.setOnClickListener {
+            selectedProductId?.let { productId ->
+                launchPurchase(productId)
+            } ?: run {
+                // Gérer le cas où aucun produit n'est sélectionné (bien que le bouton devrait être désactivé)
+            }
+        }
 
         billingManager = BillingManager(
             context = this,
@@ -60,26 +145,39 @@ class PurchaseActivity : AppCompatActivity() {
                     verifyAndGrant(productId, token)
                 }
             },
-            onError = { e -> 
+            onError = { e ->
                 // Erreur Billing
-                setButtonsEnabled(true)
+                setContinueButtonEnabled(true)
             }
         )
         billingManager.start()
-
-        btn10.setOnClickListener { launchPurchase("pack_requetes_25") }
-        btn50.setOnClickListener { launchPurchase("pack_requetes_100") }
-        btn100.setOnClickListener { launchPurchase("pack_500") }
     }
 
-    private fun setButtonsEnabled(enabled: Boolean) {
-        btn10.isEnabled = enabled
-        btn50.isEnabled = enabled
-        btn100.isEnabled = enabled
-        val alpha = if (enabled) 1f else 0.6f
-        btn10.alpha = alpha
-        btn50.alpha = alpha
-        btn100.alpha = alpha
+    private fun setContinueButtonEnabled(enabled: Boolean) {
+        continueButton.isEnabled = enabled
+        continueButton.alpha = if (enabled) 1f else 0.6f
+    }
+
+    private fun updateOfferCardAppearance(selectedCard: CardView?) {
+        listOf(card50Identifications, card100Identifications, card300Identifications).forEach { card ->
+            card.setCardBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
+        }
+
+        listOf(linearLayout50Identifications, linearLayout100Identifications, linearLayout300Identifications).forEach { linearLayout ->
+            linearLayout.background = ContextCompat.getDrawable(this, R.drawable.card_border_transparent)
+        }
+        
+        // Mettre à jour l'apparence de la carte sélectionnée
+        selectedCard?.let { card ->
+            card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.offer_pro_light))
+            val selectedLinearLayout = when (card.id) {
+                R.id.card_50_identifications -> linearLayout50Identifications
+                R.id.card_100_identifications -> linearLayout100Identifications
+                R.id.card_300_identifications -> linearLayout300Identifications
+                else -> null
+            }
+            selectedLinearLayout?.background = ContextCompat.getDrawable(this, R.drawable.card_border_blue)
+        }
     }
 
     private suspend fun loadProducts() {
@@ -92,12 +190,11 @@ class PurchaseActivity : AppCompatActivity() {
             billingManager.queryExistingPurchases(BillingClient.ProductType.SUBS)
         }
 
-        // TODO: Traiter existingPurchases pour mettre à jour l'UI et l'état de l'utilisateur si un abonnement est actif
         existingPurchases.forEach { purchase ->
-            // Exemple: Si l'abonnement est actif, vous pouvez désactiver les boutons d'achat
             if (purchase.products.any { it in productIds }) {
-                setButtonsEnabled(false)
-                // Vous pourriez vouloir faire une vérification backend ici aussi pour être sûr de l'état de l'abonnement
+                setContinueButtonEnabled(false)
+                // Vous pourriez vouloir afficher un message à l'utilisateur ici
+                return@forEach
             }
         }
 
@@ -106,37 +203,37 @@ class PurchaseActivity : AppCompatActivity() {
             val id = pd.productId
             idToDetails[id] = pd
         }
-        updateButtonLabels()
-        setButtonsEnabled(true)
+        updateOfferCardPrices()
+        // La sélection initiale sera gérée par le RadioGroup si un produit est pré-sélectionné, ou par défaut.
     }
 
-    private fun updateButtonLabels() {
-        // Le layout utilise des CardView avec du texte statique.
-        // Si besoin d'afficher les prix dynamiques Billing, ajouter des IDs aux TextView de prix et les mettre à jour ici.
+    private fun updateOfferCardPrices() {
+        // Pour l'instant, les prix sont en dur dans le XML. 
+        // Si nous voulons des prix dynamiques, nous aurions besoin d'IDs spécifiques pour les TextViews de prix dans chaque carte. 
+        // Par exemple:
+        // findViewById<TextView>(R.id.price_50_identifications).text = idToDetails["pack_requetes_25"]?.subscriptionOfferDetails?.get(0)?.pricingPhases?.pricingPhaseList?.get(0)?.formattedPrice
+        // Et ainsi de suite pour les autres cartes.
     }
 
     private fun launchPurchase(id: String) {
         val pd = idToDetails[id]
         if (pd == null) {
-            // Produit indisponible
+            setContinueButtonEnabled(false)
             return
         }
         billingManager.launchPurchase(this, pd)
     }
 
     private suspend fun verifyAndGrant(productId: String, token: String) {
-        setButtonsEnabled(false)
+        setContinueButtonEnabled(false)
         try {
-            // Pour les abonnements, nous n'appelons PAS consume() côté client.
-            // La vérification et l'octroi de l'accès se font entièrement côté serveur.
             val result = withContext(Dispatchers.IO) {
                 Tasks.await(
                     FirebaseFunctions.getInstance()
-                        .getHttpsCallable("verifyAndGrantSubscription") // Nouvelle fonction backend pour les abonnements
+                        .getHttpsCallable("verifyAndGrantSubscription")
                         .call(mapOf("productId" to productId, "purchaseToken" to token))
                 )
             }
-            // Si le backend confirme, accuser réception (acknowledge) de l'achat côté client
             withContext(Dispatchers.IO) {
                 billingManager.acknowledge(
                     token,
@@ -144,11 +241,10 @@ class PurchaseActivity : AppCompatActivity() {
                     onFail = { /* journaliser mais ne pas bloquer l'UI */ }
                 )
             }
-            setButtonsEnabled(true)
-            // Abonnement activé avec succès
+            setContinueButtonEnabled(true)
             // TODO: Rafraîchir l'état de l'utilisateur/UI après un achat d'abonnement réussi
         } catch (e: Exception) {
-            setButtonsEnabled(true)
+            setContinueButtonEnabled(true)
             // Erreur de vérification de l'abonnement
         }
     }
