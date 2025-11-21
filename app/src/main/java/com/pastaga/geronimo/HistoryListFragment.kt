@@ -73,6 +73,7 @@ class HistoryListFragment : Fragment() {
                 putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, entry.localContext)
                 putExtra(ResultActivity.EXTRA_DESCRIPTION, entry.description)
                 putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, entry.representativeColorHex) // Ajout pour un clic normal
+                putExtra(ResultActivity.EXTRA_PECULIARITIES_AND_DANGERS, entry.peculiaritiesAndDangers)
             }
             startActivity(intent)
         }) { entry, itemView ->
@@ -129,7 +130,8 @@ class HistoryListFragment : Fragment() {
                                 type = newResponse.type,
                                 habitat = newResponse.habitat,
                                 characteristics = newResponse.characteristics,
-                                localContext = newResponse.localContext
+                                localContext = newResponse.localContext,
+                                peculiaritiesAndDangers = newResponse.peculiaritiesAndDangers // Assigner le nouveau champ
                             )
                             
                             // Mettre à jour l'historique de manière synchrone dans un thread IO
@@ -149,6 +151,7 @@ class HistoryListFragment : Fragment() {
                                 putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, newResponse.localContext)
                                 putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C")
                                 putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, newResponse.representativeColorHex) // Ajout pour la ré-analyse
+                                putExtra(ResultActivity.EXTRA_PECULIARITIES_AND_DANGERS, updatedEntry.peculiaritiesAndDangers)
                             }
                             startActivity(intent)
                             

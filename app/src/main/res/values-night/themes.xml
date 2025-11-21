@@ -18,6 +18,11 @@
         <item name="android:navigationBarColor" tools:targetApi="l">@android:color/white</item>
         <!-- Light navigation bar icons. -->
         <item name="android:windowLightNavigationBar" tools:targetApi="o">true</item>
+        <!-- Styles personnalisés pour le PopupMenu -->
+        <item name="popupMenuStyle">@style/CustomPopupMenu</item>
+        <item name="android:popupMenuStyle">@style/CustomPopupMenu</item>
+        <!-- Style pour le TabLayout -->
+        <item name="tabStyle">@style/CustomTabStyle</item>
         <!-- Customize your theme here. -->
     </style>
 
@@ -53,6 +58,13 @@
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowDisablePreview">true</item>
+    </style>
+
+    <!-- Style pour les onglets -->
+    <style name="CustomTabStyle" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabTextColor">@color/text_light_gray</item>
+        <item name="tabSelectedTextColor">@color/white</item>
+        <item name="tabIndicatorColor">@color/white</item>
     </style>
 
 </resources>

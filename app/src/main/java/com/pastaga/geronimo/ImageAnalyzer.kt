@@ -126,6 +126,7 @@ class ImageAnalyzer(private val context: Context) {
         val habitat: String,
         val characteristics: String,
         val localContext: String,
+        val peculiaritiesAndDangers: String? = null, // Nouveau champ pour les particularités et dangers
         val representativeColorHex: String? // Rendre le champ nullable pour une meilleure robustesse
     )
 

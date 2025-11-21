@@ -21,6 +21,8 @@
         <!-- Styles personnalisés pour le PopupMenu -->
         <item name="popupMenuStyle">@style/CustomPopupMenu</item>
         <item name="android:popupMenuStyle">@style/CustomPopupMenu</item>
+        <!-- Style pour le TabLayout -->
+        <item name="tabStyle">@style/CustomTabStyle</item>
         <!-- Customize your theme here. -->
     </style>
 
@@ -94,6 +96,13 @@
 
     <style name="CustomAlertDialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <!-- Style pour les onglets -->
+    <style name="CustomTabStyle" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabTextColor">@color/text_medium_gray</item>
+        <item name="tabSelectedTextColor">@color/black</item>
+        <item name="tabIndicatorColor">@color/black</item>
     </style>
 
     <style name="NoRippleRadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">

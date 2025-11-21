@@ -1050,10 +1050,7 @@ class CameraFragment : Fragment() {
                         }
                         return@launch
                     }
-                    // Analyser directement via l'URI; le backend gère le prompt et le traitement
                     val response = imageAnalyzer.analyzeImage(uri, userCountry, userRegion)
-
-                    Log.d("NaturePeiBadgeColor", "[CameraFragment] Réponse brute de Gemini (via ImageAnalyzer): $response") // Nouveau log pour la réponse complète
 
                     if (!currentCoroutineContext().isActive) {
                         Log.d("CameraFragment", "Analyse annulÃ©e avant la mise Ã  jour UI.")
@@ -1071,6 +1068,7 @@ class CameraFragment : Fragment() {
                                 putExtra(ResultActivity.EXTRA_HABITAT, response.habitat)
                                 putExtra(ResultActivity.EXTRA_CHARACTERISTICS, response.characteristics)
                                 putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, response.localContext)
+                                putExtra(ResultActivity.EXTRA_PECULIARITIES_AND_DANGERS, response.peculiaritiesAndDangers) // Passer le nouveau champ
                                 putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C") // Description n'est plus fournie par l'API, utiliser N/C
                                 putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, response.representativeColorHex) // Passer la couleur
                             }
@@ -1084,6 +1082,7 @@ class CameraFragment : Fragment() {
                                 habitat = response.habitat,
                                 characteristics = response.characteristics,
                                 localContext = response.localContext,
+                                peculiaritiesAndDangers = response.peculiaritiesAndDangers, // Assigner le nouveau champ
                                 country = userCountry,
                                 region = userRegion,
                                 description = "N/C", // Description n'est plus fournie par l'API, utiliser N/C
@@ -1094,8 +1093,6 @@ class CameraFragment : Fragment() {
                             // Sauvegarder cette fiche comme dernière consultée
                             historyManager.saveLastViewedCard(analysisEntry)
 
-                            Log.d("NaturePeiBadgeColor", "[CameraFragment] RÃ©ponse Gemini - localName: ${response.localName}, scientificName: ${response.scientificName}, type: ${response.type}, color: ${response.representativeColorHex}")
-                            Log.d("NaturePeiBadgeColor", "[CameraFragment] Couleur passée à ResultActivity et enregistrée dans l'historique.")
                         } else {
                             Toast.makeText(requireContext(), "Aucune rÃ©ponse de l\'API.", Toast.LENGTH_LONG).show()
                         }

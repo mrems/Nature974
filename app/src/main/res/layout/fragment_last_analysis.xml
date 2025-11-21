@@ -106,10 +106,30 @@
                 android:layout_marginBottom="16dp"
                 tools:text="Plante Endémique" />
 
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout_last_analysis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabMode="fixed"
+                app:tabGravity="fill"
+                app:tabSelectedTextColor="@color/black"
+                app:tabTextColor="@color/text_medium_gray"
+                app:tabIndicatorColor="@color/black" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/view_pager_last_analysis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
         <!-- Cartes d'informations -->
-        <LinearLayout
+        <!-- Les LinearLayout pour les cartes d'information seront gérés par les fragments dans le ViewPager2 -->
+        <!--<LinearLayout
             android:id="@+id/last_analysis_info_cards_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -120,7 +140,7 @@
             <include layout="@layout/item_info_card" />
             <include layout="@layout/item_info_card" />
             <include layout="@layout/item_info_card" />
-        </LinearLayout>
+        </LinearLayout>-->
 
     </LinearLayout>
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Couleur pour l'onglet sélectionné -->
+    <item android:color="@color/black" android:state_selected="true"/>
+    <!-- Couleur pour les onglets non sélectionnés -->
+    <item android:color="@color/text_medium_gray" android:state_selected="false"/>
+    <!-- Couleur par défaut (au cas où) -->
+    <item android:color="@color/text_medium_gray"/>
+</selector>

@@ -19,6 +19,10 @@ import kotlinx.coroutines.withContext
 import android.util.Log
 import androidx.core.content.ContextCompat
 import android.graphics.drawable.GradientDrawable
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 class LastAnalysisFragment : Fragment() {
 
@@ -31,7 +35,8 @@ class LastAnalysisFragment : Fragment() {
     private lateinit var lastAnalysisTypeBadge: TextView
     private lateinit var lastAnalysisTutorialBadge: TextView
     private lateinit var lastAnalysisContentLayout: LinearLayout
-    private lateinit var lastAnalysisInfoCardsContainer: LinearLayout
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager2
 
     private var lastEntry: AnalysisEntry? = null
 
@@ -55,7 +60,8 @@ class LastAnalysisFragment : Fragment() {
         lastAnalysisTypeBadge = view.findViewById(R.id.last_analysis_type_badge)
         lastAnalysisTutorialBadge = view.findViewById(R.id.last_analysis_tutorial_badge)
         lastAnalysisContentLayout = view.findViewById(R.id.last_analysis_content)
-        lastAnalysisInfoCardsContainer = view.findViewById(R.id.last_analysis_info_cards_container)
+        tabLayout = view.findViewById(R.id.tab_layout_last_analysis)
+        viewPager = view.findViewById(R.id.view_pager_last_analysis)
 
         lastAnalysisImageView.setOnClickListener {
             lastEntry?.imageUri?.let { uriString ->
@@ -99,7 +105,6 @@ class LastAnalysisFragment : Fragment() {
             withContext(Dispatchers.Main) {
                 if (entry != null) {
                     lastEntry = entry
-                    Log.d("NaturePeiBadgeColor", "[LastAnalysisFragment] Fiche d'historique chargée - representativeColorHex: ${lastEntry?.representativeColorHex}")
                     lastAnalysisContentLayout.visibility = View.VISIBLE
 
                     entry.imageUri.let { uriString ->
@@ -119,30 +124,64 @@ class LastAnalysisFragment : Fragment() {
                     } else {
                         // Appliquer la couleur reçue de l'API pour les vraies analyses
                         entry.representativeColorHex?.let { colorHex ->
-                            Log.d("NaturePeiBadgeColor", "[LastAnalysisFragment] Applique couleur au badge: $colorHex")
                             if (colorHex.startsWith("#") && colorHex.length == 7) {
                                 try {
                                     val roundedDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.badge_rounded_dynamic_color) as GradientDrawable
                                     roundedDrawable.setColor(android.graphics.Color.parseColor(colorHex))
                                     lastAnalysisTypeBadge.background = roundedDrawable
                                 } catch (e: IllegalArgumentException) {
-                                    Log.e("NaturePeiBadgeColor", "[LastAnalysisFragment ERROR] Couleur hexadécimale invalide pour badge: $colorHex", e)
+                                    // Log.e("NaturePeiBadgeColor", "[LastAnalysisFragment ERROR] Couleur hexadécimale invalide pour badge: $colorHex", e) // Retirer le log d'erreur si souhaité
                                     lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut en cas d'erreur
                                 }
                             } else {
-                                Log.e("NaturePeiBadgeColor", "[LastAnalysisFragment ERROR] Format couleur hexadécimale incorrect pour badge: $colorHex")
+                                // Log.e("NaturePeiBadgeColor", "[LastAnalysisFragment ERROR] Format couleur hexadécimale incorrect pour badge: $colorHex") // Retirer le log d'erreur si souhaité
                                 lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut si le format est incorrect
                             }
-                        } ?: run { Log.w("NaturePeiBadgeColor", "[LastAnalysisFragment WARN] representativeColorHex est nul, utilise couleur par défaut badge_nc."); lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
+                        } ?: run { /* Log.w("NaturePeiBadgeColor", "[LastAnalysisFragment WARN] representativeColorHex est nul, utilise couleur par défaut badge_nc."); */ lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
                     }
 
-                    val cardHabitat = lastAnalysisInfoCardsContainer.getChildAt(0)
-                    val cardCharacteristics = lastAnalysisInfoCardsContainer.getChildAt(1)
-                    val cardReunionContext = lastAnalysisInfoCardsContainer.getChildAt(2)
+                    // Configurer le ViewPager2 et le TabLayout
+                    val pagerAdapter = LastAnalysisFragmentPagerAdapter(this@LastAnalysisFragment, entry)
+                    viewPager.adapter = pagerAdapter
 
-                    setupInfoCard(cardHabitat, R.drawable.tipi, "Habitat", entry.habitat)
-                    setupInfoCard(cardCharacteristics, R.drawable.regle, "Caractéristiques", entry.characteristics)
-                    setupInfoCard(cardReunionContext, R.drawable.local, "Contexte local", entry.localContext)
+                    viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                        override fun onPageSelected(position: Int) {
+                            super.onPageSelected(position)
+                            viewPager.post { // Utiliser post pour s'assurer que le layout est à jour
+                                val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(viewPager.width, View.MeasureSpec.EXACTLY)
+                                val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED) // Mesurer sans contrainte de hauteur
+                                
+                                // Nous devons obtenir le fragment actuellement visible. L'adaptateur crée des fragments, mais ils ne sont pas toujours attachés.
+                                // Une façon est de demander à l'adaptateur de fournir le fragment si possible.
+                                val currentFragment = childFragmentManager.findFragmentByTag("f" + pagerAdapter.getItemId(position)) as? Fragment
+                                val currentView = currentFragment?.view
+                                
+                                currentView?.measure(wMeasureSpec, hMeasureSpec)
+                                val height = currentView?.measuredHeight ?: 0
+                                
+                                if (height != 0 && viewPager.layoutParams.height != height) { // Éviter les redondances
+                                    viewPager.layoutParams = (viewPager.layoutParams as ViewGroup.LayoutParams).apply {
+                                        this.height = height
+                                    }
+                                }
+                            }
+                        }
+                    })
+
+                    TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                        tab.text = when (position) {
+                            0 -> "Infos générale"
+                            1 -> "Particularités"
+                            2 -> "Contexte local"
+                            else -> ""
+                        }
+                    }.attach()
+
+                    // Définir les couleurs du texte des onglets et de l'indicateur après l'attachement du TabLayoutMediator
+                    // Utilisation d'un ColorStateList pour une meilleure gestion des états
+                    val tabTextColors = ContextCompat.getColorStateList(requireContext(), R.color.tab_text_color_selector)
+                    tabLayout.setTabTextColors(tabTextColors)
+                    tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.black))
 
                 } else {
                     // Si aucune fiche n'est trouvée, chercher une fiche tutorielle par défaut
@@ -165,13 +204,25 @@ class LastAnalysisFragment : Fragment() {
                         
                         lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_origine)
 
-                        val cardHabitat = lastAnalysisInfoCardsContainer.getChildAt(0)
-                        val cardCharacteristics = lastAnalysisInfoCardsContainer.getChildAt(1)
-                        val cardReunionContext = lastAnalysisInfoCardsContainer.getChildAt(2)
+                        // Configurer le ViewPager2 et le TabLayout pour la fiche tutorielle
+                        val pagerAdapter = LastAnalysisFragmentPagerAdapter(this@LastAnalysisFragment, tutorialEntry)
+                        viewPager.adapter = pagerAdapter
 
-                        setupInfoCard(cardHabitat, R.drawable.tipi, "Habitat", tutorialEntry.habitat)
-                        setupInfoCard(cardCharacteristics, R.drawable.regle, "Caractéristiques", tutorialEntry.characteristics)
-                        setupInfoCard(cardReunionContext, R.drawable.local, "Contexte local", tutorialEntry.localContext)
+                        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                            tab.text = when (position) {
+                                0 -> "Infos générale"
+                                1 -> "Particularités"
+                                2 -> "Contexte local"
+                                else -> ""
+                            }
+                        }.attach()
+
+                        // Définir les couleurs du texte des onglets et de l'indicateur après l'attachement du TabLayoutMediator
+                        // Utilisation d'un ColorStateList pour une meilleure gestion des états
+                        val tabTextColors = ContextCompat.getColorStateList(requireContext(), R.color.tab_text_color_selector)
+                        tabLayout.setTabTextColors(tabTextColors)
+                        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.black))
+
                     } else {
                         lastAnalysisContentLayout.visibility = View.GONE
                         lastEntry = null
@@ -181,19 +232,20 @@ class LastAnalysisFragment : Fragment() {
         }
     }
 
-    private fun setupInfoCard(cardView: View, iconResId: Int, title: String, content: String?) {
-        val icon = cardView.findViewById<ImageView>(R.id.icon_info)
-        val titleTextView = cardView.findViewById<TextView>(R.id.title_info)
-        val contentTextView = cardView.findViewById<TextView>(R.id.content_info)
+    // L'ancienne fonction setupInfoCard est supprimée car elle est remplacée par les fragments.
+    // private fun setupInfoCard(cardView: View, iconResId: Int, title: String, content: String?) { /* ... */ }
 
-        if (content != null && content != "N/C") {
-            icon.setImageResource(iconResId)
-            icon.visibility = View.VISIBLE
-            titleTextView.text = title
-            contentTextView.text = content
-            cardView.visibility = View.VISIBLE
-        } else {
-            cardView.visibility = View.GONE
+    // Adapter pour le ViewPager2
+    private class LastAnalysisFragmentPagerAdapter(fragment: Fragment, private val entry: AnalysisEntry) : FragmentStateAdapter(fragment) {
+        override fun getItemCount(): Int = 3 // Nombre d'onglets
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> GeneralInfoFragment.newInstance(entry.habitat ?: "N/C", entry.characteristics ?: "N/C")
+                1 -> PeculiaritiesFragment.newInstance(entry.peculiaritiesAndDangers ?: "N/C")
+                2 -> LocalContextFragment.newInstance(entry.localContext ?: "N/C")
+                else -> throw IllegalArgumentException("Invalid tab position")
+            }
         }
     }
 }

@@ -16,6 +16,12 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.content.ContextCompat
 import android.graphics.drawable.GradientDrawable
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import android.view.ViewGroup
 
 class ResultActivity : AppCompatActivity() {
 
@@ -26,6 +32,8 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var resultLocalNameTextView: TextView
     private lateinit var resultScientificNameTextView: TextView
     private lateinit var resultTypeBadge: TextView
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager2
 
     private var currentEntry: AnalysisEntry? = null
 
@@ -40,7 +48,8 @@ class ResultActivity : AppCompatActivity() {
         resultLocalNameTextView = findViewById(R.id.result_local_name)
         resultScientificNameTextView = findViewById(R.id.result_scientific_name)
         resultTypeBadge = findViewById(R.id.result_type_badge)
-
+        tabLayout = findViewById(R.id.tab_layout)
+        viewPager = findViewById(R.id.view_pager)
 
         // Récupérer les données de l'Intent
         val imageUriString = intent.getStringExtra(EXTRA_IMAGE_URI)
@@ -50,10 +59,9 @@ class ResultActivity : AppCompatActivity() {
         val habitat = intent.getStringExtra(EXTRA_HABITAT)
         val characteristics = intent.getStringExtra(EXTRA_CHARACTERISTICS)
         val localContext = intent.getStringExtra(EXTRA_LOCAL_CONTEXT)
+        val peculiaritiesAndDangers = intent.getStringExtra(EXTRA_PECULIARITIES_AND_DANGERS) // Nouveau champ
         val description = intent.getStringExtra(EXTRA_DESCRIPTION) // Pour rétrocompatibilité
         val representativeColorHex = intent.getStringExtra(EXTRA_REPRESENTATIVE_COLOR_HEX) // Rétablir l'extraction de la couleur
-
-        Log.d("NaturePeiBadgeColor", "[ResultActivity] Intent Extra - representativeColorHex: $representativeColorHex")
 
         if (imageUriString != null && localName != null && scientificName != null) {
             currentEntry = AnalysisEntry(
@@ -64,10 +72,10 @@ class ResultActivity : AppCompatActivity() {
                 habitat = habitat,
                 characteristics = characteristics,
                 localContext = localContext,
+                peculiaritiesAndDangers = peculiaritiesAndDangers, // Assigner le nouveau champ
                 description = description ?: "N/C", // Assurer une valeur par défaut
-                representativeColorHex = representativeColorHex // Assigner la couleur à l'AnalysisEntry
+                representativeColorHex = representativeColorHex
             )
-            Log.d("NaturePeiBadgeColor", "[ResultActivity] AnalysisEntry créé pour affichage: ${currentEntry?.representativeColorHex}")
             displayResult(currentEntry!!)
         } else {
             Toast.makeText(this, "Erreur: Données de résultat manquantes.", Toast.LENGTH_LONG).show()
@@ -97,56 +105,85 @@ class ResultActivity : AppCompatActivity() {
                 resultTypeBadge.text = typeValue
                 // Appliquer la couleur reçue de l'API
                 entry.representativeColorHex?.let { colorHex ->
-                    Log.d("NaturePeiBadgeColor", "[ResultActivity] Applique couleur au badge: $colorHex")
                     if (colorHex.startsWith("#") && colorHex.length == 7) {
                         try {
                             val roundedDrawable = ContextCompat.getDrawable(this, R.drawable.badge_rounded_dynamic_color) as GradientDrawable
                             roundedDrawable.setColor(android.graphics.Color.parseColor(colorHex))
                             resultTypeBadge.background = roundedDrawable
                         } catch (e: IllegalArgumentException) {
-                            Log.e("NaturePeiBadgeColor", "[ResultActivity ERROR] Couleur hexadécimale invalide pour badge: $colorHex", e)
+                            // Log.e("NaturePeiBadgeColor", "[ResultActivity ERROR] Couleur hexadécimale invalide pour badge: $colorHex", e) // Retirer le log d'erreur si souhaité
                             resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut en cas d'erreur
                         }
                     } else {
-                        Log.e("NaturePeiBadgeColor", "[ResultActivity ERROR] Format couleur hexadécimale incorrect pour badge: $colorHex")
+                        // Log.e("NaturePeiBadgeColor", "[ResultActivity ERROR] Format couleur hexadécimale incorrect pour badge: $colorHex") // Retirer le log d'erreur si souhaité
                         resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut si le format est incorrect
                     }
-                } ?: run { Log.w("NaturePeiBadgeColor", "[ResultActivity WARN] representativeColorHex est nul, utilise couleur par défaut badge_nc."); resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
+                } ?: run { /* Log.w("NaturePeiBadgeColor", "[ResultActivity WARN] representativeColorHex est nul, utilise couleur par défaut badge_nc."); */ resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
                 resultTypeBadge.visibility = View.VISIBLE
             } else {
                 resultTypeBadge.visibility = View.GONE
             }
         } ?: run { resultTypeBadge.visibility = View.GONE }
 
-        // Récupérer le conteneur des cartes
-        val infoCardsContainer = findViewById<LinearLayout>(R.id.info_cards_container)
+        // Configurer le ViewPager2 et le TabLayout
+        val pagerAdapter = ResultFragmentPagerAdapter(this, entry)
+        viewPager.adapter = pagerAdapter
 
-        // Configurer chaque carte
-        val cardHabitat = infoCardsContainer.getChildAt(0)
-        val cardCharacteristics = infoCardsContainer.getChildAt(1)
-        val cardReunionContext = infoCardsContainer.getChildAt(2)
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                viewPager.post {
+                    val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(viewPager.width, View.MeasureSpec.EXACTLY)
+                    val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                    // ATTENTION: createFragment crée une nouvelle instance de fragment, il faut utiliser getChildAt(position) ou adapter la logique si les fragments sont déjà attachés
+                    // Pour une solution simple, on peut faire une approximation ou s'assurer que les fragments sont correctement attachés et mesurés
+                    // La meilleure approche est d'avoir une méthode dans l'adaptateur pour obtenir le fragment actuel
+                    val currentFragment = supportFragmentManager.findFragmentByTag("f" + pagerAdapter.getItemId(position)) as? Fragment
+                    val currentView = currentFragment?.view
+                    currentView?.measure(wMeasureSpec, hMeasureSpec)
+                    val height = currentView?.measuredHeight ?: 0
+                    if (height != 0) {
+                        viewPager.layoutParams = (viewPager.layoutParams as ViewGroup.LayoutParams).apply {
+                            this.height = height
+                        }
+                    }
+                }
+            }
+        })
 
-        setupInfoCard(cardHabitat, R.drawable.tipi, "Habitat", entry.habitat)
-        setupInfoCard(cardCharacteristics, R.drawable.regle, "Caractéristiques", entry.characteristics)
-        setupInfoCard(cardReunionContext, R.drawable.local, "Contexte local", entry.localContext)
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Infos générale"
+                1 -> "Particularités"
+                2 -> "Contexte local"
+                else -> ""
+            }
+        }.attach()
+
+        // Définir les couleurs du texte des onglets et de l'indicateur après l'attachement du TabLayoutMediator
+        // Utilisation d'un ColorStateList pour une meilleure gestion des états
+        val tabTextColors = ContextCompat.getColorStateList(this, R.color.tab_text_color_selector)
+        tabLayout.setTabTextColors(tabTextColors)
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.black))
+
     }
 
-    private fun setupInfoCard(cardView: View, iconResId: Int, title: String, content: String?) {
-        val icon = cardView.findViewById<ImageView>(R.id.icon_info)
-        val titleTextView = cardView.findViewById<TextView>(R.id.title_info)
-        val contentTextView = cardView.findViewById<TextView>(R.id.content_info)
+    // L'ancienne fonction setupInfoCard est supprimée car elle est remplacée par les fragments.
+    // private fun setupInfoCard(cardView: View, iconResId: Int, title: String, content: String?) { /* ... */ }
 
-        if (content != null && content != "N/C") {
-            icon.setImageResource(iconResId)
-            icon.visibility = View.VISIBLE
-            titleTextView.text = title
-            contentTextView.text = content
-            cardView.visibility = View.VISIBLE
-        } else {
-            cardView.visibility = View.GONE
+    // Adapter pour le ViewPager2
+    private class ResultFragmentPagerAdapter(activity: AppCompatActivity, private val entry: AnalysisEntry) : FragmentStateAdapter(activity) {
+        override fun getItemCount(): Int = 3 // Nombre d'onglets
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> GeneralInfoFragment.newInstance(entry.habitat ?: "N/C", entry.characteristics ?: "N/C")
+                1 -> PeculiaritiesFragment.newInstance(entry.peculiaritiesAndDangers ?: "N/C")
+                2 -> LocalContextFragment.newInstance(entry.localContext ?: "N/C")
+                else -> throw IllegalArgumentException("Invalid tab position")
+            }
         }
     }
-
 
     companion object {
         const val EXTRA_IMAGE_URI = "imageUri"
@@ -156,8 +193,9 @@ class ResultActivity : AppCompatActivity() {
         const val EXTRA_HABITAT = "habitat"
         const val EXTRA_CHARACTERISTICS = "characteristics"
         const val EXTRA_LOCAL_CONTEXT = "localContext"
+        const val EXTRA_PECULIARITIES_AND_DANGERS = "peculiaritiesAndDangers" // Nouveau extra
         const val EXTRA_DESCRIPTION = "description"
-        const val EXTRA_REPRESENTATIVE_COLOR_HEX = "representativeColorHex" // Rétablir la constante
+        const val EXTRA_REPRESENTATIVE_COLOR_HEX = "representativeColorHex"
     }
 }
 

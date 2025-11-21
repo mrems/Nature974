@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import android.util.Log
 
 data class AnalysisEntry(
     val imageUri: String,
@@ -13,6 +14,7 @@ data class AnalysisEntry(
     val habitat: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
     val characteristics: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
     val localContext: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
+    val peculiaritiesAndDangers: String? = null, // Nouveau champ pour les particularités et dangers
     val country: String? = null, // Localisation: pays
     val region: String? = null, // Localisation: région/adminArea
     val description: String, // Ancien champ, pour la rétrocompatibilité
@@ -20,9 +22,8 @@ data class AnalysisEntry(
     val isTutorial: Boolean = false, // Flag pour identifier les fiches d'exemple/tutoriel
     val representativeColorHex: String? = null // Nouveau champ pour la couleur représentative
 ) {
-    // Pour la rétrocompatibilité avec les anciennes données (pas de type, habitat, etc. ni timestamp)
-    constructor(imageUri: String, localName: String, scientificName: String, description: String) :
-            this(imageUri, localName, scientificName, null, null, null, null, null, null, description, null, false, null)
+    // Le constructeur secondaire a été supprimé pour éviter les ambiguïtés et simplifier la gestion des champs. 
+    // Toutes les instanciations de AnalysisEntry doivent maintenant utiliser le constructeur principal avec tous les arguments.
 }
 
 class AnalysisHistoryManager(context: Context) {
@@ -49,7 +50,8 @@ class AnalysisHistoryManager(context: Context) {
         val json = sharedPreferences.getString(KEY_HISTORY_LIST, null)
         return if (json != null) {
             val type = object : TypeToken<List<AnalysisEntry>>() {}.type
-            gson.fromJson(json, type)
+            val history = gson.fromJson<List<AnalysisEntry>>(json, type)
+            history
         } else {
             emptyList()
         }
@@ -86,7 +88,8 @@ class AnalysisHistoryManager(context: Context) {
     fun getLastViewedCard(): AnalysisEntry? {
         val json = sharedPreferences.getString(KEY_LAST_VIEWED_CARD, null)
         return if (json != null) {
-            gson.fromJson(json, AnalysisEntry::class.java)
+            val entry = gson.fromJson(json, AnalysisEntry::class.java)
+            entry
         } else {
             null
         }
