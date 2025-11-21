@@ -125,7 +125,8 @@ class ImageAnalyzer(private val context: Context) {
         val type: String,
         val habitat: String,
         val characteristics: String,
-        val localContext: String
+        val localContext: String,
+        val representativeColorHex: String? // Rendre le champ nullable pour une meilleure robustesse
     )
 
     suspend fun analyzeImage(imageUri: Uri, country: String? = null, region: String? = null): AnalyzeImageResponse? {

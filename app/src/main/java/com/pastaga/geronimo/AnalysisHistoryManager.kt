@@ -17,11 +17,12 @@ data class AnalysisEntry(
     val region: String? = null, // Localisation: région/adminArea
     val description: String, // Ancien champ, pour la rétrocompatibilité
     val timestamp: Long? = System.currentTimeMillis(), // Nouveau champ pour l'ordre chronologique
-    val isTutorial: Boolean = false // Flag pour identifier les fiches d'exemple/tutoriel
+    val isTutorial: Boolean = false, // Flag pour identifier les fiches d'exemple/tutoriel
+    val representativeColorHex: String? = null // Nouveau champ pour la couleur représentative
 ) {
     // Pour la rétrocompatibilité avec les anciennes données (pas de type, habitat, etc. ni timestamp)
     constructor(imageUri: String, localName: String, scientificName: String, description: String) :
-            this(imageUri, localName, scientificName, null, null, null, null, null, null, description, null, false)
+            this(imageUri, localName, scientificName, null, null, null, null, null, null, description, null, false, null)
 }
 
 class AnalysisHistoryManager(context: Context) {

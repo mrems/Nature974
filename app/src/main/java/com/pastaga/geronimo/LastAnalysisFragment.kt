@@ -16,6 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.util.Log
+import androidx.core.content.ContextCompat
+import android.graphics.drawable.GradientDrawable
 
 class LastAnalysisFragment : Fragment() {
 
@@ -96,6 +99,7 @@ class LastAnalysisFragment : Fragment() {
             withContext(Dispatchers.Main) {
                 if (entry != null) {
                     lastEntry = entry
+                    Log.d("NaturePeiBadgeColor", "[LastAnalysisFragment] Fiche d'historique chargée - representativeColorHex: ${lastEntry?.representativeColorHex}")
                     lastAnalysisContentLayout.visibility = View.VISIBLE
 
                     entry.imageUri.let { uriString ->
@@ -110,18 +114,26 @@ class LastAnalysisFragment : Fragment() {
                     lastAnalysisTypeBadge.text = entry.type ?: "N/C"
                     lastAnalysisTypeBadge.visibility = if (entry.type != null && entry.type != "N/C") View.VISIBLE else View.GONE
                     
-                    // Pour les fiches tutorielles, utiliser le badge vert "Origine"
                     if (entry.isTutorial) {
                         lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_origine)
                     } else {
-                        // Pour les vraies analyses, utiliser la logique habituelle
-                        entry.type?.let { typeValue ->
-                            when {
-                                typeValue.contains("endémique", ignoreCase = true) -> lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_endemique)
-                                typeValue.contains("introduit", ignoreCase = true) -> lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_introduit)
-                                else -> lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc)
+                        // Appliquer la couleur reçue de l'API pour les vraies analyses
+                        entry.representativeColorHex?.let { colorHex ->
+                            Log.d("NaturePeiBadgeColor", "[LastAnalysisFragment] Applique couleur au badge: $colorHex")
+                            if (colorHex.startsWith("#") && colorHex.length == 7) {
+                                try {
+                                    val roundedDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.badge_rounded_dynamic_color) as GradientDrawable
+                                    roundedDrawable.setColor(android.graphics.Color.parseColor(colorHex))
+                                    lastAnalysisTypeBadge.background = roundedDrawable
+                                } catch (e: IllegalArgumentException) {
+                                    Log.e("NaturePeiBadgeColor", "[LastAnalysisFragment ERROR] Couleur hexadécimale invalide pour badge: $colorHex", e)
+                                    lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut en cas d'erreur
+                                }
+                            } else {
+                                Log.e("NaturePeiBadgeColor", "[LastAnalysisFragment ERROR] Format couleur hexadécimale incorrect pour badge: $colorHex")
+                                lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut si le format est incorrect
                             }
-                        }
+                        } ?: run { Log.w("NaturePeiBadgeColor", "[LastAnalysisFragment WARN] representativeColorHex est nul, utilise couleur par défaut badge_nc."); lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
                     }
 
                     val cardHabitat = lastAnalysisInfoCardsContainer.getChildAt(0)

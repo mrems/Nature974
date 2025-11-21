@@ -72,6 +72,7 @@ class HistoryListFragment : Fragment() {
                 putExtra(ResultActivity.EXTRA_CHARACTERISTICS, entry.characteristics)
                 putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, entry.localContext)
                 putExtra(ResultActivity.EXTRA_DESCRIPTION, entry.description)
+                putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, entry.representativeColorHex) // Ajout pour un clic normal
             }
             startActivity(intent)
         }) { entry, itemView ->
@@ -147,6 +148,7 @@ class HistoryListFragment : Fragment() {
                                 putExtra(ResultActivity.EXTRA_CHARACTERISTICS, newResponse.characteristics)
                                 putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, newResponse.localContext)
                                 putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C")
+                                putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, newResponse.representativeColorHex) // Ajout pour la ré-analyse
                             }
                             startActivity(intent)
                             

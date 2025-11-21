@@ -108,13 +108,14 @@ async function analyzeImage(req, res) {
 
 Règle d'utilisation de la région: La variable 'country' est toujours utilisée. La variable 'region' est optionnelle et NE DOIT ÊTRE utilisée que si vous avez des informations spécifiques et vérifiables pour cette région. Sinon, n'incluez aucune référence à la région dans la réponse.
 
-Analysez cette image et fournissez une réponse JSON stricte avec les 6 champs suivants:
+Analysez cette image et fournissez une réponse JSON stricte avec les 7 champs suivants:
 1.  "localName": Nom commun en français (ex: "Merle noir") ou "N/C" si inconnu.
 2.  "scientificName": Nom scientifique latin (ex: "Turdus merula") ou "N/C" si inconnu.
-3.  "type": Type d'espèce et son statut combinés (ex: "Plante endémique", "Oiseau introduit", "Animal non endémique", "N/C") ou "N/C" si inconnu.
+3.  "type": Type d'espèce et statut (si pertinent). Soyez concis. Utilisez des termes comme "Plante endémique", "Oiseau", "Poisson tropical", "Liane grimpante", "Felin", "Insecte", "Plante carnivore", "Coquillage marin", "Crustacé", "Plante ornementale". Évitez les redondances comme "cultivée" ou "introduite" si le type est déjà clair. Utilisez "N/C" si inconnu.
 4.  "habitat": Habitat principal (ex: "Forêts humides >1200m", "Littoral", "Milieux urbains") ou "N/C" si inconnu.
 5.  "characteristics": Description physique COURTE et synthétique (taille, couleur, forme, max 2-3 phrases) ou "N/C" si inconnu.
 6.  "localContext": Contexte local basé sur country="${country ?? 'N/C'}".${region ? ` N'incluez region="${region}" QUE si vous disposez d'informations concrètes, spécifiques et non génériques à cette région; sinon, n'évoquez pas la région.` : ''} (usages, écologie, anecdote culturelle, max 2-3 phrases) ou "N/C" si inconnu.
+7.  "representativeColorHex": Un code couleur hexadécimal (ex: "#FF5733") qui représente le mieux l'espèce identifiée dans l'image. Si l'espèce ne peut être identifiée, utilisez "#CCCCCC".
 
 Si l'espèce ne peut pas être identifiée ou si un champ est inconnu, utilisez "N/C".
 Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;

@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.content.Intent
 import android.util.Log
+import androidx.core.content.ContextCompat
+import android.graphics.drawable.GradientDrawable
 
 class ResultActivity : AppCompatActivity() {
 
@@ -49,6 +51,9 @@ class ResultActivity : AppCompatActivity() {
         val characteristics = intent.getStringExtra(EXTRA_CHARACTERISTICS)
         val localContext = intent.getStringExtra(EXTRA_LOCAL_CONTEXT)
         val description = intent.getStringExtra(EXTRA_DESCRIPTION) // Pour rétrocompatibilité
+        val representativeColorHex = intent.getStringExtra(EXTRA_REPRESENTATIVE_COLOR_HEX) // Rétablir l'extraction de la couleur
+
+        Log.d("NaturePeiBadgeColor", "[ResultActivity] Intent Extra - representativeColorHex: $representativeColorHex")
 
         if (imageUriString != null && localName != null && scientificName != null) {
             currentEntry = AnalysisEntry(
@@ -59,9 +64,10 @@ class ResultActivity : AppCompatActivity() {
                 habitat = habitat,
                 characteristics = characteristics,
                 localContext = localContext,
-                description = description ?: "N/C" // Assurer une valeur par défaut
+                description = description ?: "N/C", // Assurer une valeur par défaut
+                representativeColorHex = representativeColorHex // Assigner la couleur à l'AnalysisEntry
             )
-            Log.d("ResultActivity", "Current Entry pour affichage: $currentEntry") // LOG AJOUTÉ ICI
+            Log.d("NaturePeiBadgeColor", "[ResultActivity] AnalysisEntry créé pour affichage: ${currentEntry?.representativeColorHex}")
             displayResult(currentEntry!!)
         } else {
             Toast.makeText(this, "Erreur: Données de résultat manquantes.", Toast.LENGTH_LONG).show()
@@ -85,15 +91,27 @@ class ResultActivity : AppCompatActivity() {
         resultLocalNameTextView.text = entry.localName
         resultScientificNameTextView.text = entry.scientificName
 
-        // Afficher le badge de type
+        // Afficher le badge de type et appliquer la couleur représentative
         entry.type?.let { typeValue ->
             if (typeValue != "N/C") {
                 resultTypeBadge.text = typeValue
-                when {
-                    typeValue.contains("endémique", ignoreCase = true) -> resultTypeBadge.setBackgroundResource(R.drawable.badge_endemique)
-                    typeValue.contains("introduit", ignoreCase = true) -> resultTypeBadge.setBackgroundResource(R.drawable.badge_introduit)
-                    else -> resultTypeBadge.setBackgroundResource(R.drawable.badge_nc)
-                }
+                // Appliquer la couleur reçue de l'API
+                entry.representativeColorHex?.let { colorHex ->
+                    Log.d("NaturePeiBadgeColor", "[ResultActivity] Applique couleur au badge: $colorHex")
+                    if (colorHex.startsWith("#") && colorHex.length == 7) {
+                        try {
+                            val roundedDrawable = ContextCompat.getDrawable(this, R.drawable.badge_rounded_dynamic_color) as GradientDrawable
+                            roundedDrawable.setColor(android.graphics.Color.parseColor(colorHex))
+                            resultTypeBadge.background = roundedDrawable
+                        } catch (e: IllegalArgumentException) {
+                            Log.e("NaturePeiBadgeColor", "[ResultActivity ERROR] Couleur hexadécimale invalide pour badge: $colorHex", e)
+                            resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut en cas d'erreur
+                        }
+                    } else {
+                        Log.e("NaturePeiBadgeColor", "[ResultActivity ERROR] Format couleur hexadécimale incorrect pour badge: $colorHex")
+                        resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut si le format est incorrect
+                    }
+                } ?: run { Log.w("NaturePeiBadgeColor", "[ResultActivity WARN] representativeColorHex est nul, utilise couleur par défaut badge_nc."); resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
                 resultTypeBadge.visibility = View.VISIBLE
             } else {
                 resultTypeBadge.visibility = View.GONE
@@ -139,6 +157,7 @@ class ResultActivity : AppCompatActivity() {
         const val EXTRA_CHARACTERISTICS = "characteristics"
         const val EXTRA_LOCAL_CONTEXT = "localContext"
         const val EXTRA_DESCRIPTION = "description"
+        const val EXTRA_REPRESENTATIVE_COLOR_HEX = "representativeColorHex" // Rétablir la constante
     }
 }
 

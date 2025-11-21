@@ -1050,8 +1050,10 @@ class CameraFragment : Fragment() {
                         }
                         return@launch
                     }
-                    // Analyser directement via l'URI; le backend gÃ¨re le prompt et le traitement
+                    // Analyser directement via l'URI; le backend gère le prompt et le traitement
                     val response = imageAnalyzer.analyzeImage(uri, userCountry, userRegion)
+
+                    Log.d("NaturePeiBadgeColor", "[CameraFragment] Réponse brute de Gemini (via ImageAnalyzer): $response") // Nouveau log pour la réponse complète
 
                     if (!currentCoroutineContext().isActive) {
                         Log.d("CameraFragment", "Analyse annulÃ©e avant la mise Ã  jour UI.")
@@ -1070,11 +1072,12 @@ class CameraFragment : Fragment() {
                                 putExtra(ResultActivity.EXTRA_CHARACTERISTICS, response.characteristics)
                                 putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, response.localContext)
                                 putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C") // Description n'est plus fournie par l'API, utiliser N/C
+                                putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, response.representativeColorHex) // Passer la couleur
                             }
                             startActivity(intent)
 
                             val analysisEntry = AnalysisEntry(
-                                imageUri = uri.toString(),
+                                imageUri = uri.toString(), // L'URI de l'image est maintenant requis pour le constructeur
                                 localName = response.localName,
                                 scientificName = response.scientificName,
                                 type = response.type,
@@ -1083,14 +1086,16 @@ class CameraFragment : Fragment() {
                                 localContext = response.localContext,
                                 country = userCountry,
                                 region = userRegion,
-                                description = "N/C" // Description n'est plus fournie par l'API, utiliser N/C
+                                description = "N/C", // Description n'est plus fournie par l'API, utiliser N/C
+                                representativeColorHex = response.representativeColorHex // Assigner la couleur à l'AnalysisEntry
                             )
                             val historyManager = AnalysisHistoryManager(requireContext())
                             historyManager.saveAnalysisEntry(analysisEntry)
                             // Sauvegarder cette fiche comme dernière consultée
                             historyManager.saveLastViewedCard(analysisEntry)
 
-                            Log.d("CameraFragment", "RÃ©ponse Gemini: ${response.localName}, ${response.scientificName}, ${response.type}") // AjustÃ© pour les nouveaux champs
+                            Log.d("NaturePeiBadgeColor", "[CameraFragment] RÃ©ponse Gemini - localName: ${response.localName}, scientificName: ${response.scientificName}, type: ${response.type}, color: ${response.representativeColorHex}")
+                            Log.d("NaturePeiBadgeColor", "[CameraFragment] Couleur passée à ResultActivity et enregistrée dans l'historique.")
                         } else {
                             Toast.makeText(requireContext(), "Aucune rÃ©ponse de l\'API.", Toast.LENGTH_LONG).show()
                         }

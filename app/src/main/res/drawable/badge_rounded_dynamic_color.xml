@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FF0000" /> <!-- Couleur de remplissage temporaire, sera remplacée -->
+    <corners android:radius="20dp" /> <!-- Rayon des coins pour un border-radius important -->
+</shape>
