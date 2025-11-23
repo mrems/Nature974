@@ -11,12 +11,14 @@ import android.widget.ImageView
 
 class PeculiaritiesFragment : Fragment() {
 
-    private var peculiaritiesAndDangers: String? = null
+    private var Peculiarities: String? = null
+    private var danger: Boolean = false // Nouveau champ
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            peculiaritiesAndDangers = it.getString(ARG_PECULIARITIES_AND_DANGERS)
+            Peculiarities = it.getString(ARG_PECULIARITIES)
+            danger = it.getBoolean(ARG_DANGER, false) // Récupérer la valeur du danger
         }
     }
 
@@ -28,22 +30,24 @@ class PeculiaritiesFragment : Fragment() {
         val peculiaritiesContent = peculiaritiesCard.findViewById<TextView>(R.id.content_info)
         val peculiaritiesIcon = peculiaritiesCard.findViewById<ImageView>(R.id.icon_info)
 
-        peculiaritiesTitle.text = "Particularités et Dangers"
-        peculiaritiesContent.text = peculiaritiesAndDangers
+        peculiaritiesTitle.text = "Particularités"
+        peculiaritiesContent.text = Peculiarities
         peculiaritiesIcon.setImageResource(R.drawable.ic_new_options) // Utilisation d'une icône générique pour l'instant
-        peculiaritiesIcon.visibility = if (peculiaritiesAndDangers != null && peculiaritiesAndDangers != "N/C") View.VISIBLE else View.GONE
-        peculiaritiesCard.visibility = if (peculiaritiesAndDangers != null && peculiaritiesAndDangers != "N/C") View.VISIBLE else View.GONE
+        peculiaritiesIcon.visibility = if (Peculiarities != null && Peculiarities != "N/C") View.VISIBLE else View.GONE
+        peculiaritiesCard.visibility = if (Peculiarities != null && Peculiarities != "N/C") View.VISIBLE else View.GONE
 
         return view
     }
 
     companion object {
-        private const val ARG_PECULIARITIES_AND_DANGERS = "peculiarities_and_dangers"
+        private const val ARG_PECULIARITIES = "peculiarities"
+        private const val ARG_DANGER = "danger"
 
         @JvmStatic
-        fun newInstance(peculiaritiesAndDangers: String) = PeculiaritiesFragment().apply {
+        fun newInstance(Peculiarities: String, danger: Boolean) = PeculiaritiesFragment().apply {
             arguments = Bundle().apply {
-                putString(ARG_PECULIARITIES_AND_DANGERS, peculiaritiesAndDangers)
+                putString(ARG_PECULIARITIES, Peculiarities)
+                putBoolean(ARG_DANGER, danger) // Passer la valeur du danger
             }
         }
     }

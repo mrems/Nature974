@@ -14,13 +14,14 @@ data class AnalysisEntry(
     val habitat: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
     val characteristics: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
     val localContext: String? = null, // Nouveau champ, peut être nul pour la rétrocompatibilité
-    val peculiaritiesAndDangers: String? = null, // Nouveau champ pour les particularités et dangers
+    val Peculiarities: String? = null, // Nouveau champ pour les particularités
     val country: String? = null, // Localisation: pays
     val region: String? = null, // Localisation: région/adminArea
     val description: String, // Ancien champ, pour la rétrocompatibilité
     val timestamp: Long? = System.currentTimeMillis(), // Nouveau champ pour l'ordre chronologique
     val isTutorial: Boolean = false, // Flag pour identifier les fiches d'exemple/tutoriel
-    val representativeColorHex: String? = null // Nouveau champ pour la couleur représentative
+    val representativeColorHex: String? = null,
+    val danger: Boolean = false // Nouveau champ pour indiquer le danger
 ) {
     // Le constructeur secondaire a été supprimé pour éviter les ambiguïtés et simplifier la gestion des champs. 
     // Toutes les instanciations de AnalysisEntry doivent maintenant utiliser le constructeur principal avec tous les arguments.

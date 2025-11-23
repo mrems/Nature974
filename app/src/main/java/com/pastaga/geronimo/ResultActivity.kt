@@ -14,14 +14,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.content.Intent
 import android.util.Log
-import androidx.core.content.ContextCompat
-import android.graphics.drawable.GradientDrawable
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import android.view.ViewGroup
+// import android.view.LayoutInflater
 
 class ResultActivity : AppCompatActivity() {
 
@@ -59,9 +58,10 @@ class ResultActivity : AppCompatActivity() {
         val habitat = intent.getStringExtra(EXTRA_HABITAT)
         val characteristics = intent.getStringExtra(EXTRA_CHARACTERISTICS)
         val localContext = intent.getStringExtra(EXTRA_LOCAL_CONTEXT)
-        val peculiaritiesAndDangers = intent.getStringExtra(EXTRA_PECULIARITIES_AND_DANGERS) // Nouveau champ
+        val Peculiarities = intent.getStringExtra(EXTRA_PECULIARITIES) // Nouveau champ
         val description = intent.getStringExtra(EXTRA_DESCRIPTION) // Pour rétrocompatibilité
         val representativeColorHex = intent.getStringExtra(EXTRA_REPRESENTATIVE_COLOR_HEX) // Rétablir l'extraction de la couleur
+        val danger = intent.getBooleanExtra(EXTRA_DANGER, false) // Nouveau champ danger
 
         if (imageUriString != null && localName != null && scientificName != null) {
             currentEntry = AnalysisEntry(
@@ -72,9 +72,10 @@ class ResultActivity : AppCompatActivity() {
                 habitat = habitat,
                 characteristics = characteristics,
                 localContext = localContext,
-                peculiaritiesAndDangers = peculiaritiesAndDangers, // Assigner le nouveau champ
+                Peculiarities = Peculiarities, // Assigner le nouveau champ
                 description = description ?: "N/C", // Assurer une valeur par défaut
-                representativeColorHex = representativeColorHex
+                representativeColorHex = representativeColorHex,
+                danger = danger // Assigner le nouveau champ danger
             )
             displayResult(currentEntry!!)
         } else {
@@ -103,7 +104,9 @@ class ResultActivity : AppCompatActivity() {
         entry.type?.let { typeValue ->
             if (typeValue != "N/C") {
                 resultTypeBadge.text = typeValue
-                // Appliquer la couleur reçue de l'API
+                // La logique de couleur pour le badge est commentée/supprimée car elle n'est plus pertinente pour la signalisation du danger.
+                // Si un autre besoin de coloration dynamique du badge existe, cette logique pourrait être réintroduite ou adaptée.
+                /*
                 entry.representativeColorHex?.let { colorHex ->
                     if (colorHex.startsWith("#") && colorHex.length == 7) {
                         try {
@@ -111,14 +114,14 @@ class ResultActivity : AppCompatActivity() {
                             roundedDrawable.setColor(android.graphics.Color.parseColor(colorHex))
                             resultTypeBadge.background = roundedDrawable
                         } catch (e: IllegalArgumentException) {
-                            // Log.e("NaturePeiBadgeColor", "[ResultActivity ERROR] Couleur hexadécimale invalide pour badge: $colorHex", e) // Retirer le log d'erreur si souhaité
                             resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut en cas d'erreur
                         }
                     } else {
-                        // Log.e("NaturePeiBadgeColor", "[ResultActivity ERROR] Format couleur hexadécimale incorrect pour badge: $colorHex") // Retirer le log d'erreur si souhaité
                         resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut si le format est incorrect
                     }
-                } ?: run { /* Log.w("NaturePeiBadgeColor", "[ResultActivity WARN] representativeColorHex est nul, utilise couleur par défaut badge_nc."); */ resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
+                } ?: run { resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
+                */
+                resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Utilisation d'une couleur par défaut pour le badge
                 resultTypeBadge.visibility = View.VISIBLE
             } else {
                 resultTypeBadge.visibility = View.GONE
@@ -152,19 +155,25 @@ class ResultActivity : AppCompatActivity() {
         })
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = when (position) {
+            var tabText = when (position) {
                 0 -> "Infos générale"
                 1 -> "Particularités"
                 2 -> "Contexte local"
                 else -> ""
             }
+            // Log.d("NaturePei_Debug", "[ResultActivity] Danger pour l'onglet Particularités: ${entry.danger}") // Commenter ce log car il n'est plus utile après le débogage de la propagation du danger
+            // Ajouter un point d'exclamation si l'espèce est dangereuse
+            if (position == 1 && entry.danger) {
+                tabText += "!"
+            }
+            tab.text = tabText
         }.attach()
 
-        // Définir les couleurs du texte des onglets et de l'indicateur après l'attachement du TabLayoutMediator
-        // Utilisation d'un ColorStateList pour une meilleure gestion des états
-        val tabTextColors = ContextCompat.getColorStateList(this, R.color.tab_text_color_selector)
-        tabLayout.setTabTextColors(tabTextColors)
-        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.black))
+        // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées, 
+        // car la coloration dynamique des onglets n'est plus une exigence.
+        // val tabTextColors = ContextCompat.getColorStateList(this, R.color.tab_text_color_selector)
+        // tabLayout.setTabTextColors(tabTextColors)
+        // tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.black))
 
     }
 
@@ -178,7 +187,7 @@ class ResultActivity : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> GeneralInfoFragment.newInstance(entry.habitat ?: "N/C", entry.characteristics ?: "N/C")
-                1 -> PeculiaritiesFragment.newInstance(entry.peculiaritiesAndDangers ?: "N/C")
+                1 -> PeculiaritiesFragment.newInstance(entry.Peculiarities ?: "N/C", entry.danger)
                 2 -> LocalContextFragment.newInstance(entry.localContext ?: "N/C")
                 else -> throw IllegalArgumentException("Invalid tab position")
             }
@@ -193,9 +202,10 @@ class ResultActivity : AppCompatActivity() {
         const val EXTRA_HABITAT = "habitat"
         const val EXTRA_CHARACTERISTICS = "characteristics"
         const val EXTRA_LOCAL_CONTEXT = "localContext"
-        const val EXTRA_PECULIARITIES_AND_DANGERS = "peculiaritiesAndDangers" // Nouveau extra
+        const val EXTRA_PECULIARITIES = "Peculiarities" // Nouveau extra
         const val EXTRA_DESCRIPTION = "description"
         const val EXTRA_REPRESENTATIVE_COLOR_HEX = "representativeColorHex"
+        const val EXTRA_DANGER = "danger" // Nouveau extra pour le danger
     }
 }
 

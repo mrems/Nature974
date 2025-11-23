@@ -7,3 +7,6 @@
     <!-- Couleur par défaut (au cas où) -->
     <item android:color="@color/text_medium_gray"/>
 </selector>
+
+
+

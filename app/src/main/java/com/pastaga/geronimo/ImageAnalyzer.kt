@@ -17,19 +17,23 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.HttpException
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 import android.graphics.ImageDecoder
 import android.os.Build
+
+class InsufficientCreditsException(message: String) : Exception(message)
 
 class ImageAnalyzer(private val context: Context) {
 
     private val BACKEND_API_URL = "https://europe-west9-geronimo-7224a.cloudfunctions.net/api/"
 
     private val okHttpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(150, TimeUnit.SECONDS)
+        .readTimeout(150, TimeUnit.SECONDS)
+        .writeTimeout(150, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(false) // Désactiver les tentatives de relance automatiques
         .build()
 
     private val retrofit = Retrofit.Builder()
@@ -114,7 +118,9 @@ class ImageAnalyzer(private val context: Context) {
         val image: String,
         val mimeType: String,
         val country: String? = null,
-        val region: String? = null
+        val region: String? = null,
+        val modelId: String,
+        val uid: String
         // Le prompt n'est plus envoyé par l'application, il est construit par le backend.
         // val prompt: String
     )
@@ -126,11 +132,12 @@ class ImageAnalyzer(private val context: Context) {
         val habitat: String,
         val characteristics: String,
         val localContext: String,
-        val peculiaritiesAndDangers: String? = null, // Nouveau champ pour les particularités et dangers
-        val representativeColorHex: String? // Rendre le champ nullable pour une meilleure robustesse
+        val Peculiarities: String? = null, // Nouveau champ pour les particularités
+        val representativeColorHex: String?,
+        val danger: Boolean = false // Nouveau champ danger
     )
 
-    suspend fun analyzeImage(imageUri: Uri, country: String? = null, region: String? = null): AnalyzeImageResponse? {
+    suspend fun analyzeImage(imageUri: Uri, modelId: String, uid: String, country: String? = null, region: String? = null): AnalyzeImageResponse? {
         return withContext(Dispatchers.IO) {
             try {
                 val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -147,32 +154,28 @@ class ImageAnalyzer(private val context: Context) {
                     image = base64Image,
                     mimeType = mimeType,
                     country = country,
-                    region = region
+                    region = region,
+                    modelId = modelId,
+                    uid = uid
                 )
 
-                var response: AnalyzeImageResponse? = null
-                val maxRetries = 5
-                var attempt = 0
-                var success = false
-
-                while (attempt < maxRetries && !success) {
-                    try {
-                        response = naturePeiService.analyzeImage(request)
-                        success = true
-                    } catch (e: Exception) {
-                        attempt++
-                        if (attempt < maxRetries) {
-                            val delayTime = (Math.pow(2.0, attempt.toDouble()).toLong() * 1000) + (0..1000).random()
-                            Log.e("ImageAnalyzer", "Tentative $attempt échouée. Nouvelle tentative dans ${delayTime / 1000}s...", e)
-                            kotlinx.coroutines.delay(delayTime)
-                        } else {
-                            throw e // Re-throw after max retries
-                        }
+                // Suppression de la boucle de relance explicite (maxRetries, attempt, success)
+                // La requête est effectuée une seule fois. Les délais d'attente OkHttpClient sont désormais à 150s.
+                val response = naturePeiService.analyzeImage(request)
+                Log.d("NaturePei_Debug", "[ImageAnalyzer] Réponse API réussie: ${response?.danger}")
+                response
+            } catch (e: HttpException) {
+                // Gérer spécifiquement les erreurs HTTP (code 400 pour crédits insuffisants)
+                if (e.code() == 400) {
+                    val errorBody = e.response()?.errorBody()?.string()
+                    if (errorBody?.contains("Crédits insuffisants") == true || errorBody?.contains("insuffisants") == true) {
+                        throw InsufficientCreditsException("Crédits insuffisants pour effectuer cette analyse.")
                     }
                 }
-                response
+                Log.e("NaturePei_Debug", "[ImageAnalyzer] Erreur HTTP lors de l'analyse: ", e)
+                null
             } catch (e: Exception) {
-                Log.e("ImageAnalyzer", "Erreur lors de l\'analyse: ", e)
+                Log.e("NaturePei_Debug", "[ImageAnalyzer] Erreur générale lors de l'analyse: ", e)
                 null
             }
         }

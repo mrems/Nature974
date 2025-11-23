@@ -35,6 +35,13 @@ app.use(express.json({ limit: "15mb" }));
 const GEMINI_API_KEY = defineSecret("GEMINI_API_KEY");
 const ANDROID_PACKAGE_NAME = defineString("ANDROID_PACKAGE_NAME");
 
+// Mapping modèle -> coût en crédits
+const MODEL_CREDITS = {
+  'gemini-2.5-flash-lite-preview-09-2025': 1,
+  'gemini-2.5-flash': 2,
+  'gemini-3-pro-preview': 5,
+};
+
 // Utilitaire: transformer base64 en part compatible Gemini
 function base64ToGenerativePart(base64EncodedImage, mimeType) {
   return {
@@ -56,7 +63,7 @@ async function analyzeImage(req, res) {
     console.log(
       `[${new Date().toISOString()}] Validation des champs. Temps écoulé depuis le début: ${Date.now() - startTime} ms.`
     );
-    const { image, mimeType, prompt, country, region } = req.body;
+    const { image, mimeType, prompt, country, region, modelId, uid } = req.body;
 
     if (!image || !mimeType) {
       console.warn("Validation échouée: champs image ou mimeType manquants.");
@@ -64,6 +71,36 @@ async function analyzeImage(req, res) {
         .status(400)
         .json({ message: "Les champs 'image' et 'mimeType' sont requis." });
     }
+
+    if (!uid) {
+      console.warn("Validation échouée: champ uid manquant.");
+      return res
+        .status(400)
+        .json({ message: "Le champ 'uid' est requis pour l'authentification." });
+    }
+
+    // Validation du modelId
+    const validModelIds = Object.keys(MODEL_CREDITS);
+    if (!modelId || !validModelIds.includes(modelId)) {
+      console.warn("Validation échouée: modelId invalide ou manquant.");
+      return res
+        .status(400)
+        .json({ message: `Le champ 'modelId' est requis et doit être l'un des suivants: ${validModelIds.join(', ')}. `});
+    }
+
+    // L'ancienne logique de déduction des crédits en début de requête a été supprimée
+    // pour éviter le double débit. La décrémentation n'a lieu qu'en cas de succès
+    // de l'analyse et d'envoi d'une réponse valide au client (voir lignes 241-242).
+    // const creditsRequired = MODEL_CREDITS[modelId];
+    // console.log(`[${new Date().toISOString()}] Crédits requis pour ${modelId}: ${creditsRequired}`);
+    // try {
+    //   await decrementCreditsWithAmount(uid, creditsRequired);
+    // } catch (creditError) {
+    //   console.error("Erreur lors de la déduction des crédits:", creditError);
+    //   return res
+    //     .status(400)
+    //     .json({ message: creditError.message });
+    // }
 
     // Conversion de l'image
     console.log(
@@ -84,7 +121,10 @@ async function analyzeImage(req, res) {
     }
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY.value());
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-09-2025" });
+    // L'ancien log de débogage pour GEMINI_API_KEY a été supprimé car il n'apparaissait pas dans les logs.
+    // console.log(`[DEBUG] GEMINI_API_KEY est chargée. Longueur: ${GEMINI_API_KEY.value()?.length || 0}. Début: ${GEMINI_API_KEY.value()?.substring(0, 5) || 'N/A'}`);
+
+    const model = genAI.getGenerativeModel({ model: modelId });
 
     // Prompt Gemini
     console.log(
@@ -99,24 +139,27 @@ async function analyzeImage(req, res) {
       locationContext += "\n\n"; // Ajouter une ligne vide pour une meilleure séparation
     }
     // Construire dynamiquement la spécialisation selon la localisation fournie
-    let expertiseLine = "Vous êtes un expert en biodiversité (faune et flore).";
+    let expertiseLine = "Vous êtes un expert en biodiversité (faune et flore), pierres et minéraux.";
     if (country) {
-      expertiseLine = `Vous êtes un expert en biodiversité (faune et flore) spécialisé dans les espèces de ${country}.`;
+      expertiseLine = `Vous êtes un expert en biodiversité (faune et flore), pierres et minéraux, spécialisé dans les espèces et formations géologiques de ${country}.`;
     }
 
     const geminiPrompt = `${locationContext}${expertiseLine}
 
+Si on t'envoie la photo d'un humain ou d'un objet manufacturé et qu'il n'est pas le sujet principal et évident de l'image, ignore-le. Concentre-toi sur l'identification et l'analyse de la faune, la flore, les champignons, les pierres et minéraux. Si l'humain est le sujet principal, alors tu dois remplir tous les champs de manière humoristique et sarcastique, toujours nouvelle, qui exprime ton imagination et ton humour.
+
 Règle d'utilisation de la région: La variable 'country' est toujours utilisée. La variable 'region' est optionnelle et NE DOIT ÊTRE utilisée que si vous avez des informations spécifiques et vérifiables pour cette région. Sinon, n'incluez aucune référence à la région dans la réponse.
 
-Analysez cette image et fournissez une réponse JSON stricte avec les 8 champs suivants:
+Analysez cette image et fournissez une réponse JSON stricte avec les 9 champs suivants:
 1.  "localName": Nom commun en français (ex: "Merle noir") ou "N/C" si inconnu.
 2.  "scientificName": Nom scientifique latin (ex: "Turdus merula") ou "N/C" si inconnu.
 3.  "type": Type d'espèce et statut (si pertinent). Soyez concis. Utilisez des termes comme "Plante endémique", "Oiseau", "Poisson tropical", "Liane grimpante", "Felin", "Insecte", "Plante carnivore", "Coquillage marin", "Crustacé", "Plante ornementale". Évitez les redondances comme "cultivée" ou "introduite" si le type est déjà clair. Utilisez "N/C" si inconnu.
 4.  "habitat": Habitat principal (ex: "Forêts humides >1200m", "Littoral", "Milieux urbains") ou "N/C" si inconnu.
 5.  "characteristics": Description physique COURTE et synthétique (taille, couleur, forme, max 2-3 phrases) ou "N/C" si inconnu.
 6.  "localContext": Contexte local basé sur country="${country ?? 'N/C'}".${region ? ` N'incluez region="${region}" QUE si vous disposez d'informations concrètes, spécifiques et non génériques à cette région; sinon, n'évoquez pas la région.` : ''} (usages, écologie, anecdote culturelle, max 2-3 phrases) ou "N/C" si inconnu.
-7.  "peculiaritiesAndDangers": Particularités et dangers associés à l'espèce (comportement, alimentation, reproduction) ET sa dangerosité/toxicité spécifique pour les humains (y compris les enfants), les chiens et les chats domestiques (ex: "plante toxique pour les reins", "morsure venimeuse", "non toxique") ou "N/C" si inconnu. Soyez concis.
+7.  "Peculiarities": Particularités (vertus médicinales, propriétés en lithothérapie, comportement, caractère, alimentation, reproduction). **EXCLUSIVEMENT** si un DANGER GRAVE ET RÉEL existe : inclure sa dangerosité/toxicité spécifique pour les humains (y compris les enfants), les chiens et les chats domestiques (ex: "plante toxique pour les reins", "morsure venimeuse", "animal venimeux, morsure douloureuse"). **DANS TOUS LES AUTRES CAS (AUCUN DANGER GRAVE, OU INFORMATION NON PERTINENTE SUR L'ABSENCE DE DANGER), NE MENTIONNEZ JAMAIS L'ABSENCE DE DANGER OU DE TOXICITÉ**. Soyez concis.
 8.  "representativeColorHex": Un code couleur hexadécimal (ex: "#FF5733") qui représente le mieux l'espèce identifiée dans l'image. Si l'espèce ne peut être identifiée, utilisez "#CCCCCC".
+9.  "danger": true si l'espèce analysée présente un DANGER GRAVE ET RÉEL pour les humains (adultes et enfants) ou les animaux de compagnie (chiens et chats) (par exemple, plantes/champignons toxiques, prédateurs dangereux, animaux venimeux, etc.). Sinon, false.
 
 Si l'espèce ne peut pas être identifiée ou si un champ est inconnu, utilisez "N/C".
 Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
@@ -167,6 +210,10 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
     if (text.startsWith("```json") && text.endsWith("```")) {
       text = text.substring(7, text.length - 3).trim();
     }
+    // L'ancien log de débogage `[DEBUG_CLEANED_TEXT]` a été supprimé.
+
+    // Log du texte nettoyé avant parsing JSON
+    // console.log(`[${new Date().toISOString()}] Texte Gemini nettoyé (avant parsing):`, text);
 
     // Parsing JSON
     console.log(
@@ -174,6 +221,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
     );
     try {
       const parsedResult = JSON.parse(text);
+      // L'ancien log de débogage `[DEBUG_PARSED_RESULT]` a été supprimé.
       console.log(
         `[${new Date().toISOString()}] Fin du parsing de la réponse Gemini. Temps écoulé depuis le début: ${Date.now() - startTime} ms.`
       );
@@ -184,19 +232,24 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
         parsedResult.habitat &&
         parsedResult.characteristics &&
         parsedResult.localContext &&
-        parsedResult.peculiaritiesAndDangers // Ajout du nouveau champ
+        parsedResult.Peculiarities && // CHANGEMENT ICI
+        parsedResult.danger !== undefined // Nouveau champ à valider: vérifier l'existence, pas la valeur booléenne
       ) {
         console.log(
           `[${new Date().toISOString()}] Réponse finale envoyée à l'application mobile: ${JSON.stringify(parsedResult)}`
         );
+        console.log(`[${new Date().toISOString()}] Valeur de danger avant envoi: ${parsedResult.danger}`);
         console.log(
           `[${new Date().toISOString()}] Réponse envoyée: Succès. Temps total: ${Date.now() - startTime} ms.`
         );
+        // Déduire les crédits après un traitement réussi et juste avant d'envoyer la réponse.
+        await decrementCreditsWithAmount(uid, MODEL_CREDITS[modelId]);
         return res.status(200).json(parsedResult);
       } else {
+        // L'ancien log de débogage `[DEBUG_VALIDATION_FAILED]` a été supprimé.
         console.error(
           "La réponse JSON de Gemini est valide mais ne contient pas tous les champs attendus:",
-          parsedResult
+          parsedResult // Afficher le résultat complet pour le débogage si l'erreur persiste
         );
         return res
           .status(500)
@@ -224,7 +277,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
 app.post("/analyze-image", analyzeImage);
 
 // Export de la fonction HTTPS Firebase
-exports.api = onRequest({ region: REGION, secrets: [GEMINI_API_KEY] }, app);
+exports.api = onRequest({ region: REGION, secrets: [GEMINI_API_KEY], timeoutSeconds: 120 }, app);
 
 // Déclencheur v1 (compat) pour la création d'utilisateur Firebase Auth
 exports.onUserCreate = functionsV1.auth.user().onCreate(async (user) => {
@@ -245,35 +298,48 @@ exports.onUserCreate = functionsV1.auth.user().onCreate(async (user) => {
   }
 });
 
+// Fonction utilitaire pour décrémenter un nombre spécifique de crédits
+async function decrementCreditsWithAmount(uid, amount) {
+  console.log(`[decrementCreditsWithAmount] uid=${uid} - début, montant=${amount}`);
+  try {
+    await db.runTransaction(async (tx) => {
+      const userRef = db.collection('users').doc(uid);
+      const snap = await tx.get(userRef);
+      if (!snap.exists) {
+        throw new Error('Document utilisateur introuvable.');
+      }
+      const credits = snap.get('credits') || 0;
+      console.log(`[decrementCreditsWithAmount] uid=${uid} - crédits actuels=${credits}`);
+      if (credits < amount) {
+        throw new Error('Crédits insuffisants.');
+      }
+      tx.update(userRef, {
+        credits: FieldValue.increment(-amount),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+    console.log(`[decrementCreditsWithAmount] uid=${uid} - succès décrémentation de ${amount} crédits`);
+  } catch (error) {
+    console.error(`[decrementCreditsWithAmount] uid=${uid} - erreur`, error);
+    throw error;
+  }
+}
+
 // Callable: décrémente 1 crédit de l'utilisateur authentifié, via transaction Firestore
 exports.decrementCredits = functionsV1.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functionsV1.https.HttpsError('unauthenticated', 'Authentification requise.');
   }
   const uid = context.auth.uid;
-  console.log(`[decrementCredits] uid=${uid} - début`);
   try {
-    await db.runTransaction(async (tx) => {
-      const userRef = db.collection('users').doc(uid);
-      const snap = await tx.get(userRef);
-      if (!snap.exists) {
-        throw new functionsV1.https.HttpsError('not-found', 'Document utilisateur introuvable.');
-      }
-      const credits = snap.get('credits') || 0;
-      console.log(`[decrementCredits] uid=${uid} - crédits actuels=${credits}`);
-      if (credits <= 0) {
-        throw new functionsV1.https.HttpsError('failed-precondition', 'Crédits insuffisants.');
-      }
-      tx.update(userRef, {
-        credits: FieldValue.increment(-1),
-        updatedAt: FieldValue.serverTimestamp(),
-      });
-    });
-    console.log(`[decrementCredits] uid=${uid} - succès décrémentation`);
+    await decrementCreditsWithAmount(uid, 1);
     return { success: true };
   } catch (error) {
-    if (error instanceof functionsV1.https.HttpsError) throw error;
-    console.error(`[decrementCredits] uid=${uid} - erreur`, error);
+    if (error.message === 'Document utilisateur introuvable.') {
+      throw new functionsV1.https.HttpsError('not-found', error.message);
+    } else if (error.message === 'Crédits insuffisants.') {
+      throw new functionsV1.https.HttpsError('failed-precondition', error.message);
+    }
     throw new functionsV1.https.HttpsError('internal', error.message || 'Erreur serveur');
   }
 });

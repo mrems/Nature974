@@ -17,8 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.util.Log
-import androidx.core.content.ContextCompat
-import android.graphics.drawable.GradientDrawable
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -122,7 +120,9 @@ class LastAnalysisFragment : Fragment() {
                     if (entry.isTutorial) {
                         lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_origine)
                     } else {
-                        // Appliquer la couleur reçue de l'API pour les vraies analyses
+                        // La logique de couleur pour le badge est commentée/supprimée car elle n'est plus pertinente pour la signalisation du danger.
+                        // Si un autre besoin de coloration dynamique du badge existe, cette logique pourrait être réintroduite ou adaptée.
+                        /*
                         entry.representativeColorHex?.let { colorHex ->
                             if (colorHex.startsWith("#") && colorHex.length == 7) {
                                 try {
@@ -130,14 +130,14 @@ class LastAnalysisFragment : Fragment() {
                                     roundedDrawable.setColor(android.graphics.Color.parseColor(colorHex))
                                     lastAnalysisTypeBadge.background = roundedDrawable
                                 } catch (e: IllegalArgumentException) {
-                                    // Log.e("NaturePeiBadgeColor", "[LastAnalysisFragment ERROR] Couleur hexadécimale invalide pour badge: $colorHex", e) // Retirer le log d'erreur si souhaité
                                     lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut en cas d'erreur
                                 }
                             } else {
-                                // Log.e("NaturePeiBadgeColor", "[LastAnalysisFragment ERROR] Format couleur hexadécimale incorrect pour badge: $colorHex") // Retirer le log d'erreur si souhaité
                                 lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut si le format est incorrect
                             }
-                        } ?: run { /* Log.w("NaturePeiBadgeColor", "[LastAnalysisFragment WARN] representativeColorHex est nul, utilise couleur par défaut badge_nc."); */ lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
+                        } ?: run { lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
+                        */
+                        lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Utilisation d'une couleur par défaut pour le badge
                     }
 
                     // Configurer le ViewPager2 et le TabLayout
@@ -169,19 +169,24 @@ class LastAnalysisFragment : Fragment() {
                     })
 
                     TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                        tab.text = when (position) {
+                        var tabText = when (position) {
                             0 -> "Infos générale"
                             1 -> "Particularités"
                             2 -> "Contexte local"
                             else -> ""
                         }
+                        // Ajouter un point d'exclamation si l'espèce est dangereuse
+                        if (position == 1 && entry.danger) {
+                            tabText += "!"
+                        }
+                        tab.text = tabText
                     }.attach()
 
-                    // Définir les couleurs du texte des onglets et de l'indicateur après l'attachement du TabLayoutMediator
-                    // Utilisation d'un ColorStateList pour une meilleure gestion des états
-                    val tabTextColors = ContextCompat.getColorStateList(requireContext(), R.color.tab_text_color_selector)
-                    tabLayout.setTabTextColors(tabTextColors)
-                    tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées,
+                    // car la coloration dynamique des onglets n'est plus une exigence.
+                    // val tabTextColors = ContextCompat.getColorStateList(requireContext(), R.color.tab_text_color_selector)
+                    // tabLayout.setTabTextColors(tabTextColors)
+                    // tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.black))
 
                 } else {
                     // Si aucune fiche n'est trouvée, chercher une fiche tutorielle par défaut
@@ -209,19 +214,24 @@ class LastAnalysisFragment : Fragment() {
                         viewPager.adapter = pagerAdapter
 
                         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                            tab.text = when (position) {
+                            var tabText = when (position) {
                                 0 -> "Infos générale"
                                 1 -> "Particularités"
                                 2 -> "Contexte local"
                                 else -> ""
                             }
+                            // Ajouter un point d'exclamation si l'espèce est dangereuse
+                            if (position == 1 && tutorialEntry.danger) {
+                                tabText += "!"
+                            }
+                            tab.text = tabText
                         }.attach()
 
-                        // Définir les couleurs du texte des onglets et de l'indicateur après l'attachement du TabLayoutMediator
-                        // Utilisation d'un ColorStateList pour une meilleure gestion des états
-                        val tabTextColors = ContextCompat.getColorStateList(requireContext(), R.color.tab_text_color_selector)
-                        tabLayout.setTabTextColors(tabTextColors)
-                        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.black))
+                        // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées,
+                        // car la coloration dynamique des onglets n'est plus une exigence.
+                        // val tabTextColors = ContextCompat.getColorStateList(requireContext(), R.color.tab_text_color_selector)
+                        // tabLayout.setTabTextColors(tabTextColors)
+                        // tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.black))
 
                     } else {
                         lastAnalysisContentLayout.visibility = View.GONE
@@ -242,7 +252,7 @@ class LastAnalysisFragment : Fragment() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> GeneralInfoFragment.newInstance(entry.habitat ?: "N/C", entry.characteristics ?: "N/C")
-                1 -> PeculiaritiesFragment.newInstance(entry.peculiaritiesAndDangers ?: "N/C")
+                1 -> PeculiaritiesFragment.newInstance(entry.Peculiarities ?: "N/C", entry.danger)
                 2 -> LocalContextFragment.newInstance(entry.localContext ?: "N/C")
                 else -> throw IllegalArgumentException("Invalid tab position")
             }

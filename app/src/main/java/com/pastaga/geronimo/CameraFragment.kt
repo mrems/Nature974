@@ -86,7 +86,7 @@ import com.google.android.gms.location.LocationServices
 import android.widget.ImageView
 import android.widget.Button
  
-class CameraFragment : Fragment() {
+class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
 
     private lateinit var cameraPreviewTextureView: TextureView
 
@@ -126,10 +126,11 @@ class CameraFragment : Fragment() {
 
     private lateinit var imageAnalyzer: ImageAnalyzer
     private lateinit var phoneOrientationSensor: PhoneOrientationSensor
+    private lateinit var modelPreferences: ModelPreferences
     private var sensorOrientation: Int = 0
     private var deviceRotation: Int = 0
-    
-    
+
+    private var pendingImageUri: Uri? = null // Pour stocker l'URI temporairement pendant la sélection du modèle
 
     private var analysisJob: Job? = null
     private lateinit var onBackPressedCallback: OnBackPressedCallback
@@ -147,6 +148,7 @@ class CameraFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageAnalyzer = ImageAnalyzer(requireContext())
+        modelPreferences = ModelPreferences(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
@@ -344,9 +346,7 @@ class CameraFragment : Fragment() {
             cameraPreviewTextureView.visibility = View.GONE
             captureButton.visibility = View.GONE
             optionsButton.visibility = View.GONE
-            lifecycleScope.launch(Dispatchers.IO) { // Lancer l'analyse dans une coroutine
-                analyzeImageWithGemini(imageUri)
-            }
+            showModelSelectionDialog(imageUri)
         }
 
         onBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -996,9 +996,7 @@ class CameraFragment : Fragment() {
                 croppedImageUri = resultUri
                 // Fermer la galerie discrÃ¨tement en arriÃ¨re-plan pendant l'analyse
                 closeBottomSheet()
-                lifecycleScope.launch(Dispatchers.IO) {
-                analyzeImageWithGemini(resultUri) // Passer resultUri directement
-                }
+                showModelSelectionDialog(resultUri)
             }
         } else if (result.resultCode == UCrop.RESULT_ERROR) {
             val data = result.data
@@ -1017,8 +1015,16 @@ class CameraFragment : Fragment() {
         }
     }
 
-    // MÃ©thode pour dÃ©marrer l'analyse de l'image (dÃ©jÃ  existante)
-    private suspend fun analyzeImageWithGemini(imageUri: Uri? = null) {
+    // Méthode pour afficher la boîte de dialogue de sélection du modèle
+    private fun showModelSelectionDialog(imageUri: Uri? = null) {
+        pendingImageUri = imageUri // Stocker l'URI pour l'utiliser après la sélection
+        val selectedModel = modelPreferences.getSelectedModel()
+        val dialog = ModelSelectionDialog.newInstance(selectedModel)
+        dialog.show(childFragmentManager, "ModelSelectionDialog")
+    }
+
+    // MÃ©thode pour démarrer l'analyse de l'image (déjà existante)
+    private suspend fun analyzeImageWithGemini(imageUri: Uri? = null, modelId: String) {
         val loadingDialog = LoadingDialogFragment()
         loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
 
@@ -1037,11 +1043,9 @@ class CameraFragment : Fragment() {
                         return@launch
                     }
                     Log.d("CameraFragment", "Utilisateur connectÃ©: ${currentUser.uid}")
-                    // Gating: décrémenter 1 crédit côté serveur avant l'analyse.
-                    // Si les crédits sont à 0 (ou autre erreur liée aux crédits), on redirige vers l'écran d'abonnement.
-                    try {
-                        CreditsManager.decrementOneCredit()
-                    } catch (e: Exception) {
+                    val response = try {
+                        imageAnalyzer.analyzeImage(uri, modelId, currentUser.uid, userCountry, userRegion)
+                    } catch (e: InsufficientCreditsException) {
                         withContext(Dispatchers.Main) {
                             loadingDialog.dismiss()
                             // Rediriger vers la page d'abonnement quand les crédits sont épuisés
@@ -1050,7 +1054,6 @@ class CameraFragment : Fragment() {
                         }
                         return@launch
                     }
-                    val response = imageAnalyzer.analyzeImage(uri, userCountry, userRegion)
 
                     if (!currentCoroutineContext().isActive) {
                         Log.d("CameraFragment", "Analyse annulÃ©e avant la mise Ã  jour UI.")
@@ -1060,6 +1063,7 @@ class CameraFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         loadingDialog.dismiss()
                         if (response != null) {
+                            Log.d("NaturePei_Debug", "[CameraFragment] Danger de la réponse de l'API: ${response.danger}")
                             val intent = Intent(requireContext(), ResultActivity::class.java).apply {
                                 putExtra(ResultActivity.EXTRA_IMAGE_URI, uri.toString())
                                 putExtra(ResultActivity.EXTRA_LOCAL_NAME, response.localName)
@@ -1068,9 +1072,10 @@ class CameraFragment : Fragment() {
                                 putExtra(ResultActivity.EXTRA_HABITAT, response.habitat)
                                 putExtra(ResultActivity.EXTRA_CHARACTERISTICS, response.characteristics)
                                 putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, response.localContext)
-                                putExtra(ResultActivity.EXTRA_PECULIARITIES_AND_DANGERS, response.peculiaritiesAndDangers) // Passer le nouveau champ
+                                putExtra(ResultActivity.EXTRA_PECULIARITIES, response.Peculiarities) // Passer le nouveau champ
                                 putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C") // Description n'est plus fournie par l'API, utiliser N/C
                                 putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, response.representativeColorHex) // Passer la couleur
+                                putExtra(ResultActivity.EXTRA_DANGER, response.danger) // Passer le champ danger
                             }
                             startActivity(intent)
 
@@ -1082,11 +1087,12 @@ class CameraFragment : Fragment() {
                                 habitat = response.habitat,
                                 characteristics = response.characteristics,
                                 localContext = response.localContext,
-                                peculiaritiesAndDangers = response.peculiaritiesAndDangers, // Assigner le nouveau champ
+                                Peculiarities = response.Peculiarities, // Assigner le nouveau champ
                                 country = userCountry,
                                 region = userRegion,
                                 description = "N/C", // Description n'est plus fournie par l'API, utiliser N/C
-                                representativeColorHex = response.representativeColorHex // Assigner la couleur à l'AnalysisEntry
+                                representativeColorHex = response.representativeColorHex, // Assigner la couleur à l'AnalysisEntry
+                                danger = response.danger // Assigner le champ danger
                             )
                             val historyManager = AnalysisHistoryManager(requireContext())
                             historyManager.saveAnalysisEntry(analysisEntry)
@@ -1128,5 +1134,31 @@ class CameraFragment : Fragment() {
         inputStream?.close()
         return if (bytes != null) Base64.encodeToString(bytes, Base64.NO_WRAP) else ""
     }
-    
+
+    // Implémentation de ModelSelectionListener
+    override fun onModelSelected(modelId: String) {
+        // Sauvegarder la préférence de l'utilisateur
+        modelPreferences.setSelectedModel(modelId)
+
+        // Démarrer l'analyse avec le modèle sélectionné et l'URI stockée
+        val imageUri = pendingImageUri
+        pendingImageUri = null // Nettoyer la variable
+
+        if (imageUri != null) {
+            lifecycleScope.launch {
+                analyzeImageWithGemini(imageUri, modelId)
+            }
+        } else {
+            // Fallback: utiliser l'URI croppée actuelle
+            val fallbackUri = croppedImageUri ?: imageFile?.let { Uri.fromFile(it) }
+            if (fallbackUri != null) {
+                lifecycleScope.launch {
+                    analyzeImageWithGemini(fallbackUri, modelId)
+                }
+            } else {
+                Toast.makeText(requireContext(), "Erreur: aucune image à analyser", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }

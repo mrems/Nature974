@@ -21,12 +21,13 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class HistoryListFragment : Fragment() {
+class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
 
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var analysisHistoryManager: AnalysisHistoryManager
     private lateinit var emptyStateLayout: View
     private lateinit var imageAnalyzer: ImageAnalyzer
+    private lateinit var modelPreferences: ModelPreferences
     private var sharedPrefs: SharedPreferences? = null
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         if (key == AnalysisHistoryManager.KEY_HISTORY_LIST) {
@@ -38,6 +39,7 @@ class HistoryListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageAnalyzer = ImageAnalyzer(requireContext())
+        modelPreferences = ModelPreferences(requireContext())
     }
 
     override fun onCreateView(
@@ -73,7 +75,8 @@ class HistoryListFragment : Fragment() {
                 putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, entry.localContext)
                 putExtra(ResultActivity.EXTRA_DESCRIPTION, entry.description)
                 putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, entry.representativeColorHex) // Ajout pour un clic normal
-                putExtra(ResultActivity.EXTRA_PECULIARITIES_AND_DANGERS, entry.peculiaritiesAndDangers)
+                putExtra(ResultActivity.EXTRA_PECULIARITIES, entry.Peculiarities)
+                putExtra(ResultActivity.EXTRA_DANGER, entry.danger) // Assurez-vous de passer le champ danger
             }
             startActivity(intent)
         }) { entry, itemView ->
@@ -85,82 +88,7 @@ class HistoryListFragment : Fragment() {
             // Option Ré-analyser
             dialogView.findViewById<View>(R.id.option_reanalyze).setOnClickListener {
                 bottomSheetDialog.dismiss()
-                
-                val loadingDialog = LoadingDialogFragment()
-                loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
-
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val currentUser = FirebaseAuth.getInstance().currentUser
-                    if (currentUser == null) {
-                        withContext(Dispatchers.Main) {
-                            loadingDialog.dismiss()
-                            Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
-                        }
-                        Log.e("HistoryListFragment", "Erreur: Ré-analyse appelée sans utilisateur connecté.")
-                        return@launch
-                    }
-                    Log.d("HistoryListFragment", "Utilisateur connecté: ${currentUser.uid}")
-                    // Gating: décrémenter 1 crédit avant ré-analyse.
-                    // Si les crédits sont à 0 (ou autre erreur liée aux crédits), on redirige vers l'écran d'abonnement.
-                    try {
-                        CreditsManager.decrementOneCredit()
-                    } catch (e: Exception) {
-                        withContext(Dispatchers.Main) {
-                            loadingDialog.dismiss()
-                            // Rediriger vers la page d'abonnement quand les crédits sont épuisés
-                            val intent = Intent(requireContext(), PurchaseActivity::class.java)
-                            startActivity(intent)
-                        }
-                        return@launch
-                    }
-
-                    val newResponse = imageAnalyzer.analyzeImage(
-                        Uri.parse(entry.imageUri),
-                        entry.country,
-                        entry.region
-                    )
-
-                    withContext(Dispatchers.Main) {
-                        loadingDialog.dismiss()
-                        if (newResponse != null) {
-                            val updatedEntry = entry.copy(
-                                localName = newResponse.localName,
-                                scientificName = newResponse.scientificName,
-                                description = "N/C", // Description n'est plus fournie par l'API
-                                type = newResponse.type,
-                                habitat = newResponse.habitat,
-                                characteristics = newResponse.characteristics,
-                                localContext = newResponse.localContext,
-                                peculiaritiesAndDangers = newResponse.peculiaritiesAndDangers // Assigner le nouveau champ
-                            )
-                            
-                            // Mettre à jour l'historique de manière synchrone dans un thread IO
-                            withContext(Dispatchers.IO) {
-                                analysisHistoryManager.updateAnalysisEntry(updatedEntry)
-                                analysisHistoryManager.saveLastViewedCard(updatedEntry)
-                            }
-                            
-                            // Ouvrir ResultActivity avec les nouveaux résultats
-                            val intent = Intent(requireContext(), ResultActivity::class.java).apply {
-                                putExtra(ResultActivity.EXTRA_IMAGE_URI, entry.imageUri)
-                                putExtra(ResultActivity.EXTRA_LOCAL_NAME, newResponse.localName)
-                                putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, newResponse.scientificName)
-                                putExtra(ResultActivity.EXTRA_TYPE, newResponse.type)
-                                putExtra(ResultActivity.EXTRA_HABITAT, newResponse.habitat)
-                                putExtra(ResultActivity.EXTRA_CHARACTERISTICS, newResponse.characteristics)
-                                putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, newResponse.localContext)
-                                putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C")
-                                putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, newResponse.representativeColorHex) // Ajout pour la ré-analyse
-                                putExtra(ResultActivity.EXTRA_PECULIARITIES_AND_DANGERS, updatedEntry.peculiaritiesAndDangers)
-                            }
-                            startActivity(intent)
-                            
-                            // L'historique sera rechargé automatiquement par onResume() au retour
-                        } else {
-                            Toast.makeText(requireContext(), "Échec de la ré-analyse.", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
+                showModelSelectionDialog(entry)
             }
 
             // Option Supprimer avec confirmation
@@ -225,7 +153,7 @@ class HistoryListFragment : Fragment() {
             val historyList = analysisHistoryManager.getAnalysisHistory()
             // Filtrer les fiches tutorielles pour ne pas les afficher dans l'historique
             val filteredHistoryList = historyList.filter { !it.isTutorial }
-            
+
             withContext(Dispatchers.Main) {
                 if (filteredHistoryList.isNotEmpty()) {
                     historyRecyclerView.visibility = View.VISIBLE
@@ -243,6 +171,109 @@ class HistoryListFragment : Fragment() {
                     historyRecyclerView.visibility = View.GONE
                     emptyStateLayout.visibility = View.VISIBLE
                 }
+            }
+        }
+    }
+
+    // Méthode pour afficher la boîte de dialogue de sélection du modèle
+    private fun showModelSelectionDialog(entry: AnalysisEntry) {
+        val selectedModel = modelPreferences.getSelectedModel()
+        val dialog = ModelSelectionDialog.newInstance(selectedModel)
+        // Stocker temporairement l'entrée pour la ré-analyse
+        (dialog as ModelSelectionDialog).entryToReanalyze = entry
+        dialog.show(childFragmentManager, "ModelSelectionDialog")
+    }
+
+    // Méthode pour ré-analyser avec le modèle sélectionné
+    private suspend fun reanalyzeWithModel(entry: AnalysisEntry, modelId: String) {
+        val loadingDialog = LoadingDialogFragment()
+        loadingDialog.show(requireActivity().supportFragmentManager, "LoadingDialogFragment")
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser == null) {
+                withContext(Dispatchers.Main) {
+                    loadingDialog.dismiss()
+                    Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
+                }
+                Log.e("HistoryListFragment", "Erreur: Ré-analyse appelée sans utilisateur connecté.")
+                return@launch
+            }
+            Log.d("HistoryListFragment", "Utilisateur connecté: ${currentUser.uid}")
+
+            val newResponse = try {
+                imageAnalyzer.analyzeImage(
+                    Uri.parse(entry.imageUri),
+                    modelId,
+                    currentUser.uid,
+                    entry.country,
+                    entry.region
+                )
+            } catch (e: InsufficientCreditsException) {
+                withContext(Dispatchers.Main) {
+                    loadingDialog.dismiss()
+                    // Rediriger vers la page d'abonnement quand les crédits sont épuisés
+                    val intent = Intent(requireContext(), PurchaseActivity::class.java)
+                    startActivity(intent)
+                }
+                return@launch
+            }
+
+            withContext(Dispatchers.Main) {
+                loadingDialog.dismiss()
+                if (newResponse != null) {
+                    val updatedEntry = entry.copy(
+                        localName = newResponse.localName,
+                        scientificName = newResponse.scientificName,
+                        description = "N/C", // Description n'est plus fournie par l'API
+                        type = newResponse.type,
+                        habitat = newResponse.habitat,
+                        characteristics = newResponse.characteristics,
+                        localContext = newResponse.localContext,
+                        Peculiarities = newResponse.Peculiarities // Assigner le nouveau champ
+                    )
+
+                    // Mettre à jour l'historique de manière synchrone dans un thread IO
+                    withContext(Dispatchers.IO) {
+                        analysisHistoryManager.updateAnalysisEntry(updatedEntry)
+                        analysisHistoryManager.saveLastViewedCard(updatedEntry)
+                    }
+
+                    // Ouvrir ResultActivity avec les nouveaux résultats
+                    val intent = Intent(requireContext(), ResultActivity::class.java).apply {
+                        putExtra(ResultActivity.EXTRA_IMAGE_URI, entry.imageUri)
+                        putExtra(ResultActivity.EXTRA_LOCAL_NAME, newResponse.localName)
+                        putExtra(ResultActivity.EXTRA_SCIENTIFIC_NAME, newResponse.scientificName)
+                        putExtra(ResultActivity.EXTRA_TYPE, newResponse.type)
+                        putExtra(ResultActivity.EXTRA_HABITAT, newResponse.habitat)
+                        putExtra(ResultActivity.EXTRA_CHARACTERISTICS, newResponse.characteristics)
+                        putExtra(ResultActivity.EXTRA_LOCAL_CONTEXT, newResponse.localContext)
+                        putExtra(ResultActivity.EXTRA_DESCRIPTION, "N/C")
+                        putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, newResponse.representativeColorHex) // Ajout pour la ré-analyse
+                        putExtra(ResultActivity.EXTRA_PECULIARITIES, updatedEntry.Peculiarities)
+                        putExtra(ResultActivity.EXTRA_DANGER, newResponse.danger) // Assurez-vous de passer le champ danger
+                    }
+                    startActivity(intent)
+
+                    // L'historique sera rechargé automatiquement par onResume() au retour
+                } else {
+                    Toast.makeText(requireContext(), "Échec de la ré-analyse.", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    // Implémentation de ModelSelectionListener
+    override fun onModelSelected(modelId: String) {
+        // Sauvegarder la préférence de l'utilisateur
+        modelPreferences.setSelectedModel(modelId)
+
+        // Récupérer l'entrée stockée temporairement et lancer la ré-analyse
+        val dialog = childFragmentManager.findFragmentByTag("ModelSelectionDialog") as? ModelSelectionDialog
+        val entry = dialog?.entryToReanalyze
+        if (entry != null) {
+            lifecycleScope.launch {
+                reanalyzeWithModel(entry, modelId)
             }
         }
     }
