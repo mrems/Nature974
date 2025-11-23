@@ -1037,12 +1037,29 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
                     if (currentUser == null) {
                         withContext(Dispatchers.Main) {
                             loadingDialog.dismiss()
-                            Toast.makeText(requireContext(), "Utilisateur non connectÃ©. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
                         }
-                        Log.e("CameraFragment", "Erreur: analyzeImageWithGemini appelÃ© sans utilisateur connectÃ©.")
+                        Log.e("CameraFragment", "Erreur: analyzeImageWithGemini appelé sans utilisateur connecté.")
                         return@launch
                     }
-                    Log.d("CameraFragment", "Utilisateur connectÃ©: ${currentUser.uid}")
+                    Log.d("CameraFragment", "Utilisateur connecté: ${currentUser.uid}")
+
+                    // --- AJOUT DE LA VÉRIFICATION CÔTÉ CLIENT (sans Toast) ---
+                    val currentCreditsText = creditsTextView.text.toString()
+                    val currentCredits = currentCreditsText.toIntOrNull() ?: 0
+
+                    if (currentCredits <= 0) { // Vérifier si les crédits sont à zéro ou négatifs
+                        withContext(Dispatchers.Main) {
+                            loadingDialog.dismiss()
+                            val intent = Intent(requireContext(), PurchaseActivity::class.java)
+                            startActivity(intent)
+                            // Toast supprimé ici
+                        }
+                        Log.d("CameraFragment", "Redirection vers PurchaseActivity: crédits épuisés (vérification client).")
+                        return@launch
+                    }
+                    // --- FIN DE L'AJOUT ---
+
                     val response = try {
                         imageAnalyzer.analyzeImage(uri, modelId, currentUser.uid, userCountry, userRegion)
                     } catch (e: InsufficientCreditsException) {
@@ -1051,7 +1068,9 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
                             // Rediriger vers la page d'abonnement quand les crédits sont épuisés
                             val intent = Intent(requireContext(), PurchaseActivity::class.java)
                             startActivity(intent)
+                            // Toast supprimé ici
                         }
+                        Log.d("CameraFragment", "Redirection vers PurchaseActivity: InsufficientCreditsException.")
                         return@launch
                     }
 

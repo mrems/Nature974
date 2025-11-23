@@ -20,6 +20,8 @@ import android.widget.Toast
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
 
@@ -201,6 +203,23 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
             }
             Log.d("HistoryListFragment", "Utilisateur connecté: ${currentUser.uid}")
 
+            // --- AJOUT DE LA VÉRIFICATION CÔTÉ CLIENT (sans Toast) ---
+            val userDocRef = FirebaseFirestore.getInstance().collection("users").document(currentUser.uid)
+            val creditsSnapshot = userDocRef.get().await()
+            val currentCredits = creditsSnapshot.getLong("credits")?.toInt() ?: 0
+
+            if (currentCredits <= 0) { // Vérifier si les crédits sont à zéro ou négatifs
+                withContext(Dispatchers.Main) {
+                    loadingDialog.dismiss()
+                    val intent = Intent(requireContext(), PurchaseActivity::class.java)
+                    startActivity(intent)
+                    // Toast supprimé ici
+                }
+                Log.d("HistoryListFragment", "Redirection vers PurchaseActivity: crédits épuisés (vérification client).")
+                return@launch
+            }
+            // --- FIN DE L'AJOUT ---
+
             val newResponse = try {
                 imageAnalyzer.analyzeImage(
                     Uri.parse(entry.imageUri),
@@ -215,7 +234,9 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                     // Rediriger vers la page d'abonnement quand les crédits sont épuisés
                     val intent = Intent(requireContext(), PurchaseActivity::class.java)
                     startActivity(intent)
+                    // Toast supprimé ici
                 }
+                Log.d("HistoryListFragment", "Redirection vers PurchaseActivity: InsufficientCreditsException.")
                 return@launch
             }
 
