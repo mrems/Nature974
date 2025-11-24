@@ -35,7 +35,7 @@ class LastAnalysisFragment : Fragment() {
     private lateinit var lastAnalysisScientificNameTextView: TextView
     private lateinit var lastAnalysisTypeBadge: TextView
     private lateinit var lastAnalysisTutorialBadge: TextView
-    private lateinit var lastAnalysisContentLayout: LinearLayout
+    // private lateinit var lastAnalysisContentLayout: LinearLayout // Cette ligne est supprimée car l'ID n'existe plus
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
     private lateinit var dangerImageOverlay: ImageView
@@ -61,7 +61,7 @@ class LastAnalysisFragment : Fragment() {
         lastAnalysisScientificNameTextView = view.findViewById(R.id.last_analysis_scientific_name)
         lastAnalysisTypeBadge = view.findViewById(R.id.last_analysis_type_badge)
         lastAnalysisTutorialBadge = view.findViewById(R.id.last_analysis_tutorial_badge)
-        lastAnalysisContentLayout = view.findViewById(R.id.last_analysis_content)
+        // lastAnalysisContentLayout = view.findViewById(R.id.last_analysis_content) // Cette ligne est supprimée car l'ID n'existe plus
         tabLayout = view.findViewById(R.id.tab_layout_last_analysis)
         viewPager = view.findViewById(R.id.view_pager_last_analysis)
         dangerImageOverlay = view.findViewById(R.id.danger_image_overlay)
@@ -108,7 +108,7 @@ class LastAnalysisFragment : Fragment() {
             withContext(Dispatchers.Main) {
                 if (entry != null) {
                     lastEntry = entry
-                    lastAnalysisContentLayout.visibility = View.VISIBLE
+                   
 
                     entry.imageUri.let { uriString ->
                         lastAnalysisImageView.setImageURI(Uri.parse(uriString))
@@ -147,56 +147,33 @@ class LastAnalysisFragment : Fragment() {
                     val pagerAdapter = LastAnalysisFragmentPagerAdapter(this@LastAnalysisFragment, entry)
                     viewPager.adapter = pagerAdapter
 
-                    viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                        override fun onPageSelected(position: Int) {
-                            super.onPageSelected(position)
-                            viewPager.post { // Utiliser post pour s'assurer que le layout est à jour
-                                val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(viewPager.width, View.MeasureSpec.EXACTLY)
-                                val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED) // Mesurer sans contrainte de hauteur
-                                
-                                // Nous devons obtenir le fragment actuellement visible. L'adaptateur crée des fragments, mais ils ne sont pas toujours attachés.
-                                // Une façon est de demander à l'adaptateur de fournir le fragment si possible.
-                                val currentFragment = childFragmentManager.findFragmentByTag("f" + pagerAdapter.getItemId(position)) as? Fragment
-                                val currentView = currentFragment?.view
-                                
-                                currentView?.measure(wMeasureSpec, hMeasureSpec)
-                                val height = currentView?.measuredHeight ?: 0
-                                
-                                if (height != 0 && viewPager.layoutParams.height != height) { // Éviter les redondances
-                                    viewPager.layoutParams = (viewPager.layoutParams as ViewGroup.LayoutParams).apply {
-                                        this.height = height
-                                    }
-                                }
-                            }
-                        }
-                    })
-
-                    TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                        val customView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_tab_with_icon, null)
-                        val mainIcon = customView.findViewById<ImageView>(R.id.tab_main_icon)
-
-                        when (position) {
-                            0 -> mainIcon.setImageResource(R.drawable.infos)
-                            1 -> mainIcon.setImageResource(R.drawable.particularities)
-                            2 -> mainIcon.setImageResource(R.drawable.local_context)
-                            else -> {}
-                        }
-
-                        tab.setCustomView(customView)
-                    }.attach()
-
                     // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées,
                     // car la coloration dynamique des onglets n'est plus une exigence.
                     // val tabTextColors = ContextCompat.getColorStateList(requireContext(), R.color.tab_text_color_selector)
                     // tabLayout.setTabTextColors(tabTextColors)
                     // tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.black))
 
+                    TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                        val customView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_tab_with_icon, null)
+                        val mainIcon = customView.findViewById<ImageView>(R.id.tab_main_icon)
+
+                        when (position) {
+                            0 -> mainIcon.setImageResource(R.drawable.onglet_1)
+                            1 -> mainIcon.setImageResource(R.drawable.onglet_2)
+                            2 -> mainIcon.setImageResource(R.drawable.onglet_3)
+                            3 -> mainIcon.setImageResource(R.drawable.onglet_4)
+                            else -> {}
+                        }
+
+                        tab.setCustomView(customView)
+                    }.attach()
+
                 } else {
                     // Si aucune fiche n'est trouvée, chercher une fiche tutorielle par défaut
                     val tutorialEntry = history.firstOrNull { it.isTutorial }
                     if (tutorialEntry != null) {
                         lastEntry = tutorialEntry
-                        lastAnalysisContentLayout.visibility = View.VISIBLE
+                       
 
                         tutorialEntry.imageUri.let { uriString ->
                             lastAnalysisImageView.setImageURI(Uri.parse(uriString))
@@ -224,9 +201,10 @@ class LastAnalysisFragment : Fragment() {
                             val mainIcon = customView.findViewById<ImageView>(R.id.tab_main_icon)
 
                             when (position) {
-                                0 -> mainIcon.setImageResource(R.drawable.infos)
-                                1 -> mainIcon.setImageResource(R.drawable.particularities)
-                                2 -> mainIcon.setImageResource(R.drawable.local_context)
+                                0 -> mainIcon.setImageResource(R.drawable.baseline_info_24)
+                                1 -> mainIcon.setImageResource(R.drawable.infos)
+                                2 -> mainIcon.setImageResource(R.drawable.particularities)
+                                3 -> mainIcon.setImageResource(R.drawable.local_context)
                                 else -> {}
                             }
 
@@ -240,7 +218,7 @@ class LastAnalysisFragment : Fragment() {
                         // tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.black))
 
                     } else {
-                        lastAnalysisContentLayout.visibility = View.GONE
+                      
                         lastEntry = null
                     }
                 }
@@ -253,13 +231,14 @@ class LastAnalysisFragment : Fragment() {
 
     // Adapter pour le ViewPager2
     private class LastAnalysisFragmentPagerAdapter(fragment: Fragment, private val entry: AnalysisEntry) : FragmentStateAdapter(fragment) {
-        override fun getItemCount(): Int = 3 // Nombre d'onglets
+        override fun getItemCount(): Int = 4 // Nombre d'onglets
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> GeneralInfoFragment.newInstance(entry.habitat ?: "N/C", entry.characteristics ?: "N/C")
-                1 -> PeculiaritiesFragment.newInstance(entry.Peculiarities ?: "N/C", entry.danger)
-                2 -> LocalContextFragment.newInstance(entry.localContext ?: "N/C")
+                0 -> ConfidenceAndAlternativesFragment.newInstance(entry)
+                1 -> GeneralInfoFragment.newInstance(entry.habitat ?: "N/C", entry.characteristics ?: "N/C")
+                2 -> PeculiaritiesFragment.newInstance(entry.Peculiarities ?: "N/C", entry.danger)
+                3 -> LocalContextFragment.newInstance(entry.localContext ?: "N/C")
                 else -> throw IllegalArgumentException("Invalid tab position")
             }
         }

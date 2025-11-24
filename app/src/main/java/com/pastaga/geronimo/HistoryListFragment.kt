@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import android.os.Parcelable
 
 class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
 
@@ -79,6 +80,8 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                 putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, entry.representativeColorHex) // Ajout pour un clic normal
                 putExtra(ResultActivity.EXTRA_PECULIARITIES, entry.Peculiarities)
                 putExtra(ResultActivity.EXTRA_DANGER, entry.danger) // Assurez-vous de passer le champ danger
+                putExtra(ResultActivity.EXTRA_CONFIDENCE_SCORE, entry.confidenceScore ?: -1) // Passer le score de confiance
+                putParcelableArrayListExtra(ResultActivity.EXTRA_ALTERNATIVE_IDENTIFICATIONS, entry.alternativeIdentifications?.let { ArrayList(it) }) // Passer les alternatives
             }
             startActivity(intent)
         }) { entry, itemView ->
@@ -251,7 +254,11 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                         habitat = newResponse.habitat,
                         characteristics = newResponse.characteristics,
                         localContext = newResponse.localContext,
-                        Peculiarities = newResponse.Peculiarities // Assigner le nouveau champ
+                        Peculiarities = newResponse.Peculiarities, // Assigner le nouveau champ
+                        representativeColorHex = newResponse.representativeColorHex,
+                        danger = newResponse.danger,
+                        confidenceScore = newResponse.confidenceScore, // Assigner le score de confiance
+                        alternativeIdentifications = newResponse.alternativeIdentifications // Assigner les alternatives
                     )
 
                     // Mettre à jour l'historique de manière synchrone dans un thread IO
@@ -273,6 +280,8 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                         putExtra(ResultActivity.EXTRA_REPRESENTATIVE_COLOR_HEX, newResponse.representativeColorHex) // Ajout pour la ré-analyse
                         putExtra(ResultActivity.EXTRA_PECULIARITIES, updatedEntry.Peculiarities)
                         putExtra(ResultActivity.EXTRA_DANGER, newResponse.danger) // Assurez-vous de passer le champ danger
+                        putExtra(ResultActivity.EXTRA_CONFIDENCE_SCORE, newResponse.confidenceScore ?: -1) // Passer le score de confiance
+                        putParcelableArrayListExtra(ResultActivity.EXTRA_ALTERNATIVE_IDENTIFICATIONS, newResponse.alternativeIdentifications?.let { ArrayList(it) }) // Passer les alternatives
                     }
                     startActivity(intent)
 

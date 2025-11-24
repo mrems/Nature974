@@ -5,7 +5,10 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import android.util.Log
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class AnalysisEntry(
     val imageUri: String,
     val localName: String,
@@ -21,11 +24,20 @@ data class AnalysisEntry(
     val timestamp: Long? = System.currentTimeMillis(), // Nouveau champ pour l'ordre chronologique
     val isTutorial: Boolean = false, // Flag pour identifier les fiches d'exemple/tutoriel
     val representativeColorHex: String? = null,
-    val danger: Boolean = false // Nouveau champ pour indiquer le danger
-) {
+    val danger: Boolean = false, // Nouveau champ pour indiquer le danger
+    val confidenceScore: Int? = null, // Score de confiance de l'IA (0-100)
+    val alternativeIdentifications: List<AlternativeIdentification>? = null // Autres possibilités identifiées
+) : Parcelable {
     // Le constructeur secondaire a été supprimé pour éviter les ambiguïtés et simplifier la gestion des champs. 
     // Toutes les instanciations de AnalysisEntry doivent maintenant utiliser le constructeur principal avec tous les arguments.
 }
+
+@Parcelize
+data class AlternativeIdentification(
+    val scientificName: String,
+    val localName: String? = null,
+    val difference: String // Comment la différencier de l'identification principale
+) : Parcelable
 
 class AnalysisHistoryManager(context: Context) {
 

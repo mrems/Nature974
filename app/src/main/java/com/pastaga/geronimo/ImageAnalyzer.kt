@@ -134,8 +134,11 @@ class ImageAnalyzer(private val context: Context) {
         val localContext: String,
         val Peculiarities: String? = null, // Nouveau champ pour les particularités
         val representativeColorHex: String?,
-        val danger: Boolean = false // Nouveau champ danger
+        val danger: Boolean = false, // Nouveau champ danger
+        val confidenceScore: Int? = null, // Score de confiance de l'IA (0-100)
+        val alternativeIdentifications: List<AlternativeIdentification>? = null // Autres possibilités identifiées
     )
+
 
     suspend fun analyzeImage(imageUri: Uri, modelId: String, uid: String, country: String? = null, region: String? = null): AnalyzeImageResponse? {
         return withContext(Dispatchers.IO) {

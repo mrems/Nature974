@@ -1,0 +1,105 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Contenu du Confidence Score (anciennement dans une carte) -->
+        <LinearLayout
+            android:id="@+id/confidence_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:id="@+id/confidence_score_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Indice de certitude"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_dark_gray"/>
+
+                    <TextView
+                        android:id="@+id/confidence_score_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/offer_pro_primary"/>
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/confidence_score_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="@color/offer_pro_primary"
+                    android:progressBackgroundTint="#E0E0E0"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/confidence_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Niveau de confiance de l'IA dans cette identification"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_medium_gray"/>
+
+        </LinearLayout>
+
+        <!-- Section des alternatives -->
+        <LinearLayout
+            android:id="@+id/alternatives_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/alternatives_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Identifications alternatives"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/text_dark_gray"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/alternatives_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="L'IA a identifié d'autres possibilités"
+                android:textSize="12sp"
+                android:textColor="@color/text_medium_gray"
+                android:layout_marginBottom="12dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/alternatives_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" /> <!-- Changed to wrap_content -->
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -66,6 +66,8 @@ class ResultActivity : AppCompatActivity() {
         val description = intent.getStringExtra(EXTRA_DESCRIPTION) // Pour rétrocompatibilité
         val representativeColorHex = intent.getStringExtra(EXTRA_REPRESENTATIVE_COLOR_HEX) // Rétablir l'extraction de la couleur
         val danger = intent.getBooleanExtra(EXTRA_DANGER, false) // Nouveau champ danger
+        val confidenceScore = intent.getIntExtra(EXTRA_CONFIDENCE_SCORE, -1) // Nouveau champ confidenceScore
+        val alternativeIdentifications: List<AlternativeIdentification>? = intent.getParcelableArrayListExtra(EXTRA_ALTERNATIVE_IDENTIFICATIONS)
 
         if (imageUriString != null && localName != null && scientificName != null) {
             currentEntry = AnalysisEntry(
@@ -79,8 +81,11 @@ class ResultActivity : AppCompatActivity() {
                 Peculiarities = Peculiarities, // Assigner le nouveau champ
                 description = description ?: "N/C", // Assurer une valeur par défaut
                 representativeColorHex = representativeColorHex,
-                danger = danger // Assigner le nouveau champ danger
+                danger = danger, // Assigner le nouveau champ danger
+                confidenceScore = if (confidenceScore != -1) confidenceScore else null, // Assigner le nouveau champ
+                alternativeIdentifications = alternativeIdentifications // Assigner le nouveau champ
             )
+            Log.d("NaturePei_Debug", "Confidence Score received: ${currentEntry?.confidenceScore}")
             displayResult(currentEntry!!)
         } else {
             Toast.makeText(this, "Erreur: Données de résultat manquantes.", Toast.LENGTH_LONG).show()
@@ -134,47 +139,26 @@ class ResultActivity : AppCompatActivity() {
         val pagerAdapter = ResultFragmentPagerAdapter(this, entry)
         viewPager.adapter = pagerAdapter
 
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                viewPager.post {
-                    val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(viewPager.width, View.MeasureSpec.EXACTLY)
-                    val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-                    // ATTENTION: createFragment crée une nouvelle instance de fragment, il faut utiliser getChildAt(position) ou adapter la logique si les fragments sont déjà attachés
-                    // Pour une solution simple, on peut faire une approximation ou s'assurer que les fragments sont correctement attachés et mesurés
-                    // La meilleure approche est d'avoir une méthode dans l'adaptateur pour obtenir le fragment actuel
-                    val currentFragment = supportFragmentManager.findFragmentByTag("f" + pagerAdapter.getItemId(position)) as? Fragment
-                    val currentView = currentFragment?.view
-                    currentView?.measure(wMeasureSpec, hMeasureSpec)
-                    val height = currentView?.measuredHeight ?: 0
-                    if (height != 0) {
-                        viewPager.layoutParams = (viewPager.layoutParams as ViewGroup.LayoutParams).apply {
-                            this.height = height
-                        }
-                    }
-                }
-            }
-        })
+        // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées, 
+        // car la coloration dynamique des onglets n'est plus une exigence.
+        // val tabTextColors = ContextCompat.getColorStateList(this, R.color.tab_text_color_selector)
+        // tabLayout.setTabTextColors(tabTextColors)
+        // tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.black))
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             val customView = LayoutInflater.from(this).inflate(R.layout.custom_tab_with_icon, null)
             val mainIcon = customView.findViewById<ImageView>(R.id.tab_main_icon)
 
             when (position) {
-                0 -> mainIcon.setImageResource(R.drawable.infos)
-                1 -> mainIcon.setImageResource(R.drawable.particularities)
-                2 -> mainIcon.setImageResource(R.drawable.local_context)
+                0 -> mainIcon.setImageResource(R.drawable.onglet_1)
+                1 -> mainIcon.setImageResource(R.drawable.onglet_2)
+                2 -> mainIcon.setImageResource(R.drawable.onglet_3)
+                3 -> mainIcon.setImageResource(R.drawable.onglet_4)
                 else -> {}
             }
 
             tab.setCustomView(customView)
         }.attach()
-
-        // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées, 
-        // car la coloration dynamique des onglets n'est plus une exigence.
-        // val tabTextColors = ContextCompat.getColorStateList(this, R.color.tab_text_color_selector)
-        // tabLayout.setTabTextColors(tabTextColors)
-        // tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.black))
 
     }
 
@@ -183,13 +167,14 @@ class ResultActivity : AppCompatActivity() {
 
     // Adapter pour le ViewPager2
     private class ResultFragmentPagerAdapter(activity: AppCompatActivity, private val entry: AnalysisEntry) : FragmentStateAdapter(activity) {
-        override fun getItemCount(): Int = 3 // Nombre d'onglets
+        override fun getItemCount(): Int = 4 // Nombre d'onglets (un de plus pour le nouvel onglet)
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> GeneralInfoFragment.newInstance(entry.habitat ?: "N/C", entry.characteristics ?: "N/C")
-                1 -> PeculiaritiesFragment.newInstance(entry.Peculiarities ?: "N/C", entry.danger)
-                2 -> LocalContextFragment.newInstance(entry.localContext ?: "N/C")
+                0 -> ConfidenceAndAlternativesFragment.newInstance(entry)
+                1 -> GeneralInfoFragment.newInstance(entry.habitat ?: "N/C", entry.characteristics ?: "N/C")
+                2 -> PeculiaritiesFragment.newInstance(entry.Peculiarities ?: "N/C", entry.danger)
+                3 -> LocalContextFragment.newInstance(entry.localContext ?: "N/C")
                 else -> throw IllegalArgumentException("Invalid tab position")
             }
         }
@@ -207,6 +192,8 @@ class ResultActivity : AppCompatActivity() {
         const val EXTRA_DESCRIPTION = "description"
         const val EXTRA_REPRESENTATIVE_COLOR_HEX = "representativeColorHex"
         const val EXTRA_DANGER = "danger" // Nouveau extra pour le danger
+        const val EXTRA_CONFIDENCE_SCORE = "confidenceScore"
+        const val EXTRA_ALTERNATIVE_IDENTIFICATIONS = "alternativeIdentifications"
     }
 }
 

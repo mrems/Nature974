@@ -1,156 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LastAnalysisFragment"
+    android:orientation="vertical"
     android:background="?android:colorBackground">
+
+    <!-- Partie haute statique (image, nom, etc.) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/last_analysis_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            android:contentDescription="Image de la dernière analyse"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintDimensionRatio="3:2" />
+
+        <ImageView
+            android:id="@+id/danger_image_overlay"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/danger"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/last_analysis_image"
+            app:layout_constraintBottom_toBottomOf="@id/last_analysis_image"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/last_analysis_tutorial_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EXEMPLE"
+            android:background="@drawable/badge_exemple"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp"
+            android:textColor="@color/badge_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="16dp"
+            android:visibility="gone"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/last_analysis_content">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:layout_marginBottom="12dp">
 
-            <ImageView
-                android:id="@+id/last_analysis_image"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@color/white"
-                android:contentDescription="Image de la dernière analyse"
-                android:scaleType="centerCrop"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintDimensionRatio="3:2" />
-
-            <ImageView
-                android:id="@+id/danger_image_overlay"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/danger"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="@id/last_analysis_image"
-                app:layout_constraintBottom_toBottomOf="@id/last_analysis_image"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"/>
-
-            <TextView
-                android:id="@+id/last_analysis_tutorial_badge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="EXEMPLE"
-                android:background="@drawable/badge_exemple"
-                android:paddingStart="12dp"
-                android:paddingTop="6dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="6dp"
-                android:textColor="@color/badge_text"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_margin="16dp"
-                android:visibility="gone"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="12dp">
-
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp">
+                android:orientation="vertical"
+                >
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/last_analysis_local_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    tools:text="Tangue" />
 
-                    <TextView
-                        android:id="@+id/last_analysis_local_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
-                        tools:text="Tangue" />
+                <TextView
+                    android:id="@+id/last_analysis_scientific_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textStyle="italic"
+                    tools:text="Tenrec ecaudatus" />
 
-                    <TextView
-                        android:id="@+id/last_analysis_scientific_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textStyle="italic"
-                        tools:text="Tenrec ecaudatus" />
+            </LinearLayout>
 
-                </LinearLayout>
+        </RelativeLayout>
 
-                
+        <TextView
+            android:id="@+id/last_analysis_type_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge_endemique"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp"
+            android:textColor="@color/badge_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="32dp"
+            tools:text="Plante Endémique" />
+    </LinearLayout>
 
-            </RelativeLayout>
+    <!-- Partie basse (onglets) avec défilement -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/last_analysis_type_badge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/badge_endemique"
-                android:paddingStart="12dp"
-                android:paddingTop="6dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="6dp"
-                android:textColor="@color/badge_text"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="32dp"
-                tools:text="Plante Endémique" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout_last_analysis"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/CustomTabStyle"
-                app:tabMode="fixed"
-                app:tabGravity="fill" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="32dp" />
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/view_pager_last_analysis"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <!-- Cartes d'informations -->
-        <!-- Les LinearLayout pour les cartes d'information seront gérés par les fragments dans le ViewPager2 -->
-        <!--<LinearLayout
-            android:id="@+id/last_analysis_info_cards_container"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout_last_analysis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
+            style="@style/CustomTabStyle"
+            app:tabMode="fixed"
+            app:tabGravity="fill" />
 
-            <include layout="@layout/item_info_card" />
-            <include layout="@layout/item_info_card" />
-            <include layout="@layout/item_info_card" />
-        </LinearLayout>-->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager_last_analysis"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" /> <!-- Remplir l'espace du LinearLayout parent -->
 
     </LinearLayout>
 
-</ScrollView>
+</LinearLayout>

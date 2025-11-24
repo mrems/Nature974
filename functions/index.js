@@ -150,7 +150,7 @@ Si on t'envoie la photo d'un humain ou d'un objet manufacturé et qu'il n'est pa
 
 Règle d'utilisation de la région: La variable 'country' est toujours utilisée. La variable 'region' est optionnelle et NE DOIT ÊTRE utilisée que si vous avez des informations spécifiques et vérifiables pour cette région. Sinon, n'incluez aucune référence à la région dans la réponse.
 
-Analysez cette image et fournissez une réponse JSON stricte avec les 9 champs suivants:
+Analysez cette image et fournissez une réponse JSON stricte avec les 11 champs suivants:
 1.  "localName": Nom commun en français (ex: "Merle noir") ou "N/C" si inconnu.
 2.  "scientificName": Nom scientifique latin (ex: "Turdus merula") ou "N/C" si inconnu.
 3.  "type": Type d'espèce et statut (si pertinent). Soyez concis. Utilisez des termes comme "Plante endémique", "Oiseau", "Poisson tropical", "Liane grimpante", "Felin", "Insecte", "Plante carnivore", "Coquillage marin", "Crustacé", "Plante ornementale". Évitez les redondances comme "cultivée" ou "introduite" si le type est déjà clair. Utilisez "N/C" si inconnu.
@@ -160,6 +160,12 @@ Analysez cette image et fournissez une réponse JSON stricte avec les 9 champs s
 7.  "Peculiarities": Particularités (vertus médicinales, propriétés en lithothérapie, comportement, caractère, alimentation, reproduction). **EXCLUSIVEMENT** si un DANGER GRAVE ET RÉEL existe : inclure sa dangerosité/toxicité spécifique pour les humains (y compris les enfants), les chiens et les chats domestiques (ex: "plante toxique pour les reins", "morsure venimeuse", "animal venimeux, morsure douloureuse"). **DANS TOUS LES AUTRES CAS (AUCUN DANGER GRAVE, OU INFORMATION NON PERTINENTE SUR L'ABSENCE DE DANGER), NE MENTIONNEZ JAMAIS L'ABSENCE DE DANGER OU DE TOXICITÉ**. Soyez concis.
 8.  "representativeColorHex": Un code couleur hexadécimal (ex: "#FF5733") qui représente le mieux l'espèce identifiée dans l'image. Si l'espèce ne peut être identifiée, utilisez "#CCCCCC".
 9.  "danger": true si l'espèce analysée présente un DANGER GRAVE ET RÉEL pour les humains (adultes et enfants) ou les animaux de compagnie (chiens et chats) (par exemple, plantes/champignons toxiques, prédateurs dangereux, animaux venimeux, etc.). Sinon, false.
+10. "confidenceScore": Un entier représentant le pourcentage de confiance de l'IA dans son identification (0-100). N'utilisez "N/C" que si l'identification principale est "N/C".
+11. "alternativeIdentifications": Un tableau d'objets JSON si l'IA hésite entre plusieurs identifications. Chaque objet doit avoir:
+    - "scientificName": Nom scientifique latin de l'alternative.
+    - "localName": Nom commun français de l'alternative, ou "N/C" si inconnu.
+    - "difference": Description COURTE et précise (max 2-3 phrases) des caractéristiques permettant de la distinguer de l'identification principale (ex: "Se différencie par la taille des feuilles plus grandes et l'absence de poils sur la tige."). Si aucune différence notable, utilisez "N/C".
+    Si aucune alternative n'est pertinente, renvoyez un tableau vide [].
 
 Si l'espèce ne peut pas être identifiée ou si un champ est inconnu, utilisez "N/C".
 Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
@@ -233,7 +239,9 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
         parsedResult.characteristics &&
         parsedResult.localContext &&
         parsedResult.Peculiarities && // CHANGEMENT ICI
-        parsedResult.danger !== undefined // Nouveau champ à valider: vérifier l'existence, pas la valeur booléenne
+        parsedResult.danger !== undefined && // Nouveau champ à valider: vérifier l'existence, pas la valeur booléenne
+        parsedResult.confidenceScore !== undefined && // Nouveau champ à valider
+        parsedResult.alternativeIdentifications !== undefined // Nouveau champ à valider
       ) {
         console.log(
           `[${new Date().toISOString()}] Réponse finale envoyée à l'application mobile: ${JSON.stringify(parsedResult)}`
