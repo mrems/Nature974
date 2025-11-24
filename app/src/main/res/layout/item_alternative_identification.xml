@@ -37,15 +37,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:textSize="15sp"
-                    android:textColor="@color/text_dark_gray"/>
+                    android:textSize="16sp"/>
 
                 <TextView
                     android:id="@+id/alternative_scientific_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="italic"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:textColor="@color/text_medium_gray"/>
 
             </LinearLayout>

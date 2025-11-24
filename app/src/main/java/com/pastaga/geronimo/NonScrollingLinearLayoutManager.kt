@@ -12,3 +12,4 @@ class NonScrollingLinearLayoutManager(context: Context) : LinearLayoutManager(co
         return false
     }
 }
+

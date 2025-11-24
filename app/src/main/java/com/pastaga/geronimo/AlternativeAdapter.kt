@@ -29,3 +29,4 @@ class AlternativeAdapter(private val alternatives: List<AlternativeIdentificatio
 
     override fun getItemCount(): Int = alternatives.size
 }
+
