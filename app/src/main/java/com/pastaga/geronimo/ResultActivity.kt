@@ -20,7 +20,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import android.view.ViewGroup
-// import android.view.LayoutInflater
+import android.graphics.drawable.GradientDrawable
+import androidx.core.content.ContextCompat
+import android.view.LayoutInflater
 
 class ResultActivity : AppCompatActivity() {
 
@@ -33,6 +35,7 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var resultTypeBadge: TextView
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
+    private lateinit var dangerImageOverlay: ImageView
 
     private var currentEntry: AnalysisEntry? = null
 
@@ -49,6 +52,7 @@ class ResultActivity : AppCompatActivity() {
         resultTypeBadge = findViewById(R.id.result_type_badge)
         tabLayout = findViewById(R.id.tab_layout)
         viewPager = findViewById(R.id.view_pager)
+        dangerImageOverlay = findViewById(R.id.danger_image_overlay)
 
         // Récupérer les données de l'Intent
         val imageUriString = intent.getStringExtra(EXTRA_IMAGE_URI)
@@ -104,9 +108,6 @@ class ResultActivity : AppCompatActivity() {
         entry.type?.let { typeValue ->
             if (typeValue != "N/C") {
                 resultTypeBadge.text = typeValue
-                // La logique de couleur pour le badge est commentée/supprimée car elle n'est plus pertinente pour la signalisation du danger.
-                // Si un autre besoin de coloration dynamique du badge existe, cette logique pourrait être réintroduite ou adaptée.
-                /*
                 entry.representativeColorHex?.let { colorHex ->
                     if (colorHex.startsWith("#") && colorHex.length == 7) {
                         try {
@@ -119,14 +120,15 @@ class ResultActivity : AppCompatActivity() {
                     } else {
                         resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut si le format est incorrect
                     }
-                } ?: run { resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
-                */
-                resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Utilisation d'une couleur par défaut pour le badge
+                } ?: run { resultTypeBadge.setBackgroundResource(R.drawable.badge_nc) }
                 resultTypeBadge.visibility = View.VISIBLE
             } else {
                 resultTypeBadge.visibility = View.GONE
             }
         } ?: run { resultTypeBadge.visibility = View.GONE }
+
+        // Afficher l'icône danger sur la photo si l'espèce est dangereuse
+        dangerImageOverlay.visibility = if (entry.danger) View.VISIBLE else View.GONE
 
         // Configurer le ViewPager2 et le TabLayout
         val pagerAdapter = ResultFragmentPagerAdapter(this, entry)
@@ -155,18 +157,17 @@ class ResultActivity : AppCompatActivity() {
         })
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            var tabText = when (position) {
-                0 -> "Infos générale"
-                1 -> "Particularités"
-                2 -> "Contexte local"
-                else -> ""
+            val customView = LayoutInflater.from(this).inflate(R.layout.custom_tab_with_icon, null)
+            val mainIcon = customView.findViewById<ImageView>(R.id.tab_main_icon)
+
+            when (position) {
+                0 -> mainIcon.setImageResource(R.drawable.infos)
+                1 -> mainIcon.setImageResource(R.drawable.particularities)
+                2 -> mainIcon.setImageResource(R.drawable.local_context)
+                else -> {}
             }
-            // Log.d("NaturePei_Debug", "[ResultActivity] Danger pour l'onglet Particularités: ${entry.danger}") // Commenter ce log car il n'est plus utile après le débogage de la propagation du danger
-            // Ajouter un point d'exclamation si l'espèce est dangereuse
-            if (position == 1 && entry.danger) {
-                tabText += "!"
-            }
-            tab.text = tabText
+
+            tab.setCustomView(customView)
         }.attach()
 
         // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées, 

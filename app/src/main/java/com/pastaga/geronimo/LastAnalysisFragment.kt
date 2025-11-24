@@ -21,6 +21,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import android.graphics.drawable.GradientDrawable
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 
 class LastAnalysisFragment : Fragment() {
 
@@ -35,6 +38,7 @@ class LastAnalysisFragment : Fragment() {
     private lateinit var lastAnalysisContentLayout: LinearLayout
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
+    private lateinit var dangerImageOverlay: ImageView
 
     private var lastEntry: AnalysisEntry? = null
 
@@ -60,6 +64,7 @@ class LastAnalysisFragment : Fragment() {
         lastAnalysisContentLayout = view.findViewById(R.id.last_analysis_content)
         tabLayout = view.findViewById(R.id.tab_layout_last_analysis)
         viewPager = view.findViewById(R.id.view_pager_last_analysis)
+        dangerImageOverlay = view.findViewById(R.id.danger_image_overlay)
 
         lastAnalysisImageView.setOnClickListener {
             lastEntry?.imageUri?.let { uriString ->
@@ -116,13 +121,13 @@ class LastAnalysisFragment : Fragment() {
                     
                     lastAnalysisTypeBadge.text = entry.type ?: "N/C"
                     lastAnalysisTypeBadge.visibility = if (entry.type != null && entry.type != "N/C") View.VISIBLE else View.GONE
+
+                    // Afficher l'icône danger sur la photo si l'espèce est dangereuse
+                    dangerImageOverlay.visibility = if (entry.danger) View.VISIBLE else View.GONE
                     
                     if (entry.isTutorial) {
                         lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_origine)
                     } else {
-                        // La logique de couleur pour le badge est commentée/supprimée car elle n'est plus pertinente pour la signalisation du danger.
-                        // Si un autre besoin de coloration dynamique du badge existe, cette logique pourrait être réintroduite ou adaptée.
-                        /*
                         entry.representativeColorHex?.let { colorHex ->
                             if (colorHex.startsWith("#") && colorHex.length == 7) {
                                 try {
@@ -136,8 +141,6 @@ class LastAnalysisFragment : Fragment() {
                                 lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Couleur par défaut si le format est incorrect
                             }
                         } ?: run { lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) } // Couleur par défaut si la couleur est nulle
-                        */
-                        lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_nc) // Utilisation d'une couleur par défaut pour le badge
                     }
 
                     // Configurer le ViewPager2 et le TabLayout
@@ -169,17 +172,17 @@ class LastAnalysisFragment : Fragment() {
                     })
 
                     TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                        var tabText = when (position) {
-                            0 -> "Infos générale"
-                            1 -> "Particularités"
-                            2 -> "Contexte local"
-                            else -> ""
+                        val customView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_tab_with_icon, null)
+                        val mainIcon = customView.findViewById<ImageView>(R.id.tab_main_icon)
+
+                        when (position) {
+                            0 -> mainIcon.setImageResource(R.drawable.infos)
+                            1 -> mainIcon.setImageResource(R.drawable.particularities)
+                            2 -> mainIcon.setImageResource(R.drawable.local_context)
+                            else -> {}
                         }
-                        // Ajouter un point d'exclamation si l'espèce est dangereuse
-                        if (position == 1 && entry.danger) {
-                            tabText += "!"
-                        }
-                        tab.text = tabText
+
+                        tab.setCustomView(customView)
                     }.attach()
 
                     // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées,
@@ -209,22 +212,25 @@ class LastAnalysisFragment : Fragment() {
                         
                         lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_origine)
 
+                        // Afficher l'icône danger sur la photo si l'espèce est dangereuse
+                        dangerImageOverlay.visibility = if (tutorialEntry.danger) View.VISIBLE else View.GONE
+
                         // Configurer le ViewPager2 et le TabLayout pour la fiche tutorielle
                         val pagerAdapter = LastAnalysisFragmentPagerAdapter(this@LastAnalysisFragment, tutorialEntry)
                         viewPager.adapter = pagerAdapter
 
                         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                            var tabText = when (position) {
-                                0 -> "Infos générale"
-                                1 -> "Particularités"
-                                2 -> "Contexte local"
-                                else -> ""
+                            val customView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_tab_with_icon, null)
+                            val mainIcon = customView.findViewById<ImageView>(R.id.tab_main_icon)
+
+                            when (position) {
+                                0 -> mainIcon.setImageResource(R.drawable.infos)
+                                1 -> mainIcon.setImageResource(R.drawable.particularities)
+                                2 -> mainIcon.setImageResource(R.drawable.local_context)
+                                else -> {}
                             }
-                            // Ajouter un point d'exclamation si l'espèce est dangereuse
-                            if (position == 1 && tutorialEntry.danger) {
-                                tabText += "!"
-                            }
-                            tab.text = tabText
+
+                            tab.setCustomView(customView)
                         }.attach()
 
                         // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées,

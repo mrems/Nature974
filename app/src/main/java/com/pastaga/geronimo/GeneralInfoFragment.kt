@@ -28,23 +28,17 @@ class GeneralInfoFragment : Fragment() {
         val habitatCard = view.findViewById<View>(R.id.info_card_habitat)
         val habitatTitle = habitatCard.findViewById<TextView>(R.id.title_info)
         val habitatContent = habitatCard.findViewById<TextView>(R.id.content_info)
-        val habitatIcon = habitatCard.findViewById<ImageView>(R.id.icon_info)
 
         habitatTitle.text = "Habitat"
         habitatContent.text = habitat
-        habitatIcon.setImageResource(R.drawable.tipi)
-        habitatIcon.visibility = if (habitat != null && habitat != "N/C") View.VISIBLE else View.GONE
         habitatCard.visibility = if (habitat != null && habitat != "N/C") View.VISIBLE else View.GONE
 
         val characteristicsCard = view.findViewById<View>(R.id.info_card_characteristics)
         val characteristicsTitle = characteristicsCard.findViewById<TextView>(R.id.title_info)
         val characteristicsContent = characteristicsCard.findViewById<TextView>(R.id.content_info)
-        val characteristicsIcon = characteristicsCard.findViewById<ImageView>(R.id.icon_info)
 
         characteristicsTitle.text = "Caractéristiques"
         characteristicsContent.text = characteristics
-        characteristicsIcon.setImageResource(R.drawable.regle)
-        characteristicsIcon.visibility = if (characteristics != null && characteristics != "N/C") View.VISIBLE else View.GONE
         characteristicsCard.visibility = if (characteristics != null && characteristics != "N/C") View.VISIBLE else View.GONE
 
         return view

@@ -26,12 +26,9 @@ class LocalContextFragment : Fragment() {
         val localContextCard = view.findViewById<View>(R.id.info_card_local_context)
         val localContextTitle = localContextCard.findViewById<TextView>(R.id.title_info)
         val localContextContent = localContextCard.findViewById<TextView>(R.id.content_info)
-        val localContextIcon = localContextCard.findViewById<ImageView>(R.id.icon_info)
 
         localContextTitle.text = "Contexte Local"
         localContextContent.text = localContext
-        localContextIcon.setImageResource(R.drawable.local)
-        localContextIcon.visibility = if (localContext != null && localContext != "N/C") View.VISIBLE else View.GONE
         localContextCard.visibility = if (localContext != null && localContext != "N/C") View.VISIBLE else View.GONE
 
         return view

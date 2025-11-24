@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="8dp"
-        app:cardElevation="2dp"
+        app:cardElevation="0dp"
         android:layout_marginBottom="8dp">
 
         <LinearLayout
@@ -25,35 +25,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp" >
-
-                <ImageView
-                    android:id="@+id/icon_info"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="8dp"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true" />
+                android:gravity="start"
+                android:layout_marginBottom="6dp" >
 
                 <TextView
                     android:id="@+id/title_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"/>
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/open_sans_medium"/>
+
+                <ImageView
+                    android:id="@+id/icon_danger_title"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/danger"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/content_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:lineSpacingMultiplier=".9"
-                android:layout_marginTop="0dp"
-                android:fontFamily="@font/kalam_regular"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:letterSpacing="0.05"/>
+                android:textSize="14sp"
+                android:fontFamily="@font/open_sans_regular"
+                android:lineSpacingMultiplier="1.2"/>
 
         </LinearLayout>
 

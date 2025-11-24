@@ -28,12 +28,17 @@ class PeculiaritiesFragment : Fragment() {
         val peculiaritiesCard = view.findViewById<View>(R.id.info_card_peculiarities_dangers)
         val peculiaritiesTitle = peculiaritiesCard.findViewById<TextView>(R.id.title_info)
         val peculiaritiesContent = peculiaritiesCard.findViewById<TextView>(R.id.content_info)
-        val peculiaritiesIcon = peculiaritiesCard.findViewById<ImageView>(R.id.icon_info)
+        val dangerTitleIcon = peculiaritiesCard.findViewById<ImageView>(R.id.icon_danger_title)
 
         peculiaritiesTitle.text = "Particularités"
         peculiaritiesContent.text = Peculiarities
-        peculiaritiesIcon.setImageResource(R.drawable.ic_new_options) // Utilisation d'une icône générique pour l'instant
-        peculiaritiesIcon.visibility = if (Peculiarities != null && Peculiarities != "N/C") View.VISIBLE else View.GONE
+
+        if (danger) {
+            dangerTitleIcon.visibility = View.VISIBLE
+        } else {
+            dangerTitleIcon.visibility = View.GONE
+        }
+
         peculiaritiesCard.visibility = if (Peculiarities != null && Peculiarities != "N/C") View.VISIBLE else View.GONE
 
         return view
