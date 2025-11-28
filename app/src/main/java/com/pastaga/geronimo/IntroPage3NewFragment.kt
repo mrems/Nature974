@@ -5,26 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 
-class IntroPage1Fragment : Fragment() {
+class IntroPage3NewFragment : Fragment() {
     
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_intro_page1, container, false)
+        return inflater.inflate(R.layout.fragment_intro_page3_new, container, false)
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        // Bouton Get Started
-        val button = view.findViewById<Button>(R.id.page1_button)
+        val button = view.findViewById<Button>(R.id.page3_new_button)
         button.setOnClickListener {
             (activity as? IntroOnboardingActivity)?.goToNextPage()
         }
     }
 }
+

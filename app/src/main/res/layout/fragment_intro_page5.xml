@@ -8,46 +8,43 @@
     android:background="@color/white">
 
     <TextView
-        android:id="@+id/page3_title"
+        android:id="@+id/page4_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Explorez la Nature "
+        android:text="Dernière étape"
         android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="@color/black"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="24dp"
         android:gravity="center" />
 
     <ImageView
-        android:id="@+id/page3_illustration"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:src="@drawable/voyage"
+        android:id="@+id/page4_illustration"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/geronimo_app"
         android:scaleType="fitCenter"
-        android:layout_marginBottom="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:translationX="-16dp"
-        android:contentDescription="Illustration compagnon de voyage" />
+        android:layout_marginBottom="24dp"
+        android:contentDescription="Logo Geronimo" />
 
     <TextView
-        android:id="@+id/page3_description"
+        android:id="@+id/page4_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="En balade ou en voyage, c'est votre meilleur compagnon d'aventures"
+        android:text="Pour utiliser l'application, vous devez vous connecter avec Google et accepter les permissions nécessaires"
         android:textSize="18sp"
         android:textColor="@color/black"
         android:layout_marginBottom="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:gravity="center"
         android:lineSpacingExtra="4dp" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/page3_button"
+        android:id="@+id/page4_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Suivant"
+        android:text="Se connecter"
         android:textColor="#FFFFFF"
         android:background="@drawable/button_badge_style"
         android:paddingStart="40dp"

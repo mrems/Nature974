@@ -8,6 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.pastaga.geronimo.IntroPage1Fragment
+import com.pastaga.geronimo.IntroPage2Fragment
+import com.pastaga.geronimo.IntroPage3NewFragment
+import com.pastaga.geronimo.IntroPage4Fragment
+import com.pastaga.geronimo.IntroPage5Fragment
 
 class IntroOnboardingActivity : AppCompatActivity() {
 
@@ -33,7 +38,7 @@ class IntroOnboardingActivity : AppCompatActivity() {
     
     fun goToNextPage() {
         val currentItem = viewPager.currentItem
-        if (currentItem < 3) {
+        if (currentItem < 4) {
             viewPager.setCurrentItem(currentItem + 1, true)
         }
     }
@@ -47,14 +52,15 @@ class IntroOnboardingActivity : AppCompatActivity() {
     }
     
     private inner class IntroScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int = 4
+        override fun getItemCount(): Int = 5
         
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> IntroPage1Fragment()
                 1 -> IntroPage2Fragment()
-                2 -> IntroPage3Fragment()
+                2 -> IntroPage3NewFragment()
                 3 -> IntroPage4Fragment()
+                4 -> IntroPage5Fragment()
                 else -> throw IllegalStateException("Invalid position")
             }
         }

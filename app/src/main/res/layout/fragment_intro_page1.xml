@@ -1,57 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp"
-    android:background="@color/white">
+    android:background="#F5F5F0"
+    android:padding="24dp">
 
-    <TextView
-        android:id="@+id/page1_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bienvenue"
-        android:textSize="48sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginBottom="48dp"
-        android:gravity="center" />
-
-    <FrameLayout
+    <!-- Contenu principal centré -->
+    <LinearLayout
+        android:id="@+id/content_container"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
-        android:layout_marginBottom="60dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp">
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/page1_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp">
 
+        <!-- Titre Welcome to -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bienvenue sur"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="-16dp" />
+
+        <!-- Titre Geronimo! remplacé par l'image -->
         <ImageView
-            android:id="@+id/page1_illustration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/title"
+            android:contentDescription="Geronimo Logo"
+            android:layout_marginBottom="48dp" />
+
+       
+
+        <!-- Sous-titre -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Avec Geronimo vous allez pouvoir identifier n'importe quoi sur votre chemin :"
+            android:textSize="18sp"
+            android:gravity="start"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="24dp"
+            android:paddingHorizontal="16dp" />
+
+        <!-- Liste d'éléments -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\u2022 Un oiseau qui passe par la,\n\u2022 Une nouvelle plante mystérieuse,\n\u2022 Un insecte posé sur votre terrasse,\n\u2022 Une fleur qu’on vous a offerte,\n\u2022 Un champignon dans la forêt,\n\u2022 Un fruit sur un marché exotique,\n\u2022 Une empreinte animale par terre,\n\u2022 Un coquillage ramassé sur la plage,\n\u2022 Une pierre sur un collier…"
+            android:textSize="16sp"
+            android:lineSpacingExtra="6dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Phrase en gras -->
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/b2"
-            android:scaleType="centerCrop"
-            android:layout_gravity="center"
-            android:contentDescription="Illustration de bienvenue" />
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:text="littéralement n'importe quoi !"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:paddingHorizontal="16dp" />
 
-    
+    </LinearLayout>
 
+    <!-- Bouton Get Started -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/page1_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Commencer"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Get Started"
         android:textColor="#FFFFFF"
-        android:background="@drawable/button_badge_style"
-        android:paddingStart="40dp"
-        android:paddingEnd="40dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="0dp" />
+        android:textAllCaps="false"
+        android:background="@drawable/button_primary_rounded"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp" />
 
-</LinearLayout>
-
+</androidx.constraintlayout.widget.ConstraintLayout>
