@@ -11,6 +11,16 @@
         android:orientation="vertical"
         android:paddingTop="8dp">
 
+        <TextView
+            android:id="@+id/tutorial_explanation_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:textSize="16sp"
+            android:textColor="@color/text_medium_gray"
+            android:fontFamily="@font/open_sans_regular"
+            android:visibility="gone"/>
+
         <include
             android:id="@+id/info_card_peculiarities_dangers"
             layout="@layout/item_info_card" />

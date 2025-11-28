@@ -82,6 +82,7 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                 putExtra(ResultActivity.EXTRA_DANGER, entry.danger) // Assurez-vous de passer le champ danger
                 putExtra(ResultActivity.EXTRA_CONFIDENCE_SCORE, entry.confidenceScore ?: -1) // Passer le score de confiance
                 putParcelableArrayListExtra(ResultActivity.EXTRA_ALTERNATIVE_IDENTIFICATIONS, entry.alternativeIdentifications?.let { ArrayList(it) }) // Passer les alternatives
+                putExtra(ResultActivity.EXTRA_JUSTIFICATION_TEXT, entry.justificationText) // Passer le texte de justification
             }
             startActivity(intent)
         }) { entry, itemView ->
@@ -258,7 +259,8 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                         representativeColorHex = newResponse.representativeColorHex,
                         danger = newResponse.danger,
                         confidenceScore = newResponse.confidenceScore, // Assigner le score de confiance
-                        alternativeIdentifications = newResponse.alternativeIdentifications // Assigner les alternatives
+                        alternativeIdentifications = newResponse.alternativeIdentifications, // Assigner les alternatives
+                        justificationText = newResponse.justificationText // Assigner le texte de justification
                     )
 
                     // Mettre à jour l'historique de manière synchrone dans un thread IO
@@ -282,6 +284,7 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                         putExtra(ResultActivity.EXTRA_DANGER, newResponse.danger) // Assurez-vous de passer le champ danger
                         putExtra(ResultActivity.EXTRA_CONFIDENCE_SCORE, newResponse.confidenceScore ?: -1) // Passer le score de confiance
                         putParcelableArrayListExtra(ResultActivity.EXTRA_ALTERNATIVE_IDENTIFICATIONS, newResponse.alternativeIdentifications?.let { ArrayList(it) }) // Passer les alternatives
+                        putExtra(ResultActivity.EXTRA_JUSTIFICATION_TEXT, newResponse.justificationText) // Passer le texte de justification
                     }
                     startActivity(intent)
 

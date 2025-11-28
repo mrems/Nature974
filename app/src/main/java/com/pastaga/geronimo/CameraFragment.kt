@@ -1097,6 +1097,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
                                 putExtra(ResultActivity.EXTRA_DANGER, response.danger) // Passer le champ danger
                                 putExtra(ResultActivity.EXTRA_CONFIDENCE_SCORE, response.confidenceScore ?: -1) // Passer le score de confiance
                                 putParcelableArrayListExtra(ResultActivity.EXTRA_ALTERNATIVE_IDENTIFICATIONS, response.alternativeIdentifications?.let { ArrayList(it) }) // Passer les alternatives
+                                putExtra(ResultActivity.EXTRA_JUSTIFICATION_TEXT, response.justificationText) // Passer le texte de justification
                             }
                             startActivity(intent)
 
@@ -1115,7 +1116,8 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
                                 representativeColorHex = response.representativeColorHex, // Assigner la couleur à l'AnalysisEntry
                                 danger = response.danger, // Assigner le champ danger
                                 confidenceScore = response.confidenceScore, // Assigner le score de confiance
-                                alternativeIdentifications = response.alternativeIdentifications // Assigner les alternatives
+                                alternativeIdentifications = response.alternativeIdentifications, // Assigner les alternatives
+                                justificationText = response.justificationText // Assigner le texte de justification
                             )
                             val historyManager = AnalysisHistoryManager(requireContext())
                             historyManager.saveAnalysisEntry(analysisEntry)

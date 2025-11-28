@@ -105,7 +105,10 @@ class MainActivity : AppCompatActivity() {
                 region = null,
                 description = "Ceci est un exemple de fiche d'analyse",
                 timestamp = System.currentTimeMillis(),
-                isTutorial = true
+                isTutorial = true,
+                confidenceScore = 100, // Exemple de score de confiance
+                tutorialExplanationFirstTab = "Découvrez ici le score de certitude de l'identification ainsi que des propositions d'alternatives avec les différences clés pour vous aider à affiner votre analyse.",
+                tutorialExplanationPeculiarities = "Explorez ici les traits uniques, comportements et informations de sécurité pour chaque espèce. Ces détails vous aideront à mieux comprendre et interagir avec la nature."
             )
             
             val historyManager = AnalysisHistoryManager(this)

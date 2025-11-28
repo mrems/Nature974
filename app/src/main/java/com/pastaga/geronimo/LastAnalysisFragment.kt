@@ -201,10 +201,10 @@ class LastAnalysisFragment : Fragment() {
                             val mainIcon = customView.findViewById<ImageView>(R.id.tab_main_icon)
 
                             when (position) {
-                                0 -> mainIcon.setImageResource(R.drawable.baseline_info_24)
-                                1 -> mainIcon.setImageResource(R.drawable.infos)
-                                2 -> mainIcon.setImageResource(R.drawable.particularities)
-                                3 -> mainIcon.setImageResource(R.drawable.local_context)
+                                0 -> mainIcon.setImageResource(R.drawable.onglet_1)
+                                1 -> mainIcon.setImageResource(R.drawable.onglet_2)
+                                2 -> mainIcon.setImageResource(R.drawable.onglet_3)
+                                3 -> mainIcon.setImageResource(R.drawable.onglet_4)
                                 else -> {}
                             }
 
@@ -237,7 +237,7 @@ class LastAnalysisFragment : Fragment() {
             return when (position) {
                 0 -> ConfidenceAndAlternativesFragment.newInstance(entry)
                 1 -> GeneralInfoFragment.newInstance(entry.habitat ?: "N/C", entry.characteristics ?: "N/C")
-                2 -> PeculiaritiesFragment.newInstance(entry.Peculiarities ?: "N/C", entry.danger)
+                2 -> PeculiaritiesFragment.newInstance(entry.Peculiarities ?: "N/C", entry.danger, entry.tutorialExplanationPeculiarities)
                 3 -> LocalContextFragment.newInstance(entry.localContext ?: "N/C")
                 else -> throw IllegalArgumentException("Invalid tab position")
             }

@@ -35,13 +35,15 @@ class ConfidenceAndAlternativesFragment : Fragment() {
         val alternativesSection = view.findViewById<View>(R.id.alternatives_section)
         val alternativesRecyclerView: RecyclerView = view.findViewById(R.id.alternatives_recycler_view)
         val alternativesSubtitle: TextView = view.findViewById(R.id.alternatives_subtitle)
+        val justificationText: TextView = view.findViewById(R.id.justification_text)
+        val tutorialExplanationTextView: TextView = view.findViewById(R.id.tutorial_explanation_text)
 
         analysisEntry?.let { entry ->
-            // Gestion du confidence score
+            // Gestion commune du confidence score
             entry.confidenceScore?.let { score ->
                 confidenceProgressBar.progress = score
                 confidenceTextView.text = "${score}%"
-                
+
                 // Changer la description selon le score
                 confidenceDescription.text = when {
                     score >= 90 -> "Identification très fiable"
@@ -49,31 +51,59 @@ class ConfidenceAndAlternativesFragment : Fragment() {
                     score >= 50 -> "Identification probable"
                     else -> "Identification incertaine"
                 }
+                confidenceCard.visibility = View.VISIBLE
             } ?: run { // Si confidenceScore est null
                 confidenceCard.visibility = View.GONE
             }
 
-            // Gestion des alternatives
-            entry.alternativeIdentifications?.let { alternatives ->
-                if (alternatives.isNotEmpty()) {
-                    alternativesRecyclerView.layoutManager = NonScrollingLinearLayoutManager(requireContext())
-                    alternativesRecyclerView.adapter = AlternativeAdapter(alternatives)
-                    
-                    // Adapter le texte selon le nombre d'alternatives
-                    alternativesSubtitle.text = when (alternatives.size) {
-                        1 -> "L'IA a identifié 1 autre possibilité"
-                        else -> "L'IA a identifié ${alternatives.size} autres possibilités"
+            if (entry.isTutorial) {
+                tutorialExplanationTextView.text = entry.tutorialExplanationFirstTab
+                tutorialExplanationTextView.visibility = View.VISIBLE
+                alternativesSection.visibility = View.GONE
+            } else {
+                tutorialExplanationTextView.visibility = View.GONE
+                alternativesSection.visibility = View.VISIBLE
+
+                // Gestion des alternatives
+                entry.alternativeIdentifications?.let { alternatives ->
+                    if (alternatives.isNotEmpty()) {
+                        // Afficher les alternatives
+                        alternativesRecyclerView.layoutManager = NonScrollingLinearLayoutManager(requireContext())
+                        alternativesRecyclerView.adapter = AlternativeAdapter(alternatives)
+                        alternativesRecyclerView.visibility = View.VISIBLE
+
+                        // Afficher le subtitle adapté au nombre d'alternatives
+                        alternativesSubtitle.text = when (alternatives.size) {
+                            1 -> "L'IA a identifié 1 autre possibilité"
+                            else -> "L'IA a identifié ${alternatives.size} autres possibilités"
+                        }
+                        alternativesSubtitle.visibility = View.VISIBLE
+
+                        // Cacher le texte de justification
+                        justificationText.visibility = View.GONE
+                    } else {
+                        // Pas d'alternatives : afficher le texte de justification
+                        alternativesRecyclerView.visibility = View.GONE
+                        alternativesSubtitle.visibility = View.GONE
+
+                        // Afficher le texte de justification si disponible
+                        entry.justificationText?.let { justification ->
+                            justificationText.text = justification
+                            justificationText.visibility = View.VISIBLE
+                        } ?: run {
+                            // Si pas de justification, cacher toute la section
+                            alternativesSection.visibility = View.GONE
+                        }
                     }
-                } else {
+                } ?: run { // Si alternativeIdentifications est null
                     alternativesSection.visibility = View.GONE
                 }
-            } ?: run { // Si alternativeIdentifications est null
-                alternativesSection.visibility = View.GONE
             }
         } ?: run {
             // Gérer le cas où analysisEntry est null
             confidenceCard.visibility = View.GONE
             alternativesSection.visibility = View.GONE
+            tutorialExplanationTextView.visibility = View.GONE
         }
 
         return view

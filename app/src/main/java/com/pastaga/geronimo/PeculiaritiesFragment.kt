@@ -13,12 +13,14 @@ class PeculiaritiesFragment : Fragment() {
 
     private var Peculiarities: String? = null
     private var danger: Boolean = false // Nouveau champ
+    private var tutorialExplanation: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             Peculiarities = it.getString(ARG_PECULIARITIES)
             danger = it.getBoolean(ARG_DANGER, false) // Récupérer la valeur du danger
+            tutorialExplanation = it.getString(ARG_TUTORIAL_EXPLANATION)
         }
     }
 
@@ -29,6 +31,14 @@ class PeculiaritiesFragment : Fragment() {
         val peculiaritiesTitle = peculiaritiesCard.findViewById<TextView>(R.id.title_info)
         val peculiaritiesContent = peculiaritiesCard.findViewById<TextView>(R.id.content_info)
         val dangerTitleIcon = peculiaritiesCard.findViewById<ImageView>(R.id.icon_danger_title)
+        val tutorialExplanationTextView = view.findViewById<TextView>(R.id.tutorial_explanation_text)
+
+        if (tutorialExplanation != null) {
+            tutorialExplanationTextView.text = tutorialExplanation
+            tutorialExplanationTextView.visibility = View.VISIBLE
+        } else {
+            tutorialExplanationTextView.visibility = View.GONE
+        }
 
         peculiaritiesTitle.text = "Particularités"
         peculiaritiesContent.text = Peculiarities
@@ -47,12 +57,14 @@ class PeculiaritiesFragment : Fragment() {
     companion object {
         private const val ARG_PECULIARITIES = "peculiarities"
         private const val ARG_DANGER = "danger"
+        private const val ARG_TUTORIAL_EXPLANATION = "tutorial_explanation"
 
         @JvmStatic
-        fun newInstance(Peculiarities: String, danger: Boolean) = PeculiaritiesFragment().apply {
+        fun newInstance(Peculiarities: String, danger: Boolean, tutorialExplanation: String? = null) = PeculiaritiesFragment().apply {
             arguments = Bundle().apply {
                 putString(ARG_PECULIARITIES, Peculiarities)
                 putBoolean(ARG_DANGER, danger) // Passer la valeur du danger
+                putString(ARG_TUTORIAL_EXPLANATION, tutorialExplanation)
             }
         }
     }

@@ -26,7 +26,10 @@ data class AnalysisEntry(
     val representativeColorHex: String? = null,
     val danger: Boolean = false, // Nouveau champ pour indiquer le danger
     val confidenceScore: Int? = null, // Score de confiance de l'IA (0-100)
-    val alternativeIdentifications: List<AlternativeIdentification>? = null // Autres possibilités identifiées
+    val alternativeIdentifications: List<AlternativeIdentification>? = null, // Autres possibilités identifiées
+    val justificationText: String? = null, // Texte de justification quand aucune alternative n'est proposée
+    val tutorialExplanationFirstTab: String? = null, // Nouveau champ pour le texte explicatif du premier onglet du tutoriel
+    val tutorialExplanationPeculiarities: String? = null // Nouveau champ pour le texte explicatif de l'onglet particularités
 ) : Parcelable {
     // Le constructeur secondaire a été supprimé pour éviter les ambiguïtés et simplifier la gestion des champs. 
     // Toutes les instanciations de AnalysisEntry doivent maintenant utiliser le constructeur principal avec tous les arguments.

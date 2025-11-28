@@ -136,7 +136,8 @@ class ImageAnalyzer(private val context: Context) {
         val representativeColorHex: String?,
         val danger: Boolean = false, // Nouveau champ danger
         val confidenceScore: Int? = null, // Score de confiance de l'IA (0-100)
-        val alternativeIdentifications: List<AlternativeIdentification>? = null // Autres possibilités identifiées
+        val alternativeIdentifications: List<AlternativeIdentification>? = null, // Autres possibilités identifiées
+        val justificationText: String? = null // Texte de justification quand aucune alternative n'est proposée
     )
 
 

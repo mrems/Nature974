@@ -68,6 +68,7 @@ class ResultActivity : AppCompatActivity() {
         val danger = intent.getBooleanExtra(EXTRA_DANGER, false) // Nouveau champ danger
         val confidenceScore = intent.getIntExtra(EXTRA_CONFIDENCE_SCORE, -1) // Nouveau champ confidenceScore
         val alternativeIdentifications: List<AlternativeIdentification>? = intent.getParcelableArrayListExtra(EXTRA_ALTERNATIVE_IDENTIFICATIONS)
+        val justificationText = intent.getStringExtra(EXTRA_JUSTIFICATION_TEXT) // Nouveau champ justificationText
 
         if (imageUriString != null && localName != null && scientificName != null) {
             currentEntry = AnalysisEntry(
@@ -83,7 +84,8 @@ class ResultActivity : AppCompatActivity() {
                 representativeColorHex = representativeColorHex,
                 danger = danger, // Assigner le nouveau champ danger
                 confidenceScore = if (confidenceScore != -1) confidenceScore else null, // Assigner le nouveau champ
-                alternativeIdentifications = alternativeIdentifications // Assigner le nouveau champ
+                alternativeIdentifications = alternativeIdentifications, // Assigner le nouveau champ
+                justificationText = justificationText // Assigner le nouveau champ
             )
             Log.d("NaturePei_Debug", "Confidence Score received: ${currentEntry?.confidenceScore}")
             displayResult(currentEntry!!)
@@ -194,6 +196,7 @@ class ResultActivity : AppCompatActivity() {
         const val EXTRA_DANGER = "danger" // Nouveau extra pour le danger
         const val EXTRA_CONFIDENCE_SCORE = "confidenceScore"
         const val EXTRA_ALTERNATIVE_IDENTIFICATIONS = "alternativeIdentifications"
+        const val EXTRA_JUSTIFICATION_TEXT = "justificationText"
     }
 }
 

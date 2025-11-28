@@ -15,30 +15,23 @@
         android:textSize="48sp"
         android:textStyle="bold"
         android:textColor="@color/black"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="48dp"
         android:gravity="center" />
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
-
-        <VideoView
-            android:id="@+id/page1_video_illustration"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center" />
+        android:layout_height="360dp"
+        android:layout_marginBottom="60dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp">
 
         <ImageView
-            android:id="@+id/page1_video_placeholder"
+            android:id="@+id/page1_illustration"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/bienvenue"
-            android:scaleType="fitCenter"
+            android:src="@drawable/b2"
+            android:scaleType="centerCrop"
             android:layout_gravity="center"
-            android:background="@color/white"
             android:contentDescription="Illustration de bienvenue" />
     </FrameLayout>
 
@@ -58,7 +51,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="0dp" />
 
 </LinearLayout>
 
