@@ -1,348 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F0"
-    android:fillViewport="true">
+    android:background="#F5F5F0">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="24dp">
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Titre Welcome Offers -->
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Welcome Offers"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:textColor="#1F2937"
-                android:fontFamily="@font/montserrat_bold"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="48dp" />
-
-        <!-- Sous-titre -->
-        <TextView
-            android:id="@+id/subtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Get started with exclusive offers available only for new users."
-            android:textSize="15sp"
-            android:textColor="#6B7280"
-            android:gravity="center"
-            android:lineSpacingExtra="4dp"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
-
-        <!-- Container des offres -->
         <LinearLayout
-            android:id="@+id/offers_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/subtitle"
-            android:layout_marginTop="32dp">
+            android:gravity="center_horizontal"
+            android:paddingBottom="20dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
-            <!-- Offre Premium - 100 crédits pour 9.99$ -->
-            <FrameLayout
+            <TextView
+                android:id="@+id/new_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Partout avec vous"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/montserrat_bold"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="48dp" />
+
+            <!-- Image geronimo_splash.png -->
+            <ImageView
+                android:id="@+id/geronimo_splash_image_view"
+                android:layout_width="200dp"
+                android:layout_height="250dp"
+                android:src="@drawable/geronimo_splash"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:layout_marginTop="24dp"
+                android:contentDescription="Geronimo Splash" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:text="Que ce soit en balade, en forêt, à la plage ou encore en voyage dans un pays lointain, vous allez apprendre à reconnaitre et à differencier toute la nature autour de vous."
+                android:textSize="17sp"
+                android:gravity="center_horizontal"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:layout_marginTop="24dp" />
 
-                <LinearLayout
-                    android:id="@+id/card_premium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_offer_card_premium"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:layout_marginTop="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <FrameLayout
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="@drawable/bg_icon_circle_red">
-
-                            <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_gift"
-                                android:contentDescription="Gift" />
-                        </FrameLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginStart="16dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Starter Pack"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
-                                android:textColor="#1F2937" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="100 credits"
-                                android:textSize="15sp"
-                                android:textColor="#10B981"
-                                android:textStyle="bold"
-                                android:layout_marginTop="2dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E5E7EB"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Special introductory price"
-                                android:textSize="13sp"
-                                android:textColor="#6B7280" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginTop="4dp">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="$9.99"
-                                    android:textSize="28sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#1F2937" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text=" one-time"
-                                    android:textSize="14sp"
-                                    android:textColor="#6B7280" />
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btn_premium"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:text="Get offer"
-                            android:textColor="#FFFFFF"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textAllCaps="false"
-                            android:background="@drawable/bg_best_offer_badge"
-                            android:paddingStart="24dp"
-                            android:paddingEnd="24dp" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <!-- Badge BEST VALUE -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|top"
-                    android:background="@drawable/bg_best_offer_badge"
-                    android:text="BEST VALUE"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp" />
-            </FrameLayout>
-
-            <!-- Offre Test - 20 crédits pour 0.52$ -->
-            <LinearLayout
-                android:id="@+id/card_test"
+            <TextView
+                android:id="@+id/quote_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_analysis_card"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:text="&quot;Ce sont les possessions qui te rendent riche ? Ma richesse c'est la vie, pour toujours !&quot;  Bob Marley"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="32dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=" Bob Marley"
+                android:textSize="14sp"
+                android:gravity="end"
+                android:layout_marginTop="8dp"
+                android:paddingEnd="32dp" />
 
-                    <FrameLayout
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_icon_circle_orange">
-
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_coins"
-                            android:contentDescription="Coins" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="16dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Try it out"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:textColor="#1F2937" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="20 credits"
-                            android:textSize="15sp"
-                            android:textColor="#FFB347"
-                            android:textStyle="bold"
-                            android:layout_marginTop="2dp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E5E7EB"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Perfect for testing"
-                            android:textSize="13sp"
-                            android:textColor="#6B7280" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="4dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="$0.52"
-                                android:textSize="28sp"
-                                android:textStyle="bold"
-                                android:textColor="#1F2937" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=" one-time"
-                                android:textSize="14sp"
-                                android:textColor="#6B7280" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btn_test"
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dp"
-                        android:text="Get offer"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textAllCaps="false"
-                        android:background="@drawable/button_primary_rounded"
-                        android:paddingStart="24dp"
-                        android:paddingEnd="24dp" />
-                </LinearLayout>
-
-            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/continue_button"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Continuer"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:background="@drawable/button_primary_rounded"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginBottom="16dp" />
 
         </LinearLayout>
-
-        <!-- Bouton Skip -->
-        <TextView
-            android:id="@+id/page3_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Skip for now"
-            android:textSize="16sp"
-            android:textColor="#6B7280"
-            android:padding="16dp"
-            android:background="?attr/selectableItemBackground"
-            app:layout_constraintTop_toBottomOf="@id/offers_container"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="24dp" />
-
-        <!-- Info texte -->
-        <TextView
-            android:id="@+id/info_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="These offers are only available for new users and cannot be combined with other promotions."
-            android:textSize="12sp"
-            android:textColor="#9CA3AF"
-            android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/page3_button"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="24dp" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

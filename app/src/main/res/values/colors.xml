@@ -44,6 +44,8 @@
     <color name="price_text">#212121</color>
     <color name="subtitle_text">#757575</color>
 
+    <color name="button_primary_blue">#4285F4</color>
+
     <!-- Couleurs pour le texte général (utilisées dans item_alternative_identification) -->
     <color name="text_primary">#FF000000</color>
     <color name="text_secondary">#8A000000</color>

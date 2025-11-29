@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/title"
             android:contentDescription="Geronimo Logo"
-            android:layout_marginBottom="48dp" />
+            android:layout_marginBottom="36dp" />
 
        
 
@@ -55,8 +55,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="\u2022 Un oiseau qui passe par la,\n\u2022 Une nouvelle plante mystérieuse,\n\u2022 Un insecte posé sur votre terrasse,\n\u2022 Une fleur qu’on vous a offerte,\n\u2022 Un champignon dans la forêt,\n\u2022 Un fruit sur un marché exotique,\n\u2022 Une empreinte animale par terre,\n\u2022 Un coquillage ramassé sur la plage,\n\u2022 Une pierre sur un collier…"
-            android:textSize="16sp"
+            android:text="\u2022 Un oiseau qui passe par la,\n\u2022 Une nouvelle plante mystérieuse,\n\u2022 Un insecte posé sur votre terrasse,\n\u2022 Une fleur qu’on vous a offerte,\n\u2022 Un champignon dans la forêt,\n\u2022 Un fruit sur un marché exotique,\n\u2022 Une empreinte animale par terre,\n\u2022 Un coquillage ramassé sur la plage,\n\u2022 Une pierre sur un collier,\n\u2022 etc…"
+            android:textSize="17sp"
             android:lineSpacingExtra="6dp"
             android:layout_marginBottom="24dp" />
 
