@@ -85,8 +85,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.widget.ImageView
 import android.widget.Button
- 
-class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
+import androidx.appcompat.widget.PopupMenu
+import androidx.fragment.app.DialogFragment
+
+class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, TitleMenuDialogFragment.TitleMenuListener {
 
     private lateinit var cameraPreviewTextureView: TextureView
 
@@ -136,9 +138,8 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
     private lateinit var creditsTextView: TextView
-
-    private lateinit var feedbackButton: Button
- 
+    private lateinit var creditsContainer: LinearLayout
+    
     // Variables pour la localisation
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userCountry: String? = null
@@ -195,28 +196,51 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
         bottomSheetBehavior.isDraggable = true
 
         appTitleImageView = view.findViewById(R.id.app_title_image_view)
+        appTitleImageView.setOnClickListener { showTitleMenu() }
 
         creditsTextView = view.findViewById(R.id.credits_text_view)
-        
-        feedbackButton = view.findViewById(R.id.feedback_button)
-        feedbackButton.setOnClickListener { 
-            val emailBody = "Ecrivez ici un commentaire concernant l'application Geronimo ( bugs, suggestions, expérience, etc...)  Merci !! "
-            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:mat_mail@ymail.com?subject=" + Uri.encode("FeedBack Geronimo") + "&body=" + Uri.encode(emailBody))
-            }
-            if (intent.resolveActivity(requireActivity().packageManager) != null) {
-                startActivity(intent)
-            } else {
-                Toast.makeText(requireContext(), "Aucun client email installÃ©.", Toast.LENGTH_SHORT).show()
-            }
-        }
-        
+        creditsContainer = view.findViewById(R.id.credits_container)
+        setupCreditsListener()
+        val hintTitleContainer: LinearLayout = view.findViewById(R.id.hint_title_container)
+        val hintCreditsContainer: LinearLayout = view.findViewById(R.id.hint_credits_container)
+        val hintSlideLeftContainer: LinearLayout = view.findViewById(R.id.hint_slide_left_container)
+        val hintSlideRightContainer: LinearLayout = view.findViewById(R.id.hint_slide_right_container)
+        val hintSlideBottomContainer: LinearLayout = view.findViewById(R.id.hint_slide_bottom_container)
+
+
         // Clic sur le compteur de crédits pour ouvrir l'écran d'achat
         val creditsContainer = view.findViewById<LinearLayout>(R.id.credits_container)
         creditsContainer.setOnClickListener {
             val intent = Intent(requireContext(), PurchaseActivity::class.java)
             startActivity(intent)
         }
+
+        // Affichage systématique de l'aide générale + des indicateurs (titre, crédits, slide)
+        fun showWithFadeThenHide(viewToShow: View, delayBeforeHideMs: Long = 3000L) {
+            viewToShow.visibility = View.VISIBLE
+            viewToShow.alpha = 0f
+            viewToShow.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .withEndAction {
+                    viewToShow.postDelayed({
+                        viewToShow.animate()
+                            .alpha(0f)
+                            .setDuration(300)
+                            .withEndAction {
+                                viewToShow.visibility = View.GONE
+                            }
+                            .start()
+                    }, delayBeforeHideMs)
+                }
+                .start()
+        }
+
+        showWithFadeThenHide(hintTitleContainer, 5000L)
+        showWithFadeThenHide(hintCreditsContainer, 5000L)
+        showWithFadeThenHide(hintSlideLeftContainer, 5000L)
+        showWithFadeThenHide(hintSlideRightContainer, 5000L)
+        showWithFadeThenHide(hintSlideBottomContainer, 5000L)
 
         // Calculer la hauteur du titre + une petite marge en dp
         val density = resources.displayMetrics.density
@@ -388,15 +412,9 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
         creditsListener = docRef.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
             val credits = snapshot?.getLong("credits")?.toInt() ?: return@addSnapshotListener
-            Log.d("CameraFragment", "Mise Ã  jour crÃ©dits temps rÃ©el: $credits")
+            Log.d("CameraFragment", "Mise à jour crédits temps réel: $credits")
             creditsTextView.text = "$credits"
-
-            // Mise à jour de la visibilité du bouton de feedback
-            if (credits < 5) {
-                feedbackButton.visibility = View.VISIBLE
-            } else {
-                feedbackButton.visibility = View.GONE
-            }
+            creditsContainer.visibility = View.VISIBLE
         }
     }
 
@@ -650,7 +668,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
      * Cible ~2048px pour le bord long
      */
     private fun chooseOptimalCaptureSize(sizes: Array<Size>): Size {
-        val maxLongEdge = 2048
+        val maxLongEdge = 4096
         val ratio16by9 = 16.0 / 9.0
         val ratio4by3 = 4.0 / 3.0
         val tolerance = 0.06
@@ -1182,6 +1200,36 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
                 }
             } else {
                 Toast.makeText(requireContext(), "Erreur: aucune image à analyser", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showTitleMenu() {
+        val titleMenuDialog = TitleMenuDialogFragment()
+        titleMenuDialog.listener = this
+        titleMenuDialog.show(childFragmentManager, "TitleMenuDialog")
+    }
+
+    override fun onMenuItemClick(itemId: Int) {
+        when (itemId) {
+            R.id.menu_preferences -> {
+                // TODO: Ouvrir l'écran des préférences
+                Toast.makeText(requireContext(), "Préférences - Fonctionnalité à implémenter", Toast.LENGTH_SHORT).show()
+            }
+            R.id.menu_manual -> {
+                // TODO: Ouvrir le mode d'emploi
+                Toast.makeText(requireContext(), "Mode d'emploi - Fonctionnalité à implémenter", Toast.LENGTH_SHORT).show()
+            }
+            R.id.menu_feedback -> {
+                val emailBody = "Ecrivez ici un commentaire concernant l'application Geronimo ( bugs, suggestions, expérience, etc...)  Merci !! "
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:mat_mail@ymail.com?subject=" + Uri.encode("FeedBack Geronimo") + "&body=" + Uri.encode(emailBody))
+                }
+                if (intent.resolveActivity(requireActivity().packageManager) != null) {
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(requireContext(), "Aucun client email installé.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

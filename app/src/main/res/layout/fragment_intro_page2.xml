@@ -57,7 +57,7 @@
             android:id="@+id/page3_new_button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Continuer"
+            android:text="Suivant"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"

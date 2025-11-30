@@ -42,24 +42,24 @@
                 android:src="@drawable/onboard4"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="44dp"
                 android:contentDescription="Geronimo Splash" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Que ce soit en balade ou en voyage, vous allez bientôt connaître et differencier toute la nature"
-                android:textSize="17sp"
+                android:text="Que ce soit en balade ou en voyage, vous allez bientôt connaître et reconnaître toute la nature autour de vous"
+                android:textSize="16sp"
                 android:gravity="center_horizontal"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
-                android:layout_marginTop="24dp" />
+                android:layout_marginTop="44dp" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/continue_button"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="Continuer"
+                android:text="Suivant"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"

@@ -19,25 +19,25 @@
             android:text="Dernière étape"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="48dp"
             android:gravity="center" />
 
         <ImageView
             android:id="@+id/page4_illustration"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@drawable/geronimo_app"
+            android:src="@drawable/onboard5"
             android:scaleType="fitCenter"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="48dp"
             android:contentDescription="Logo Geronimo" />
 
         <TextView
             android:id="@+id/page4_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pour utiliser l'application, vous devez maintenant vous connecter avec Google et accepter la permission pour utiliser la caméra"
+            android:text="Pour utiliser l'application, vous devez maintenant vous connecter avec Google et accepter les permissions necessaires."
             android:textSize="16sp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="48dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
@@ -53,7 +53,7 @@
             android:textStyle="bold"
             android:textAllCaps="false"
             android:background="@drawable/button_primary_rounded"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="0dp"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="16dp" />

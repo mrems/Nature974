@@ -17,8 +17,7 @@
     <FrameLayout
         android:id="@+id/overlay_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <!-- Icône Options (Thème) -->
         <ImageButton
@@ -34,70 +33,107 @@
             android:scaleType="fitCenter"
             android:alpha="0.9"/>
 
-        <!-- Titre de l'application (Image) -->
-        <ImageView
-            android:id="@+id/app_title_image_view"
+        <!-- Bloc titre + indicateur centré sous le titre -->
+        <LinearLayout
+            android:id="@+id/title_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|top"
             android:layout_marginTop="18dp"
             android:layout_marginStart="16dp"
-            android:src="@drawable/title"
-            android:maxWidth="140dp"
-            android:adjustViewBounds="true" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/feedback_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|top"
-            android:layout_marginTop="76dp" 
-            android:layout_marginStart="16dp"
-            android:text="FeedBack"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/design_default_color_primary_dark"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:paddingVertical="8dp"
-            android:textSize="14sp"
-            android:elevation="4dp"
-            />
+            <!-- Titre de l'application (Image) -->
+            <ImageView
+                android:id="@+id/app_title_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/title"
+                android:maxWidth="140dp"
+                android:adjustViewBounds="true" />
 
-        <!-- Conteneur pour le compteur de crédits (chiffre + icône) -->
+            <!-- Indicateur sous le titre : flèche + texte "Click" -->
+            <LinearLayout
+                android:id="@+id/hint_title_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical|center_horizontal"
+                android:visibility="gone"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="↑ Click ↑"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:includeFontPadding="false"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Bloc compteur de crédits + indicateur centré sous le compteur -->
         <LinearLayout
-            android:id="@+id/credits_container"
+            android:id="@+id/credits_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|top"
             android:layout_marginTop="26dp"
             android:layout_marginEnd="16dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/credits_text_view"
+            <!-- Conteneur pour le compteur de crédits (chiffre + icône) -->
+            <LinearLayout
+                android:id="@+id/credits_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5"
-                android:textColor="@color/gold"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:shadowColor="#80000000"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="4" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:visibility="gone">
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="4dp"
-                android:src="@drawable/compteur_icon" />
+                <TextView
+                    android:id="@+id/credits_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gold"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4" />
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/compteur_icon" />
+
+            </LinearLayout>
+
+            <!-- Indicateur sous le compteur de crédits : texte "Click" + flèche à droite -->
+            <LinearLayout
+                android:id="@+id/hint_credits_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical|center_horizontal"
+                android:visibility="gone"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="↑ Click ↑"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:includeFontPadding="false"/>
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Conteneur pour les boutons du bas (Capture, Galerie) -->
@@ -122,6 +158,78 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Indicateurs "slide" pour montrer les écrans accessibles par swipe -->
+        <!-- Slide vers la gauche (par ex. galerie / historique) -->
+        <LinearLayout
+            android:id="@+id/hint_slide_left_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="←  Swipe"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:includeFontPadding="false"/>
+
+            
+        </LinearLayout>
+
+        <!-- Slide vers la droite (par ex. last analysis / autre onglet) -->
+        <LinearLayout
+            android:id="@+id/hint_slide_right_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Swipe  →"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:includeFontPadding="false"/>
+
+        </LinearLayout>
+
+            
+
+            
+
+        <!-- Indicateur "slide" en bas (décalé vers la droite, flèche qui pointe vers le bas) -->
+        <LinearLayout
+            android:id="@+id/hint_slide_bottom_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="64dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="↓ Swipe ↓"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:includeFontPadding="false"/>
+        </LinearLayout>
 
     </FrameLayout>
 

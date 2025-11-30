@@ -193,14 +193,14 @@
             android:id="@+id/page2_button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Continuer"
+            android:text="Suivant"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:background="@drawable/button_primary_rounded"
             app:layout_constraintTop_toBottomOf="@id/cards_container"
-            android:layout_marginTop="48dp" />
+            android:layout_marginTop="42dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
