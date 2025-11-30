@@ -184,8 +184,8 @@ class LastAnalysisFragment : Fragment() {
                         // Afficher le badge EXEMPLE pour les fiches tutorielles
                         lastAnalysisTutorialBadge.visibility = View.VISIBLE
                         
-                        lastAnalysisTypeBadge.text = tutorialEntry.type ?: "N/C"
-                        lastAnalysisTypeBadge.visibility = if (tutorialEntry.type != null && tutorialEntry.type != "N/C") View.VISIBLE else View.GONE
+                        lastAnalysisTypeBadge.text = "Badge espèce"
+                        lastAnalysisTypeBadge.visibility = View.VISIBLE
                         
                         lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_origine)
 

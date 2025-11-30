@@ -37,9 +37,9 @@
             <!-- Image geronimo_splash.png -->
             <ImageView
                 android:id="@+id/geronimo_splash_image_view"
-                android:layout_width="200dp"
-                android:layout_height="250dp"
-                android:src="@drawable/geronimo_splash"
+                android:layout_width="350dp"
+                android:layout_height="350dp"
+                android:src="@drawable/onboard4"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_marginTop="24dp"
@@ -48,33 +48,12 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Que ce soit en balade, en forêt, à la plage ou encore en voyage dans un pays lointain, vous allez apprendre à reconnaitre et à differencier toute la nature autour de vous."
+                android:text="Que ce soit en balade ou en voyage, vous allez bientôt connaître et differencier toute la nature"
                 android:textSize="17sp"
                 android:gravity="center_horizontal"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
                 android:layout_marginTop="24dp" />
-
-            <TextView
-                android:id="@+id/quote_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="&quot;Ce sont les possessions qui te rendent riche ? Ma richesse c'est la vie, pour toujours !&quot;  Bob Marley"
-                android:textSize="16sp"
-                android:textStyle="italic"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="32dp"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=" Bob Marley"
-                android:textSize="14sp"
-                android:gravity="end"
-                android:layout_marginTop="8dp"
-                android:paddingEnd="32dp" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/continue_button"

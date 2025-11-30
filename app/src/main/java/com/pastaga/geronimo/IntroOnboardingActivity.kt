@@ -57,8 +57,8 @@ class IntroOnboardingActivity : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> IntroPage1Fragment()
-                1 -> IntroPage2Fragment()    // Ancien: IntroPage3NewFragment()
-                2 -> IntroPage3Fragment()    // Ancien: IntroPage2Fragment()
+                1 -> IntroPage3Fragment()    // Ancien: IntroPage3NewFragment()
+                2 -> IntroPage2Fragment()    // Ancien: IntroPage2Fragment()
                 3 -> IntroPage4Fragment()
                 4 -> IntroPage5Fragment()
                 else -> throw IllegalStateException("Invalid position")

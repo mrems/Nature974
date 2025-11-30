@@ -24,11 +24,20 @@
         android:id="@+id/splash_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/title_splash"
-        android:maxWidth="280dp"
+        android:src="@drawable/title"
+        android:maxWidth="320dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:contentDescription="@string/app_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Science, Nature &amp; Aventure"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#666666"
+        android:layout_marginTop="0dp" />
 
     <View
         android:layout_width="match_parent"

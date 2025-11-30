@@ -71,6 +71,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             android:textSize="16sp"
             android:textColor="@color/text_medium_gray"
             android:fontFamily="@font/open_sans_regular"

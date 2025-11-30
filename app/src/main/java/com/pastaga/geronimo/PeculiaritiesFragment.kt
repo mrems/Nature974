@@ -31,17 +31,10 @@ class PeculiaritiesFragment : Fragment() {
         val peculiaritiesTitle = peculiaritiesCard.findViewById<TextView>(R.id.title_info)
         val peculiaritiesContent = peculiaritiesCard.findViewById<TextView>(R.id.content_info)
         val dangerTitleIcon = peculiaritiesCard.findViewById<ImageView>(R.id.icon_danger_title)
-        val tutorialExplanationTextView = view.findViewById<TextView>(R.id.tutorial_explanation_text)
-
-        if (tutorialExplanation != null) {
-            tutorialExplanationTextView.text = tutorialExplanation
-            tutorialExplanationTextView.visibility = View.VISIBLE
-        } else {
-            tutorialExplanationTextView.visibility = View.GONE
-        }
 
         peculiaritiesTitle.text = "Particularités"
-        peculiaritiesContent.text = Peculiarities
+        // Afficher le texte d'explication du tutoriel dans le contenu de la carte si disponible, sinon les particularités normales.
+        peculiaritiesContent.text = tutorialExplanation ?: Peculiarities
 
         if (danger) {
             dangerTitleIcon.visibility = View.VISIBLE
@@ -49,7 +42,8 @@ class PeculiaritiesFragment : Fragment() {
             dangerTitleIcon.visibility = View.GONE
         }
 
-        peculiaritiesCard.visibility = if (Peculiarities != null && Peculiarities != "N/C") View.VISIBLE else View.GONE
+        // La carte des particularités est toujours visible.
+        peculiaritiesCard.visibility = View.VISIBLE
 
         return view
     }
