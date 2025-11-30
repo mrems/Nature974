@@ -87,7 +87,11 @@ import android.widget.ImageView
 import android.widget.Button
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.DialogFragment
-
+import com.google.android.play.core.review.ReviewInfo
+import com.google.android.play.core.review.ReviewManager
+import com.google.android.play.core.review.ReviewManagerFactory
+ 
+ 
 class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, TitleMenuDialogFragment.TitleMenuListener {
 
     private lateinit var cameraPreviewTextureView: TextureView
@@ -1217,18 +1221,38 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 Toast.makeText(requireContext(), "Préférences - Fonctionnalité à implémenter", Toast.LENGTH_SHORT).show()
             }
             R.id.menu_manual -> {
-                // TODO: Ouvrir le mode d'emploi
-                Toast.makeText(requireContext(), "Mode d'emploi - Fonctionnalité à implémenter", Toast.LENGTH_SHORT).show()
+                val manualFragment = ManualFragment()
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_container, manualFragment)
+                    .addToBackStack(null) // Permet de revenir en arrière avec le bouton retour
+                    .commit()
             }
             R.id.menu_feedback -> {
-                val emailBody = "Ecrivez ici un commentaire concernant l'application Geronimo ( bugs, suggestions, expérience, etc...)  Merci !! "
-                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                    data = Uri.parse("mailto:mat_mail@ymail.com?subject=" + Uri.encode("FeedBack Geronimo") + "&body=" + Uri.encode(emailBody))
+                // Appeler la nouvelle fonction pour montrer la boÃ®te de dialogue d'Ã©valuation in-app
+                showInAppReview()
+            }
+        }
+    }
+
+    private fun showInAppReview() {
+        val manager = ReviewManagerFactory.create(requireContext())
+        manager.requestReviewFlow().addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                val reviewInfo = request.result
+                manager.launchReviewFlow(requireActivity(), reviewInfo).addOnCompleteListener { _ ->
+                    // Le flux est terminé. L'API n'indique pas si l'utilisateur a laissé un avis.
+                    // On continue le flux normal de l'application.
                 }
-                if (intent.resolveActivity(requireActivity().packageManager) != null) {
-                    startActivity(intent)
-                } else {
-                    Toast.makeText(requireContext(), "Aucun client email installé.", Toast.LENGTH_SHORT).show()
+            } else {
+                // Il y a eu un problème. Vous pouvez logguer l'erreur ou
+                // avoir un fallback, par exemple, ouvrir le Play Store directement.
+                Log.e("CameraFragment", "Erreur lors de la demande de l'API d'évaluation in-app: ${request.exception?.message}")
+                // Optionnel : Fallback vers l'ouverture directe du Play Store
+                val packageName = requireContext().packageName
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+                } catch (e: android.content.ActivityNotFoundException) {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
                 }
             }
         }

@@ -1,0 +1,217 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".ManualFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+         <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/title"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="0dp"
+            android:contentDescription="Titre de l'application"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Science, Nature &amp; Aventure"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="48dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Manuel d'Utilisation"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="24dp"/>    
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Synthèse des Modèles d'Analyse"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Modèle Standard"
+            android:textSize="16sp"
+            android:layout_marginBottom="0dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Coût : 1\nVitesse : Très Rapide\nRéflexion : Basse\nUsage : Premier Choix pour photos nettes et claires (80% des cas)."
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Modèle Avancé"
+            android:textSize="16sp"
+            android:layout_marginBottom="0dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Coût : 2\nVitesse : Rapide\nRéflexion : Approfondie\nUsage : Option de Secours pour photos floues ou difficiles (si le Modèle 1 échoue)."
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Modèle Expert"
+            android:textSize="16sp"
+            android:layout_marginBottom="0dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Coût : 10\nVitesse : Lent\nRéflexion : Maximum\nUsage : Dernier Recours pour cas très rares et complexes uniquement."
+            android:textSize="14sp"
+            android:layout_marginBottom="32dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Utiliser Intelligemment Ses Crédits."
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Votre objectif est de résoudre votre identification avec le Modèle 1."
+            android:textSize="14sp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="La Règle d'Or : La Qualité d'Image"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Avant toute chose, assurez-vous que votre photo est nette, bien éclairée et que le sujet remplit bien le cadre."
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pourquoi ? Le Modèle 1 n'a pas beaucoup de réflexion. S'il échoue à cause d'une mauvaise photo, vous serez obligé de passer au Modèle 2, vous faisant gaspiller 1 Crédit. Une bonne photo est la meilleure façon d'économiser."
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="La Stratégie d'Identification"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notez que les Modèles 1 et 2 à eux seuls résolvent la plus grande majorité des cas d'identification."
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Commencez par le Modèle 1. (Le plus économique et rapide)."
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Si la réponse est insatisfaisante : Passez au Modèle 2. (Il résoudra la quasi-totalité des échecs du Modèle 1 grâce à sa réflexion approfondie)."
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dernier Recours : Modèle 3"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Usage : Uniquement pour les cas très complexes que les Modèles 1 et 2 n'ont pas pu résoudre. Utilisez-le avec grande prudence."
+            android:textSize="14sp"
+            android:layout_marginBottom="32dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Limites de l'Identification par Image"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="L'identification par image est un outil puissant, mais elle a ses limites. Soyez conscient des défis suivants :"
+            android:textSize="14sp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pourquoi l'identification n'est jamais absolue :"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Même les plus grands spécialistes de la nature sont souvent incapables de se prononcer avec une certitude absolue sur une simple image, notamment pour les espèces très proches."
+            android:textSize="14sp"
+            android:layout_marginBottom="16dp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Végétaux Jeunes : Les plantes n'ont pas encore toutes les caractéristiques visibles à l'âge adulte, rendant leur identification précoce très difficile.\n\nCousins Proches : Difficile de distinguer entre des espèces très similaires lorsque leurs points de divergence sont extremements subtils.\n\nDiversité Naturelle : La nature est immense (notamment les insectes). Le nombre de sujets connus est tellement vaste que la distinction entre eux est extrêmement complexe, même pour les experts."
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Malgré toutes ces limites, Vous avez entre vos mains le guide le plus puissant et le plus rapide pour aller explorer le monde qui vous entoure !"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+    </LinearLayout>
+
+</ScrollView>
