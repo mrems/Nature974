@@ -1221,11 +1221,10 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 Toast.makeText(requireContext(), "Préférences - Fonctionnalité à implémenter", Toast.LENGTH_SHORT).show()
             }
             R.id.menu_manual -> {
-                val manualFragment = ManualFragment()
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_container, manualFragment)
-                    .addToBackStack(null) // Permet de revenir en arrière avec le bouton retour
-                    .commit()
+                val url = "https://mrems.github.io/Nature974/"
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(url)
+                startActivity(intent)
             }
             R.id.menu_feedback -> {
                 // Appeler la nouvelle fonction pour montrer la boÃ®te de dialogue d'Ã©valuation in-app
