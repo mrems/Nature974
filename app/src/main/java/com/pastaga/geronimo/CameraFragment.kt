@@ -1221,9 +1221,8 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 Toast.makeText(requireContext(), "Préférences - Fonctionnalité à implémenter", Toast.LENGTH_SHORT).show()
             }
             R.id.menu_manual -> {
-                val url = "https://mrems.github.io/Nature974/"
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(url)
+                val manualUrl = "https://mrems.github.io/Nature974/"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(manualUrl))
                 startActivity(intent)
             }
             R.id.menu_feedback -> {
