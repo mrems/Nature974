@@ -210,6 +210,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         val hintSlideLeftContainer: LinearLayout = view.findViewById(R.id.hint_slide_left_container)
         val hintSlideRightContainer: LinearLayout = view.findViewById(R.id.hint_slide_right_container)
         val hintSlideBottomContainer: LinearLayout = view.findViewById(R.id.hint_slide_bottom_container)
+        val hintClickMessageCenter: TextView = view.findViewById(R.id.hint_click_message_center)
 
 
         // Clic sur le compteur de crédits pour ouvrir l'écran d'achat
@@ -240,11 +241,12 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 .start()
         }
 
-        showWithFadeThenHide(hintTitleContainer, 5000L)
-        showWithFadeThenHide(hintCreditsContainer, 5000L)
-        showWithFadeThenHide(hintSlideLeftContainer, 5000L)
-        showWithFadeThenHide(hintSlideRightContainer, 5000L)
-        showWithFadeThenHide(hintSlideBottomContainer, 5000L)
+        showWithFadeThenHide(hintTitleContainer, 2000L)
+        showWithFadeThenHide(hintCreditsContainer, 2000L)
+        showWithFadeThenHide(hintSlideLeftContainer, 2000L)
+        showWithFadeThenHide(hintSlideRightContainer, 2000L)
+        showWithFadeThenHide(hintSlideBottomContainer, 2000L)
+        showWithFadeThenHide(hintClickMessageCenter, 2000L)
 
         // Calculer la hauteur du titre + une petite marge en dp
         val density = resources.displayMetrics.density

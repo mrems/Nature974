@@ -24,7 +24,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="48dp"/>
+            android:layout_marginTop="48dp"
+            android:textColor="#4CAF50"/>
 
         <!-- Image de la page -->
         <ImageView

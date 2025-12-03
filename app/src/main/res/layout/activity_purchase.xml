@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/bg_splash"
     tools:context=".PurchaseActivity">
 
     <ScrollView
@@ -30,7 +30,7 @@
                 android:id="@+id/geronimo_splash_image_view"
                 android:layout_width="200dp" 
                 android:layout_height="300dp" 
-                android:src="@drawable/geronimo_splash"
+                android:src="@drawable/gekito"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_marginTop="0dp"
@@ -42,7 +42,7 @@
                 android:id="@+id/geronimo_title_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="70dp"
-                android:src="@drawable/title"
+                android:src="@drawable/geki_title"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_marginTop="-8dp"
@@ -55,20 +55,19 @@
                 android:text="@string/unlock_adventure_title"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_dark_gray"
                 android:layout_marginTop="0dp" />
 
             <TextView
                 android:id="@+id/choose_plan_description"
                 android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/choose_plan_description"
                 android:textSize="16sp"
                 android:textColor="@color/text_medium_gray"
                 android:gravity="center"
                 android:layout_marginTop="0dp"
-                android:layout_marginStart="64dp"
-                android:layout_marginEnd="64dp" />
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp" />
 
             <RadioGroup
                 android:id="@+id/offer_radio_group"
@@ -139,8 +138,7 @@
                             android:layout_height="wrap_content"
                                 android:text="@string/offer_50_price"
                                 android:textSize="16sp"
-                            android:textStyle="bold"
-                                android:textColor="@color/text_dark_gray" />
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -210,8 +208,7 @@
                             android:layout_height="wrap_content"
                                 android:text="@string/offer_100_price"
                                 android:textSize="16sp"
-                            android:textStyle="bold"
-                                android:textColor="@color/text_dark_gray" />
+                            android:textStyle="bold"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -281,8 +278,7 @@
                             android:layout_height="wrap_content"
                                 android:text="@string/offer_300_price"
                                 android:textSize="16sp"
-                            android:textStyle="bold"
-                                android:textColor="@color/text_dark_gray" />
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"

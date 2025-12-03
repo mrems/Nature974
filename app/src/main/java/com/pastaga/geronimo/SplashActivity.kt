@@ -8,42 +8,32 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import android.view.WindowManager
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class SplashActivity : AppCompatActivity() {
 
-    private val SPLASH_DELAY: Long = 1000 // 1 seconde
+    private val SPLASH_DELAY: Long = 2000 // 2 secondes
     private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        // Force des barres blanches avec icônes sombres, au cas où le thème serait surchargé par l'OEM
-        window.statusBarColor = Color.WHITE
-        window.navigationBarColor = Color.WHITE
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val controller = window.insetsController
-            if (controller != null) {
-                controller.setSystemBarsAppearance(
-                    android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or
-                            android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
-                    android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or
-                            android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-                )
-            }
-        } else {
-            @Suppress("DEPRECATION")
-            var flags = window.decorView.systemUiVisibility
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                @Suppress("DEPRECATION")
-                flags = flags or android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                @Suppress("DEPRECATION")
-                flags = flags or android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-            }
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = flags
+        // Permettre au contenu de s'afficher sur les barres système
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Rendre les barres d'état et de navigation transparentes
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+
+        // Définir l'apparence des icônes des barres système (clair ou foncé)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (controller != null) {
+            controller.isAppearanceLightStatusBars = true // Icônes claires ou sombres pour la barre d'état
+            controller.isAppearanceLightNavigationBars = true // Icônes claires ou sombres pour la barre de navigation
         }
 
         firebaseAuth = FirebaseAuth.getInstance()

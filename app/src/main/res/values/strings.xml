@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Geronimo</string>
+    <string name="app_name">Geki</string>
     <string name="loading">Chargement...</string>
     <string name="choose_credits_pack">Choisissez un pack de crédits</string>
     <string name="choose_subscription">Choisissez un abonnement</string>
@@ -10,22 +10,22 @@
     <string name="already_subscribed">Vous avez déjà un abonnement actif</string>
 
     <!-- Nouveau texte pour la page d'abonnement -->
-    <string name="unlock_adventure_title">Unlock Your Adventure!</string>
-    <string name="choose_plan_description">Choose your plan and start exploring nature.</string>
+    <string name="unlock_adventure_title">Débloquez Votre Aventure !</string>
+    <string name="choose_plan_description">Choisissez votre plan et commencez à explorer la nature.</string>
     <string name="geronimo_splash_content_description">Image du personnage Geronimo</string>
     <string name="geronimo_title_content_description">Titre Geronimo</string>
 
     <!-- Offres d'abonnement mises à jour -->
     <string name="offer_50_identifications">50 crédits</string>
-    <string name="offer_50_price">$7.99</string>
+    <string name="offer_50_price">7.99€</string>
     <string name="offer_100_identifications">100 crédits</string>
-    <string name="offer_100_price">$14.99</string>
-    <string name="offer_100_badge">MOST POPULAR</string>
+    <string name="offer_100_price">14.99€</string>
+    <string name="offer_100_badge">LE PLUS POPULAIRE</string>
     <string name="offer_300_identifications">300 crédits</string>
-    <string name="offer_300_price">$29.99</string>
+    <string name="offer_300_price">29.99€</string>
     <string name="per_month">/mois</string>
-    <string name="button_continue">Continue</string>
-    <string name="payment_info">Cancel anytime from your Google Play account</string>
+    <string name="button_continue">Continuer</string>
+    <string name="payment_info">Annulez à tout moment depuis votre compte Google Play</string>
 </resources>
 
 

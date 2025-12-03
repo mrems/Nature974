@@ -24,21 +24,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bienvenue sur"
-            android:textSize="28sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center_horizontal"
-            android:layout_marginBottom="-16dp" />
+            android:layout_marginBottom="-16dp"
+            android:textColor="#4CAF50" />
 
         <!-- Titre Geronimo! remplacé par l'image -->
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/title"
+            android:layout_height="85dp"
+            android:src="@drawable/geki_title"
             android:contentDescription="Geronimo Logo"
-            android:layout_marginBottom="36dp" />
+            android:adjustViewBounds="true"
+            android:layout_marginBottom="24dp" />
 
        
+
 
         <!-- Sous-titre -->
         <TextView

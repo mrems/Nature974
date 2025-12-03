@@ -33,6 +33,22 @@
             android:scaleType="fitCenter"
             android:alpha="0.9"/>
 
+        <!-- Nouveau TextView pour le message unique au centre de l'écran -->
+        <TextView
+            android:id="@+id/hint_click_message_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+            android:text="Click here to open the Menu or to Buy Credits"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:visibility="gone"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"/>
+
         <!-- Bloc titre + indicateur centré sous le titre -->
         <LinearLayout
             android:id="@+id/title_wrapper"
@@ -48,8 +64,8 @@
                 android:id="@+id/app_title_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/title"
-                android:maxWidth="140dp"
+                android:src="@drawable/geki_title"
+                android:maxWidth="180dp"
                 android:adjustViewBounds="true" />
 
             <!-- Indicateur sous le titre : flèche + texte "Click" -->
@@ -65,12 +81,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="↑ Click ↑"
+                    android:text="↑"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     android:includeFontPadding="false"/>
             </LinearLayout>
+
         </LinearLayout>
 
         <!-- Bloc compteur de crédits + indicateur centré sous le compteur -->
@@ -128,12 +145,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="↑ Click ↑"
+                    android:text="↑"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     android:includeFontPadding="false"/>
             </LinearLayout>
+
         </LinearLayout>
 
         <!-- Conteneur pour les boutons du bas (Capture, Galerie) -->
