@@ -14,7 +14,7 @@
          <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/title"
+            android:src="@drawable/geki_title"
             android:adjustViewBounds="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"

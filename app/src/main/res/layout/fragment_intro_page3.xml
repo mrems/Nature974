@@ -6,26 +6,23 @@
     android:background="#F5F5F0"
     android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical|center_horizontal"
         android:padding="24dp">
 
-            <!-- Titre Choisissez votre analyse -->
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nouvelle génération de modèles IA"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/montserrat_bold"
-                android:gravity="center_horizontal"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="48dp"
-                android:textColor="#4CAF50" />
+        <!-- Titre Choisissez votre analyse -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nouvelle génération de modèles IA"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center_horizontal" />
 
         <!-- Sous-titre -->
         <TextView
@@ -36,12 +33,7 @@
             android:textSize="16sp"
             android:gravity="start"
             android:lineSpacingExtra="4dp"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp" />
+            android:layout_marginTop="12dp" />
 
         <!-- Container des cartes -->
         <LinearLayout
@@ -49,7 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/subtitle"
             android:layout_marginTop="32dp">
 
             <!-- Carte Quick -->
@@ -200,8 +191,8 @@
             android:textStyle="bold"
             android:textAllCaps="false"
             android:background="@drawable/button_primary_rounded"
-            app:layout_constraintTop_toBottomOf="@id/cards_container"
-            android:layout_marginTop="42dp" />
+            android:layout_marginTop="32dp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
 </ScrollView>

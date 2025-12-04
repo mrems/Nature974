@@ -26,6 +26,12 @@
     <string name="per_month">/mois</string>
     <string name="button_continue">Continuer</string>
     <string name="payment_info">Annulez à tout moment depuis votre compte Google Play</string>
+
+    <!-- Identifiants de menu -->
+    <item type="id" name="menu_preferences" />
+    <item type="id" name="menu_manual" />
+    <item type="id" name="menu_feedback" />
+    <item type="id" name="menu_subscription" />
 </resources>
 
 

@@ -2,9 +2,26 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="24dp"
     android:background="@drawable/bg_rounded_menu_dialog"
     android:elevation="8dp">
+
+    <!-- Nouveau LinearLayout pour le titre -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/geki_title"
+            android:adjustViewBounds="true"
+            android:maxWidth="280dp"/> 
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/menu_preferences"
@@ -15,18 +32,30 @@
         android:paddingBottom="12dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textSize="24sp"
         android:gravity="center_vertical"
         android:drawablePadding="12dp"
         android:clickable="true"
         android:focusable="true"
         android:background="?attr/selectableItemBackground"/>
 
-    <View
+    <TextView
+        android:id="@+id/menu_subscription"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#20000000"/>
+        android:layout_height="wrap_content"
+        android:text="Abonnement"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:gravity="center_vertical"
+        android:drawablePadding="12dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground"/>
 
     <TextView
         android:id="@+id/menu_manual"
@@ -37,18 +66,13 @@
         android:paddingBottom="12dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textSize="24sp"
         android:gravity="center_vertical"
         android:drawablePadding="12dp"
         android:clickable="true"
         android:focusable="true"
         android:background="?attr/selectableItemBackground"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#20000000"/>
 
     <TextView
         android:id="@+id/menu_feedback"
@@ -59,8 +83,8 @@
         android:paddingBottom="12dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textSize="24sp"
         android:gravity="center_vertical"
         android:drawablePadding="12dp"
         android:clickable="true"

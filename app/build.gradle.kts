@@ -107,4 +107,7 @@ dependencies {
     implementation("com.airbnb.android:lottie:6.1.0")
     implementation("com.google.android.play:review:2.0.1")
     implementation("com.google.android.play:review-ktx:2.0.1")
+
+    // PhotoView pour le zoom d'image
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
 }

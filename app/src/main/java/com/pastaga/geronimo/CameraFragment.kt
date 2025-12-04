@@ -386,20 +386,11 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                         analysisJob?.cancel()
                         Toast.makeText(requireContext(), "Analyse annulÃ©e.", Toast.LENGTH_SHORT).show()
                         Log.d("CameraFragment", "Analyse annulÃ©e par le bouton retour.")
-                        // Revenir Ã  l'Ã©tat initial ou Ã  l'Ã©cran de recadrage
-                        croppedImageUri = null // Annuler l'URI recadrÃ©e
-                        closeCamera() // Fermer la camÃ©ra proprement
-                        // openCamera() // Ne pas appeler openCamera() ici, laisser onResume le faire.
+                        croppedImageUri = null
+                        closeCamera()
                         cameraPreviewTextureView.visibility = View.VISIBLE
                         captureButton.visibility = View.VISIBLE
-                        // optionsButton.visibility = View.VISIBLE // Si vous voulez le re-montrer
                     }
-                    // GÃ©rer si UCrop est visible (l'ActivityResultLauncher d'UCrop gÃ¨re dÃ©jÃ  le retour)
-                    // Pour UCrop, le simple fait d'appeler super.handleOnBackPressed() ou de laisser la gestion par dÃ©faut
-                    // devrait revenir Ã  l'activitÃ© appelante (CameraFragment) avec RESULT_CANCELED.
-                    // Il n'y a pas de moyen direct de savoir si UCrop est "actif" de l'extÃ©rieur.
-                    // La meilleure approche est de simplement ne pas intercepter si on sait qu'on a lancÃ© UCrop.
-                    // Pour l'instant, on laisse UCrop gÃ©rer son propre retour.
                     else -> {
                         isEnabled = false
                         requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -498,7 +489,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         }
 
         override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
-            // GÃ©rer les changements de taille ici si nÃ©cessaire
         }
 
         override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
@@ -506,16 +496,12 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         }
 
         override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
-            // AppelÃ© Ã  chaque mise Ã  jour de l'aperÃ§u
         }
     }
 
     private val captureCallback = object : CameraCaptureSession.CaptureCallback() {
         override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
             super.onCaptureCompleted(session, request, result)
-            lifecycleScope.launch(Dispatchers.IO) { // Appeler suspend fun dans une coroutine
-                // analyzeImageWithGemini() // L'analyse est dÃ©sormais appelÃ©e aprÃ¨s le recadrage rÃ©ussi
-            }
         }
 
         override fun onCaptureFailed(session: CameraCaptureSession, request: CaptureRequest, failure: CaptureFailure) {
@@ -759,10 +745,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                         // Optimisations pour la fluiditÃ©
                         previewRequestBuilder!!.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
                         previewRequestBuilder!!.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
-                        
-                        // Limiter le FPS pour rÃ©duire la charge CPU (optionnel)
-                        // previewRequestBuilder!!.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, android.util.Range(30, 30))
-                        
+
                         captureSession!!.setRepeatingRequest(previewRequestBuilder!!.build(), null, backgroundHandler)
                         Log.d("CameraFragment", "Session de preview configurÃ©e avec succÃ¨s")
                     } catch (e: CameraAccessException) {
@@ -782,21 +765,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             }, null)
         } catch (e: CameraAccessException) {
             e.printStackTrace()
-        }
-    }
-
-    // Cette fonction n'est plus nÃ©cessaire car les permissions sont gÃ©rÃ©es par l'onboarding
-    // ConservÃ©e pour compatibilitÃ© mais pourrait Ãªtre supprimÃ©e
-    private fun checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            openCamera()
-        } else {
-            Log.e("CameraFragment", "Permission camÃ©ra non accordÃ©e")
-            Toast.makeText(requireContext(), "Permission camÃ©ra requise", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -1230,6 +1198,10 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             R.id.menu_feedback -> {
                 // Appeler la nouvelle fonction pour montrer la boÃ®te de dialogue d'Ã©valuation in-app
                 showInAppReview()
+            }
+            R.id.menu_subscription -> {
+                val intent = Intent(requireContext(), PurchaseActivity::class.java)
+                startActivity(intent)
             }
         }
     }

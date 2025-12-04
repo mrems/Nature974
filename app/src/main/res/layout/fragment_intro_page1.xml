@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F0"
-    android:padding="24dp">
+    android:fillViewport="true">
 
-    <!-- Contenu principal centré -->
     <LinearLayout
-        android:id="@+id/content_container"
+        android:id="@+id/content_container_with_button"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/page1_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp">
+        android:gravity="center_horizontal|center_vertical"
+        android:padding="24dp">
 
         <!-- Titre Welcome to -->
         <TextView
@@ -28,8 +23,7 @@
             android:textStyle="bold"
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center_horizontal"
-            android:layout_marginBottom="-16dp"
-            android:textColor="#4CAF50" />
+            android:layout_marginBottom="-16dp" />
 
         <!-- Titre Geronimo! remplacé par l'image -->
         <ImageView
@@ -40,14 +34,11 @@
             android:adjustViewBounds="true"
             android:layout_marginBottom="24dp" />
 
-       
-
-
         <!-- Sous-titre -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Avec Geronimo vous allez pouvoir identifier n'importe quoi sur votre chemin :"
+            android:text="Avec Geki vous allez pouvoir identifier n'importe quoi sur votre chemin :"
             android:textSize="18sp"
             android:gravity="start"
             android:lineSpacingExtra="4dp"
@@ -73,22 +64,19 @@
             android:gravity="start"
             android:paddingHorizontal="16dp" />
 
+        <!-- Bouton Get Started -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/page1_button"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Commencer"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:background="@drawable/button_primary_rounded"
+            android:layout_marginTop="32dp" />
+
     </LinearLayout>
 
-    <!-- Bouton Get Started -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/page1_button"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="Commencer"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textAllCaps="false"
-        android:background="@drawable/button_primary_rounded"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

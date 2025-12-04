@@ -41,6 +41,10 @@ class TitleMenuDialogFragment : DialogFragment() {
             listener?.onMenuItemClick(R.id.menu_feedback)
             dismiss()
         }
+        view.findViewById<TextView>(R.id.menu_subscription).setOnClickListener {
+            listener?.onMenuItemClick(R.id.menu_subscription)
+            dismiss()
+        }
     }
 
     override fun getTheme(): Int {
