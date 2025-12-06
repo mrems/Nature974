@@ -18,7 +18,7 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nouvelle génération de modèles IA"
+            android:text="@string/intro_page3_title"
             android:textSize="28sp"
             android:textStyle="bold"
             android:fontFamily="@font/montserrat_bold"
@@ -29,7 +29,7 @@
             android:id="@+id/subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nous vous offront les meilleurs modèles au monde. Sélectionnez parmi nos trois niveaux d'identification, chacun offrant une profondeur d'analyse croissante."
+            android:text="@string/intro_page3_subtitle"
             android:textSize="16sp"
             android:gravity="start"
             android:lineSpacingExtra="4dp"
@@ -63,7 +63,7 @@
                         android:layout_height="28dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_lightning"
-                        android:contentDescription="Rapide" />
+                        android:contentDescription="@string/intro_page3_quick_title" />
                 </FrameLayout>
 
                 <LinearLayout
@@ -75,14 +75,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Rapide"
+                        android:text="@string/intro_page3_quick_title"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Identification rapide et efficace."
+                        android:text="@string/intro_page3_quick_description"
                         android:textSize="14sp"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>
@@ -108,7 +108,7 @@
                         android:layout_height="28dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_badge_check"
-                        android:contentDescription="Standard" />
+                        android:contentDescription="@string/intro_page3_standard_title" />
                 </FrameLayout>
 
                 <LinearLayout
@@ -120,14 +120,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Standard"
+                        android:text="@string/intro_page3_standard_title"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Équilibre entre précision et rapidité."
+                        android:text="@string/intro_page3_standard_description"
                         android:textSize="14sp"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>
@@ -152,7 +152,7 @@
                         android:layout_height="28dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_flask"
-                        android:contentDescription="Extrêmement précis" />
+                        android:contentDescription="@string/intro_page3_precise_title" />
                 </FrameLayout>
 
                 <LinearLayout
@@ -164,14 +164,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Extrêmement précis"
+                        android:text="@string/intro_page3_precise_title"
                         android:textSize="18sp"
                         android:textStyle="bold"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Analyse approfondie pour les cas difficiles."
+                        android:text="@string/intro_page3_precise_description"
                         android:textSize="14sp"
                         android:textColor="#6B7280"
                         android:layout_marginTop="2dp" />
@@ -185,7 +185,7 @@
             android:id="@+id/page2_button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Suivant"
+            android:text="@string/intro_page3_button_next"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"

@@ -93,8 +93,8 @@ class OnboardingFragment : Fragment() {
             permissionsToRequest.add(
                 PermissionInfo(
                     permission = Manifest.permission.CAMERA,
-                    title = "Permission Caméra",
-                    description = "Cette application a besoin d'accéder à votre caméra pour capturer et analyser des photos de plantes et d'animaux.",
+                    title = getString(R.string.permission_camera_title),
+                    description = getString(R.string.permission_camera_description),
                     iconRes = R.drawable.camera,
                     required = true
                 )
@@ -108,8 +108,8 @@ class OnboardingFragment : Fragment() {
             permissionsToRequest.add(
                 PermissionInfo(
                     permission = "LOCATION", // Identifiant spécial pour gérer les deux permissions
-                    title = "Permission Localisation",
-                    description = "L'accès à votre localisation permet d'améliorer la précision de l'identification des espèces en fonction de votre région.",
+                    title = getString(R.string.permission_location_title),
+                    description = getString(R.string.permission_location_description),
                     iconRes = R.drawable.localisation,
                     required = true
                 )
@@ -127,8 +127,8 @@ class OnboardingFragment : Fragment() {
             permissionsToRequest.add(
                 PermissionInfo(
                     permission = storagePermission,
-                    title = "Permission Galerie",
-                    description = "L'accès à vos photos vous permet d'analyser des images existantes depuis votre galerie.",
+                    title = getString(R.string.permission_gallery_title),
+                    description = getString(R.string.permission_gallery_description),
                     iconRes = R.drawable.stockage,
                     required = true
                 )
@@ -156,7 +156,7 @@ class OnboardingFragment : Fragment() {
         iconImageView.setImageResource(permissionInfo.iconRes)
         titleTextView.text = permissionInfo.title
         descriptionTextView.text = permissionInfo.description
-        requestButton.text = "Accepter"
+        requestButton.text = getString(R.string.permission_button_accept)
     }
     
     private fun requestCurrentPermission() {

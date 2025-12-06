@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bienvenue sur"
+            android:text="@string/intro_page1_welcome_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:fontFamily="@font/montserrat_bold"
@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Avec Geki vous allez pouvoir identifier n'importe quoi sur votre chemin :"
+            android:text="@string/intro_page1_subtitle"
             android:textSize="18sp"
             android:gravity="start"
             android:lineSpacingExtra="4dp"
@@ -49,7 +49,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="\u2022 Un oiseau qui passe par la,\n\u2022 Une nouvelle plante mystérieuse,\n\u2022 Un insecte posé sur votre terrasse,\n\u2022 Une fleur qu’on vous a offerte,\n\u2022 Un champignon dans la forêt,\n\u2022 Un fruit sur un marché exotique,\n\u2022 Une empreinte animale par terre,\n\u2022 Un coquillage ramassé sur la plage,\n\u2022 Une pierre sur un collier,\n\u2022 etc…"
+            android:text="@string/intro_page1_list_items"
             android:textSize="17sp"
             android:lineSpacingExtra="6dp"
             android:layout_marginBottom="24dp" />
@@ -58,7 +58,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="littéralement n'importe quoi !"
+            android:text="@string/intro_page1_bold_text"
             android:textSize="20sp"
             android:textStyle="bold"
             android:gravity="start"
@@ -69,7 +69,7 @@
             android:id="@+id/page1_button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Commencer"
+            android:text="@string/intro_page1_button_start"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"

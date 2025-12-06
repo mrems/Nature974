@@ -114,8 +114,6 @@ class LastAnalysisFragment : Fragment() {
                     lastAnalysisLocalNameTextView.text = entry.localName
                     lastAnalysisScientificNameTextView.text = entry.scientificName
 
-                    // Afficher le badge EXEMPLE pour les fiches tutorielles
-                    lastAnalysisTutorialBadge.visibility = if (entry.isTutorial) View.VISIBLE else View.GONE
                     
                     lastAnalysisTypeBadge.text = entry.type ?: "N/C"
                     lastAnalysisTypeBadge.visibility = if (entry.type != null && entry.type != "N/C") View.VISIBLE else View.GONE
@@ -173,8 +171,6 @@ class LastAnalysisFragment : Fragment() {
                         lastAnalysisLocalNameTextView.text = tutorialEntry.localName
                         lastAnalysisScientificNameTextView.text = tutorialEntry.scientificName
 
-                        // Afficher le badge EXEMPLE pour les fiches tutorielles
-                        lastAnalysisTutorialBadge.visibility = View.VISIBLE
                         
                         lastAnalysisTypeBadge.text = "Badge espèce"
                         lastAnalysisTypeBadge.visibility = View.VISIBLE

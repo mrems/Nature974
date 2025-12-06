@@ -8,7 +8,7 @@
 
     <ImageView
         android:id="@+id/splash_geki_character"
-        android:layout_width="360dp"
+        android:layout_width="320dp"
         android:layout_height="0dp"
         android:src="@drawable/geki_icon"
         app:layout_constraintBottom_toTopOf="@+id/splash_geki_title"
@@ -18,7 +18,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintDimensionRatio="1:1"
         android:layout_marginBottom="48dp"
-        android:contentDescription="@string/app_name" />
+        android:contentDescription="Geki" />
 
     <ImageView
         android:id="@+id/splash_geki_title"

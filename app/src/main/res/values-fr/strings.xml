@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Intro Page 1 -->
+    <string name="intro_page1_welcome_title">Bienvenue sur</string>
+    <string name="intro_page1_subtitle">Avec Geki vous allez pouvoir identifier n\'importe quoi sur votre chemin :</string>
+    <string name="intro_page1_list_items">• Un oiseau qui passe par la,\n• Une nouvelle plante mystérieuse,\n• Un insecte posé sur votre terrasse,\n• Une fleur qu\'on vous a offerte,\n• Un champignon dans la forêt,\n• Un fruit sur un marché exotique,\n• Une empreinte animale par terre,\n• Un coquillage ramassé sur la plage,\n• Une pierre sur un collier,\n• etc…</string>
+    <string name="intro_page1_bold_text">littéralement n\'importe quoi !</string>
+    <string name="intro_page1_button_start">Commencer</string>
+
+    <!-- Intro Page 2 -->
+    <string name="intro_page2_title">Rapide et intuitif</string>
+    <string name="intro_page2_description">Il suffit de prendre une photo pour avoir une réponse en quelques secondes</string>
+    <string name="intro_page2_button_next">Suivant</string>
+
+    <!-- Intro Page 3 -->
+    <string name="intro_page3_title">Nouvelle génération de modèles IA</string>
+    <string name="intro_page3_subtitle">Nous vous offrons les meilleurs modèles au monde. Sélectionnez parmi nos trois niveaux d\'identification, chacun offrant une profondeur d\'analyse croissante.</string>
+    <string name="intro_page3_quick_title">Rapide</string>
+    <string name="intro_page3_quick_description">Identification rapide et efficace.</string>
+    <string name="intro_page3_standard_title">Standard</string>
+    <string name="intro_page3_standard_description">Équilibre entre précision et rapidité.</string>
+    <string name="intro_page3_precise_title">Extrêmement précis</string>
+    <string name="intro_page3_precise_description">Analyse approfondie pour les cas difficiles.</string>
+    <string name="intro_page3_button_next">Suivant</string>
+
+    <!-- Intro Page 4 -->
+    <string name="intro_page4_title">Partout avec vous</string>
+    <string name="intro_page4_description">Que ce soit en balade ou en voyage, vous allez bientôt connaître et reconnaître toute la nature autour de vous</string>
+    <string name="intro_page4_button_next">Suivant</string>
+
+    <!-- Intro Page 5 -->
+    <string name="intro_page5_title">Dernière étape</string>
+    <string name="intro_page5_description">Pour utiliser l\'application, vous devez maintenant vous connecter avec Google et accepter les permissions necessaires.</string>
+    <string name="intro_page5_button_login">Se connecter</string>
+
+    <!-- Onboarding Fragment (Permissions) -->
+    <string name="permission_camera_title">Permission Caméra</string>
+    <string name="permission_camera_description">Cette application a besoin d\'accéder à votre caméra pour capturer et analyser des photos de plantes et d\'animaux.</string>
+    <string name="permission_location_title">Permission Localisation</string>
+    <string name="permission_location_description">L\'accès à votre localisation permet d\'améliorer la précision de l\'identification des espèces en fonction de votre région.</string>
+    <string name="permission_gallery_title">Permission Galerie</string>
+    <string name="permission_gallery_description">L\'accès à vos photos vous permet d\'analyser des images existantes depuis votre galerie.</string>
+    <string name="permission_button_accept">Accepter</string>
+</resources>
+
+
+
+
+
+
+

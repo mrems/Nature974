@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Geki</string>
-    <string name="loading">Chargement...</string>
-    <string name="choose_credits_pack">Choisissez un pack de crédits</string>
-    <string name="choose_subscription">Choisissez un abonnement</string>
-    <string name="verifying_purchase">Vérification de l\'achat...</string>
-    <string name="purchase_success">Achat confirmé</string>
-    <string name="subscription_success">Abonnement activé</string>
-    <string name="already_subscribed">Vous avez déjà un abonnement actif</string>
+    <!-- Intro Page 1 -->
+    <string name="intro_page1_welcome_title">Welcome to</string>
+    <string name="intro_page1_subtitle">With Geki you will be able to identify anything on your path:</string>
+    <string name="intro_page1_list_items">• A bird flying by,\n• A mysterious new plant,\n• An insect on your terrace,\n• A flower you were given,\n•• A mushroom in the forest,\n• A fruit at an exotic market,\n• An animal footprint on the ground,\n• A seashell picked up on the beach,\n• A stone on a necklace,\n• etc…</string>
+    <string name="intro_page1_bold_text">literally anything!</string>
+    <string name="intro_page1_button_start">Get Started</string>
 
-    <!-- Nouveau texte pour la page d'abonnement -->
-    <string name="unlock_adventure_title">Débloquez Votre Aventure !</string>
-    <string name="choose_plan_description">Choisissez votre plan et commencez à explorer la nature.</string>
-    <string name="geronimo_splash_content_description">Image du personnage Geronimo</string>
-    <string name="geronimo_title_content_description">Titre Geronimo</string>
+    <!-- Intro Page 2 -->
+    <string name="intro_page2_title">Fast and Intuitive</string>
+    <string name="intro_page2_description">Just take a photo to get an answer in seconds</string>
+    <string name="intro_page2_button_next">Next</string>
 
-    <!-- Offres d'abonnement mises à jour -->
-    <string name="offer_50_identifications">50 crédits</string>
-    <string name="offer_50_price">7.99€</string>
-    <string name="offer_100_identifications">100 crédits</string>
-    <string name="offer_100_price">14.99€</string>
-    <string name="offer_100_badge">LE PLUS POPULAIRE</string>
-    <string name="offer_300_identifications">300 crédits</string>
-    <string name="offer_300_price">29.99€</string>
-    <string name="per_month">/mois</string>
-    <string name="button_continue">Continuer</string>
-    <string name="payment_info">Annulez à tout moment depuis votre compte Google Play</string>
+    <!-- Intro Page 3 -->
+    <string name="intro_page3_title">New Generation of AI Models</string>
+    <string name="intro_page3_subtitle">We offer you the best models in the world. Select from our three levels of identification, each offering increasing analytical depth.</string>
+    <string name="intro_page3_quick_title">Quick</string>
+    <string name="intro_page3_quick_description">Fast and efficient identification.</string>
+    <string name="intro_page3_standard_title">Standard</string>
+    <string name="intro_page3_standard_description">Balance between precision and speed.</string>
+    <string name="intro_page3_precise_title">Extremely Precise</string>
+    <string name="intro_page3_precise_description">In-depth analysis for difficult cases.</string>
+    <string name="intro_page3_button_next">Next</string>
 
-    <!-- Identifiants de menu -->
-    <item type="id" name="menu_preferences" />
-    <item type="id" name="menu_manual" />
-    <item type="id" name="menu_feedback" />
-    <item type="id" name="menu_subscription" />
+    <!-- Intro Page 4 -->
+    <string name="intro_page4_title">Everywhere with you</string>
+    <string name="intro_page4_description">Whether on a stroll or traveling, you will soon know and recognize all the nature around you</string>
+    <string name="intro_page4_button_next">Next</string>
+
+    <!-- Intro Page 5 -->
+    <string name="intro_page5_title">Last Step</string>
+    <string name="intro_page5_description">To use the application, you must now connect with Google and accept the necessary permissions.</string>
+    <string name="intro_page5_button_login">Log In</string>
+
+    <!-- Onboarding Fragment (Permissions) -->
+    <string name="permission_camera_title">Camera Permission</string>
+    <string name="permission_camera_description">This application needs access to your camera to capture and analyze photos of plants and animals.</string>
+    <string name="permission_location_title">Location Permission</string>
+    <string name="permission_location_description">Access to your location improves the accuracy of species identification based on your region.</string>
+    <string name="permission_gallery_title">Gallery Permission</string>
+    <string name="permission_gallery_description">Access to your photos allows you to analyze existing images from your gallery.</string>
+    <string name="permission_button_accept">Accept</string>
 </resources>
-
-
 
 
 
