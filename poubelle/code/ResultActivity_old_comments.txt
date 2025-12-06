@@ -1,0 +1,20 @@
+// Ancienne coloration dynamique des onglets dans ResultActivity
+// Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées, 
+// car la coloration dynamique des onglets n'est plus une exigence.
+// val tabTextColors = ContextCompat.getColorStateList(this, R.color.tab_text_color_selector)
+// tabLayout.setTabTextColors(tabTextColors)
+// tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.black))
+
+// Ancienne fonction setupInfoCard (supprimée, remplacée par les fragments)
+// private fun setupInfoCard(cardView: View, iconResId: Int, title: String, content: String?) { /* ... */ }
+
+{
+  "cells": [],
+  "metadata": {
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 2
+}

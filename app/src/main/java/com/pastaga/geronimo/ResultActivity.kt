@@ -141,12 +141,6 @@ class ResultActivity : AppCompatActivity() {
         val pagerAdapter = ResultFragmentPagerAdapter(this, entry)
         viewPager.adapter = pagerAdapter
 
-        // Les lignes pour définir les couleurs du texte des onglets et de l'indicateur sont supprimées, 
-        // car la coloration dynamique des onglets n'est plus une exigence.
-        // val tabTextColors = ContextCompat.getColorStateList(this, R.color.tab_text_color_selector)
-        // tabLayout.setTabTextColors(tabTextColors)
-        // tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.black))
-
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             val customView = LayoutInflater.from(this).inflate(R.layout.custom_tab_with_icon, null)
             val mainIcon = customView.findViewById<ImageView>(R.id.tab_main_icon)
@@ -163,9 +157,6 @@ class ResultActivity : AppCompatActivity() {
         }.attach()
 
     }
-
-    // L'ancienne fonction setupInfoCard est supprimée car elle est remplacée par les fragments.
-    // private fun setupInfoCard(cardView: View, iconResId: Int, title: String, content: String?) { /* ... */ }
 
     // Adapter pour le ViewPager2
     private class ResultFragmentPagerAdapter(activity: AppCompatActivity, private val entry: AnalysisEntry) : FragmentStateAdapter(activity) {

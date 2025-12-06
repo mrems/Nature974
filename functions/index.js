@@ -39,7 +39,7 @@ const ANDROID_PACKAGE_NAME = defineString("ANDROID_PACKAGE_NAME");
 const MODEL_CREDITS = {
   'gemini-2.5-flash-lite-preview-09-2025': 1,
   'gemini-2.5-flash': 2,
-  'gemini-3-pro-preview': 5,
+  'gemini-2.5-pro': 5,
 };
 
 // Utilitaire: transformer base64 en part compatible Gemini

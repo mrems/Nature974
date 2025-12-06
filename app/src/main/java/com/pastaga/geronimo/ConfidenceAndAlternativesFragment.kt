@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import android.graphics.Color
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 class ConfidenceAndAlternativesFragment : Fragment() {
 
     private var analysisEntry: AnalysisEntry? = null
+
+    // Couleurs du dégradé pour la barre de progression (doivent correspondre à custom_progress_bar.xml)
+    private val startColor = Color.parseColor("#8BC34A") // Vert clair
+    private val endColor = Color.parseColor("#2196F3") // Bleu clair
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +50,10 @@ class ConfidenceAndAlternativesFragment : Fragment() {
                 confidenceProgressBar.progress = score
                 confidenceTextView.text = "${score}%"
 
+                // Adapter la couleur du texte du score en fonction de la progression
+                val interpolatedColor = interpolateColor(score)
+                confidenceTextView.setTextColor(interpolatedColor)
+
                 // Changer la description selon le score
                 confidenceDescription.text = when {
                     score >= 90 -> "Identification très fiable"
@@ -69,7 +79,7 @@ class ConfidenceAndAlternativesFragment : Fragment() {
                     if (alternatives.isNotEmpty()) {
                         // Afficher les alternatives
                         alternativesRecyclerView.layoutManager = NonScrollingLinearLayoutManager(requireContext())
-                        alternativesRecyclerView.adapter = AlternativeAdapter(alternatives)
+                        alternativesRecyclerView.adapter = AlternativeAdapter(alternatives, entry.confidenceScore) // Passer le confidenceScore ici
                         alternativesRecyclerView.visibility = View.VISIBLE
 
                         // Afficher le subtitle adapté au nombre d'alternatives
@@ -107,6 +117,21 @@ class ConfidenceAndAlternativesFragment : Fragment() {
         }
 
         return view
+    }
+
+    /**
+     * Interpole une couleur entre la couleur de dÃ©but et la couleur de fin en fonction d'une progression (0-100).
+     */
+    private fun interpolateColor(progress: Int): Int {
+        val fraction = progress / 100f
+        val inverseFraction = 1 - fraction
+
+        val a = (Color.alpha(startColor) * inverseFraction + Color.alpha(endColor) * fraction).toInt()
+        val r = (Color.red(startColor) * inverseFraction + Color.red(endColor) * fraction).toInt()
+        val g = (Color.green(startColor) * inverseFraction + Color.green(endColor) * fraction).toInt()
+        val b = (Color.blue(startColor) * inverseFraction + Color.blue(endColor) * fraction).toInt()
+
+        return Color.argb(a, r, g, b)
     }
 
     companion object {

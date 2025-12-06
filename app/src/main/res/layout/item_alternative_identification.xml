@@ -21,6 +21,7 @@
             android:layout_marginBottom="4dp">
 
             <View
+                android:id="@+id/alternative_vertical_bar"
                 android:layout_width="3dp"
                 android:layout_height="match_parent"
                 android:background="@color/offer_starter_primary"

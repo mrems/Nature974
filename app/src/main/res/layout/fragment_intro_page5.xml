@@ -19,16 +19,16 @@
             android:text="Dernière étape"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="24dp"
             android:gravity="center" />
 
         <ImageView
             android:id="@+id/page4_illustration"
             android:layout_width="280dp"
             android:layout_height="240dp"
-            android:src="@drawable/gekito"
+            android:src="@drawable/onboard5"
             android:scaleType="fitCenter"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="24dp"
             android:contentDescription="Logo Geronimo" />
 
         <TextView

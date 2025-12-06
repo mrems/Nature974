@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCaptureSession
@@ -489,6 +490,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         }
 
         override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
+            configureTransform(width, height)
         }
 
         override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
@@ -727,11 +729,58 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         }
     }
 
+    /**
+     * Configure la transformation du TextureView pour un affichage "center crop".
+     * L'image de la caméra remplit tout l'écran en maintenant son ratio d'aspect,
+     * et les parties qui dépassent sont coupées sur les côtés.
+     */
+    private fun configureTransform(viewWidth: Int, viewHeight: Int) {
+        if (!::previewSize.isInitialized) return
+        if (viewWidth == 0 || viewHeight == 0) return
+        
+        val matrix = Matrix()
+        val centerX = viewWidth / 2f
+        val centerY = viewHeight / 2f
+        
+        // Le buffer de la caméra a ces dimensions (généralement en paysage, ex: 1920x1080)
+        val bufferWidth = previewSize.width.toFloat()
+        val bufferHeight = previewSize.height.toFloat()
+        
+        // En mode portrait (rotation 0 ou 180), le buffer est affiché tourné de 90°
+        // donc on échange width et height pour le calcul du ratio affiché
+        val displayRotation = requireActivity().windowManager.defaultDisplay.rotation
+        val isPortrait = displayRotation == Surface.ROTATION_0 || displayRotation == Surface.ROTATION_180
+        
+        val effectiveBufferWidth = if (isPortrait) bufferHeight else bufferWidth
+        val effectiveBufferHeight = if (isPortrait) bufferWidth else bufferHeight
+        
+        // Calculer le scale pour center crop
+        // Le TextureView étire par défaut le buffer pour remplir la vue
+        val scaleX = viewWidth / effectiveBufferWidth
+        val scaleY = viewHeight / effectiveBufferHeight
+        
+        // Pour center crop, on utilise le scale maximum pour que l'image remplisse tout l'écran
+        val scale = maxOf(scaleX, scaleY)
+        
+        // Calculer la correction à appliquer par rapport au comportement par défaut
+        val correctionScaleX = scale / scaleX
+        val correctionScaleY = scale / scaleY
+        
+        matrix.setScale(correctionScaleX, correctionScaleY, centerX, centerY)
+        
+        cameraPreviewTextureView.setTransform(matrix)
+        Log.d("CameraFragment", "configureTransform: view=${viewWidth}x${viewHeight}, buffer=${bufferWidth}x${bufferHeight}, correction=${correctionScaleX}x${correctionScaleY}")
+    }
+
     @Suppress("DEPRECATION")
     private fun createCameraPreviewSession() {
         try {
             val texture = cameraPreviewTextureView.surfaceTexture
             texture!!.setDefaultBufferSize(previewSize.width, previewSize.height)
+            
+            // Appliquer la transformation center crop pour éviter la déformation de l'image
+            configureTransform(cameraPreviewTextureView.width, cameraPreviewTextureView.height)
+            
             val surface = Surface(texture)
 
             previewRequestBuilder = cameraDevice!!.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
