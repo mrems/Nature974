@@ -102,9 +102,9 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                 bottomSheetDialog.dismiss()
                 
                 MaterialAlertDialogBuilder(requireContext(), R.style.Theme_Geronimo_Dialog)
-                    .setTitle("Confirmer la suppression")
-                    .setMessage("Êtes-vous sûr de vouloir supprimer cette fiche d'analyse ?")
-                    .setPositiveButton("Supprimer") { dialog, which ->
+                    .setTitle(getString(R.string.dialog_delete_title))
+                    .setMessage(getString(R.string.dialog_delete_message))
+                    .setPositiveButton(getString(R.string.dialog_delete_button)) { dialog, which ->
                         lifecycleScope.launch(Dispatchers.IO) {
                             val lastViewedCard = analysisHistoryManager.getLastViewedCard()
                             val isLastViewed = lastViewedCard != null && lastViewedCard.imageUri == entry.imageUri
@@ -125,7 +125,7 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                             }
                         }
                     }
-                    .setNegativeButton("Annuler") { dialog, which ->
+                    .setNegativeButton(getString(R.string.dialog_cancel_button)) { dialog, which ->
                         dialog.dismiss()
                     }
                     .show()

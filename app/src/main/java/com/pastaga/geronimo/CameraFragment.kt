@@ -994,7 +994,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             uCropOptions.setActiveControlsWidgetColor(ContextCompat.getColor(requireContext(), R.color.black)) // Couleur des contrôles actifs en noir
             uCropOptions.setCropFrameColor(ContextCompat.getColor(requireContext(), R.color.white))
             uCropOptions.setCropGridColor(ContextCompat.getColor(requireContext(), R.color.white))
-            uCropOptions.setToolbarTitle("Recadrer l'image")
+            uCropOptions.setToolbarTitle(getString(R.string.crop_image_title))
 
             val uCropIntent = UCrop.of(sourceUri, destinationUri)
                 .withOptions(uCropOptions)

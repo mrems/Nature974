@@ -92,6 +92,11 @@
         <item name="android:listPreferredItemPaddingRight">8dp</item>
     </style>
 
+    <style name="ShapeAppearance.App.MediumComponent.RoundedCorners" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
     <style name="Theme.Geronimo.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="android:windowBackground">@android:color/white</item>
         <item name="colorSurface">@android:color/white</item>
@@ -101,18 +106,18 @@
         <item name="materialAlertDialogBodyTextStyle">@style/CustomAlertDialogBodyTextStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/CustomAlertDialogButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/CustomAlertDialogButton</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.MediumComponent.RoundedCorners</item>
     </style>
 
     <style name="CustomAlertDialogTitleTextStyle" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="CustomAlertDialogBodyTextStyle" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
-        <item name="android:textColor">@android:color/black</item>
     </style>
 
     <style name="CustomAlertDialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:textColor">@android:color/black</item>
     </style>
 
     <!-- Style pour les onglets -->

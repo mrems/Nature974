@@ -40,6 +40,8 @@
     <string name="permission_location_description">Access to your location improves the accuracy of species identification based on your region.</string>
     <string name="permission_gallery_title">Gallery Permission</string>
     <string name="permission_gallery_description">Access to your photos allows you to analyze existing images from your gallery.</string>
+    <string name="crop_image_title">Crop Image</string>
+    <string name="model_selection_title">Choose analysis level</string>
     <string name="permission_button_accept">Accept</string>
 
     <!-- Activity Purchase -->
@@ -90,7 +92,6 @@
     <!-- Titles and content for these cards are dynamic and will be handled in Kotlin files if needed -->
     <!-- Lignes pour LastAnalysisFragment -->
     <!-- Lignes pour item_analysis_history -->
-    <string name="model_selection_title">Select desired analysis precision level:</string>
     <string name="model_selection_quick_option">Quick (1 credit)</string>
     <string name="model_selection_balanced_option">Balanced (2 credits)</string>
     <string name="model_selection_ultra_precise_option">Ultra-Precise (5 credits)</string>
@@ -125,7 +126,10 @@
     <!-- Alternative Subtitle -->
     <string name="alternatives_subtitle_single">AI identified 1 other possibility</string>
     <string name="alternatives_subtitle_multiple">AI identified %1$d other possibilities</string>
-
+    <string name="dialog_delete_title">Confirm Deletion</string>
+    <string name="dialog_delete_message">Are you sure you want to delete this analysis entry?</string>
+    <string name="dialog_delete_button">Delete</string>
+    <string name="dialog_cancel_button">Cancel</string>
 </resources>
 
 

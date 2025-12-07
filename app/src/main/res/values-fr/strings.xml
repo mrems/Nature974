@@ -40,6 +40,8 @@
     <string name="permission_location_description">L\'accès à votre localisation permet d\'améliorer la précision de l\'identification des espèces en fonction de votre région.</string>
     <string name="permission_gallery_title">Permission Galerie</string>
     <string name="permission_gallery_description">L\'accès à vos photos vous permet d\'analyser des images existantes depuis votre galerie.</string>
+    <string name="crop_image_title">Recadrer l\'image</string>
+    <string name="model_selection_title">Choisir le niveau d\'analyse</string>
     <string name="permission_button_accept">Accepter</string>
 
     <!-- Activity Purchase -->
@@ -65,7 +67,6 @@
 
 
     <!-- Dialog Model Selection -->
-    <string name="model_selection_title">Sélectionnez le niveau de précision souhaité pour l\'analyse :</string>
     <string name="model_selection_quick_option">Rapide (1 crédit)</string>
     <string name="model_selection_balanced_option">Équilibré (2 crédits)</string>
     <string name="model_selection_ultra_precise_option">Ultra-précis (5 crédits)</string>
@@ -124,7 +125,10 @@
     <!-- Alternative Subtitle -->
     <string name="alternatives_subtitle_single">L\'IA a identifié 1 autre possibilité</string>
     <string name="alternatives_subtitle_multiple">L\'IA a identifié %1$d autres possibilités</string>
-
+    <string name="dialog_delete_title">Confirmer la suppression</string>
+    <string name="dialog_delete_message">Êtes-vous sûr de vouloir supprimer cette fiche d\'analyse ?</string>
+    <string name="dialog_delete_button">Supprimer</string>
+    <string name="dialog_cancel_button">Annuler</string>
 </resources>
 
 

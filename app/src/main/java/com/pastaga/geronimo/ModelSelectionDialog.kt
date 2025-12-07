@@ -8,6 +8,7 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ModelSelectionDialog : DialogFragment() {
 
@@ -48,7 +49,7 @@ class ModelSelectionDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = MaterialAlertDialogBuilder(requireContext(), R.style.Theme_Geronimo_Dialog)
         val view = layoutInflater.inflate(R.layout.dialog_model_selection, null)
 
         val radioGroup = view.findViewById<RadioGroup>(R.id.model_radio_group)
@@ -68,7 +69,7 @@ class ModelSelectionDialog : DialogFragment() {
         }
 
         builder.setView(view)
-            .setTitle("Choisir le niveau d'analyse")
+            .setTitle(getString(R.string.model_selection_title))
 
         // Configurer le bouton Analyser
         val btnAnalyze = view.findViewById<View>(R.id.btn_analyze)
