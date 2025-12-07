@@ -41,6 +41,60 @@
     <string name="permission_gallery_title">Gallery Permission</string>
     <string name="permission_gallery_description">Access to your photos allows you to analyze existing images from your gallery.</string>
     <string name="permission_button_accept">Accept</string>
+
+    <!-- Activity Purchase -->
+    <string name="purchase_unlock_adventure_title">Unlock Your Adventure!</string>
+    <string name="purchase_choose_plan_description">Choose your plan and start exploring nature.</string>
+    <string name="purchase_50_credits">50 credits</string>
+    <string name="purchase_100_credits">100 credits</string>
+    <string name="purchase_300_credits">300 credits</string>
+    <string name="purchase_per_month">/month</string>
+    <string name="purchase_continue_button">Continue</string>
+    <string name="purchase_payment_info">Cancel anytime from your Google Play account</string>
+
+    <!-- Activity History -->
+    <string name="history_title">Analysis History</string>
+
+    <!-- Dialog History Options -->
+    <string name="history_option_reanalyze">Re-analyze</string>
+    <string name="history_option_delete">Delete</string>
+
+    <!-- Dialog Loading -->
+    <string name="loading_analysis_in_progress">Analysis in progress...</string>
+    <string name="loading_identifying_photo">Identifying your photo</string>
+
+    <!-- Fragment Confidence and Alternatives -->
+    <string name="confidence_score_label">Confidence Score</string>
+    <string name="confidence_description">AI\'s confidence level in this identification</string>
+    <string name="alternatives_label">Alternative Identifications</string>
+    <string name="alternatives_subtitle">AI has identified other possibilities</string>
+
+    <!-- Fragment Camera -->
+    <string name="camera_hint_click_menu_buy_credits">Click here to open the Menu or to Buy Credits</string>
+    <string name="camera_hint_slide_left">←  Swipe</string>
+    <string name="camera_hint_slide_right">Swipe  →</string>
+    <string name="camera_hint_slide_bottom">↓ Swipe ↓</string>
+
+    <!-- Fragment Title Menu -->
+    <string name="menu_preferences">Preferences</string>
+    <string name="menu_subscription">Subscription</string>
+    <string name="menu_manual">User Manual</string>
+    <string name="menu_feedback">Feedback</string>
+
+    <!-- Fragment History List -->
+    <string name="history_list_title">Analysis History</string>
+    <string name="history_list_empty_state_title">No analyses yet</string>
+    <string name="history_list_empty_state_description">Capture your first plant or\nanimal to start your collection!</string>
+
+    <!-- Item Info Card -->
+    <!-- Titles and content for these cards are dynamic and will be handled in Kotlin files if needed -->
+    <!-- Lignes pour LastAnalysisFragment -->
+    <!-- Lignes pour item_analysis_history -->
+    <string name="model_selection_title">Sélection du modèle</string>
+    <string name="model_selection_quick_option">Rapide</string>
+    <string name="model_selection_balanced_option">Équilibré</string>
+    <string name="model_selection_ultra_precise_option">Ultra-précis</string>
+    <string name="model_selection_analyze_button">Analyser</string>
 </resources>
 
 

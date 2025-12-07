@@ -31,7 +31,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Indice de certitude"
+                        android:text="@string/confidence_score_label"
                         android:textStyle="bold"
                         android:textSize="20sp"
                         android:fontFamily="@font/open_sans_medium"/>
@@ -59,7 +59,7 @@
                     android:id="@+id/confidence_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Niveau de confiance de l'IA dans cette identification"
+                    android:text="@string/confidence_description"
                     android:textSize="14sp"/>
 
         </LinearLayout>
@@ -91,7 +91,7 @@
                 android:id="@+id/alternatives_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Identifications alternatives"
+                android:text="@string/alternatives_label"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:fontFamily="@font/open_sans_medium"
@@ -101,7 +101,7 @@
                 android:id="@+id/alternatives_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="L'IA a identifié d'autres possibilités"
+                android:text="@string/alternatives_subtitle"
                 android:textSize="14sp"
                 android:textColor="@color/text_medium_gray"
                 android:layout_marginBottom="12dp"

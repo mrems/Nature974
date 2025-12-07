@@ -47,22 +47,6 @@
                     android:maxLines="1"
                     android:ellipsize="end"/>
 
-                <TextView
-                    android:id="@+id/history_item_tutorial_badge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="EXEMPLE"
-                    android:background="@drawable/badge_exemple"
-                    android:paddingStart="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="4dp"
-                    android:textColor="@color/badge_text"
-                    android:textSize="10sp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="8dp"
-                    android:visibility="gone"/>
-
             </LinearLayout>
 
             <TextView

@@ -28,7 +28,6 @@ class HistoryAdapter(
         val localNameTextView: TextView = itemView.findViewById(R.id.history_item_local_name)
         val scientificNameTextView: TextView = itemView.findViewById(R.id.history_item_scientific_name)
         val timestampTextView: TextView = itemView.findViewById(R.id.history_item_timestamp)
-        val tutorialBadge: TextView = itemView.findViewById(R.id.history_item_tutorial_badge)
 
         fun bind(entry: AnalysisEntry) {
             imageView.load(Uri.parse(entry.imageUri))
@@ -36,9 +35,6 @@ class HistoryAdapter(
             scientificNameTextView.text = entry.scientificName
             val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             timestampTextView.text = entry.timestamp?.let { sdf.format(Date(it)) } ?: "N/A"
-            
-            // Afficher le badge EXEMPLE pour les fiches tutorielles
-            tutorialBadge.visibility = if (entry.isTutorial) android.view.View.VISIBLE else android.view.View.GONE
             
             itemView.setOnClickListener { onClick(entry) }
             itemView.setOnLongClickListener { 

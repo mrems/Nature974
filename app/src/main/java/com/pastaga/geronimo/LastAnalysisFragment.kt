@@ -34,7 +34,6 @@ class LastAnalysisFragment : Fragment() {
     private lateinit var lastAnalysisLocalNameTextView: TextView
     private lateinit var lastAnalysisScientificNameTextView: TextView
     private lateinit var lastAnalysisTypeBadge: TextView
-    private lateinit var lastAnalysisTutorialBadge: TextView
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
     private lateinit var dangerImageOverlay: ImageView
@@ -59,7 +58,6 @@ class LastAnalysisFragment : Fragment() {
         lastAnalysisLocalNameTextView = view.findViewById(R.id.last_analysis_local_name)
         lastAnalysisScientificNameTextView = view.findViewById(R.id.last_analysis_scientific_name)
         lastAnalysisTypeBadge = view.findViewById(R.id.last_analysis_type_badge)
-        lastAnalysisTutorialBadge = view.findViewById(R.id.last_analysis_tutorial_badge)
         tabLayout = view.findViewById(R.id.tab_layout_last_analysis)
         viewPager = view.findViewById(R.id.view_pager_last_analysis)
         dangerImageOverlay = view.findViewById(R.id.danger_image_overlay)

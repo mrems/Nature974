@@ -10,7 +10,7 @@
         android:id="@+id/title_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Historique des analyses"
+        android:text="@string/history_list_title"
         android:textSize="26sp"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
@@ -54,7 +54,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pas encore d'analyses"
+            android:text="@string/history_list_empty_state_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
@@ -62,7 +62,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Capturez votre première plante ou\nanimal pour commencer votre collection !"
+            android:text="@string/history_list_empty_state_description"
             android:textSize="16sp"
             android:textColor="?android:textColorSecondary"
             android:gravity="center"

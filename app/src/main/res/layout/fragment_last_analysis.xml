@@ -31,28 +31,10 @@
             android:layout_height="60dp"
             android:src="@drawable/danger"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@id/last_analysis_image"
-            app:layout_constraintBottom_toBottomOf="@id/last_analysis_image"
+            app:layout_constraintEnd_toEndOf="@+id/last_analysis_image"
+            app:layout_constraintBottom_toBottomOf="@+id/last_analysis_image"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"/>
-
-        <TextView
-            android:id="@+id/last_analysis_tutorial_badge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="EXEMPLE"
-            android:background="@drawable/badge_exemple"
-            android:paddingStart="12dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="6dp"
-            android:textColor="@color/badge_text"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="16dp"
-            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

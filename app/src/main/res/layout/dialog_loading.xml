@@ -31,7 +31,7 @@
             android:id="@+id/loading_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Analyse en cours..."
+            android:text="@string/loading_analysis_in_progress"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/black"
@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Identification de votre photo"
+            android:text="@string/loading_identifying_photo"
             android:textSize="14sp"
             android:textColor="@color/black"
             android:gravity="center" />

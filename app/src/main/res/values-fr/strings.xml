@@ -41,6 +41,61 @@
     <string name="permission_gallery_title">Permission Galerie</string>
     <string name="permission_gallery_description">L\'accès à vos photos vous permet d\'analyser des images existantes depuis votre galerie.</string>
     <string name="permission_button_accept">Accepter</string>
+
+    <!-- Activity Purchase -->
+    <string name="purchase_unlock_adventure_title">Débloquez Votre Aventure !</string>
+    <string name="purchase_choose_plan_description">Choisissez votre plan et commencez à explorer la nature.</string>
+    <string name="purchase_50_credits">50 crédits</string>
+    <string name="purchase_100_credits">100 crédits</string>
+    <string name="purchase_300_credits">300 crédits</string>
+    <string name="purchase_per_month">/mois</string>
+    <string name="purchase_continue_button">Continuer</string>
+    <string name="purchase_payment_info">Annulez à tout moment depuis votre compte Google Play</string>
+
+    <!-- Activity History -->
+    <string name="history_title">Historique des Analyses</string>
+
+    <!-- Dialog History Options -->
+    <string name="history_option_reanalyze">Ré-analyser</string>
+    <string name="history_option_delete">Supprimer</string>
+
+    <!-- Dialog Loading -->
+    <string name="loading_analysis_in_progress">Analyse en cours...</string>
+    <string name="loading_identifying_photo">Identification de votre photo</string>
+
+
+    <!-- Dialog Model Selection -->
+    <string name="model_selection_title">Sélectionnez le niveau de précision souhaité pour l\'analyse :</string>
+    <string name="model_selection_quick_option">Rapide (1 crédit)</string>
+    <string name="model_selection_balanced_option">Équilibré (2 crédits)</string>
+    <string name="model_selection_ultra_precise_option">Ultra-précis (5 crédits)</string>
+    <string name="model_selection_analyze_button">Analyser</string>
+
+    <!-- Fragment Confidence and Alternatives -->
+    <string name="confidence_score_label">Indice de certitude</string>
+    <string name="confidence_description">Niveau de confiance de l\'IA dans cette identification</string>
+    <string name="alternatives_label">Identifications alternatives</string>
+    <string name="alternatives_subtitle">L\'IA a identifié d\'autres possibilités</string>
+
+    <!-- Fragment Camera -->
+    <string name="camera_hint_click_menu_buy_credits">Click here to open the Menu or to Buy Credits</string>
+    <string name="camera_hint_slide_left">←  Swipe</string>
+    <string name="camera_hint_slide_right">Swipe  →</string>
+    <string name="camera_hint_slide_bottom">↓ Swipe ↓</string>
+
+    <!-- Fragment Title Menu -->
+    <string name="menu_preferences">Préférences</string>
+    <string name="menu_subscription">Abonnement</string>
+    <string name="menu_manual">Mode d\'emploi</string>
+    <string name="menu_feedback">Feedback</string>
+
+    <!-- Fragment History List -->
+    <string name="history_list_title">Historique des analyses</string>
+    <string name="history_list_empty_state_title">Pas encore d\'analyses</string>
+    <string name="history_list_empty_state_description">Capturez votre première plante ou\nanimal pour commencer votre collection !</string>
+
+    <!-- Item Info Card -->
+    <!-- Titles et contenu pour ces cartes sont dynamiques et seront gérés dans les fichiers Kotlin si nécessaire -->
 </resources>
 
 
