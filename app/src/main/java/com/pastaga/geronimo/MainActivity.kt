@@ -95,20 +95,20 @@ class MainActivity : AppCompatActivity() {
             // Créer une fiche d'exemple éducative
             val tutorialEntry = AnalysisEntry(
                 imageUri = "android.resource://$packageName/${R.drawable.illustration}",
-                localName = "Nom commun",
-                scientificName = "Nom scientifique",
-                type = "Origine",
-                habitat = "Cette section vous indique où l'espèce vit naturellement. Vous y trouverez des informations sur son environnement préféré.",
-                characteristics = "Ici vous découvrirez les traits distinctifs qui vous aident à identifier l'espèce. Les détails visuels importants y sont décrits.",
-                localContext = "Des informations spécifiques à votre région apparaissent ici. Vous saurez si l'espèce est protégée ou si elle présente des particularités locales.",
+                localName = getString(R.string.tutorial_entry_local_name),
+                scientificName = getString(R.string.tutorial_entry_scientific_name),
+                type = getString(R.string.tutorial_entry_type),
+                habitat = getString(R.string.tutorial_entry_habitat),
+                characteristics = getString(R.string.tutorial_entry_characteristics),
+                localContext = getString(R.string.tutorial_entry_local_context),
                 country = null,
                 region = null,
-                description = "Ceci est un exemple de fiche d'analyse",
+                description = getString(R.string.tutorial_entry_description),
                 timestamp = System.currentTimeMillis(),
                 isTutorial = true,
                 confidenceScore = 100, // Exemple de score de confiance
-                tutorialExplanationFirstTab = "Découvrez ici le score de certitude de l'identification ainsi que des propositions d'alternatives avec les différences clés pour vous aider à affiner votre analyse.",
-                tutorialExplanationPeculiarities = "Explorez ici les traits uniques, comportements et informations de sécurité pour chaque espèce. Ces détails vous aideront à mieux comprendre et interagir avec la nature."
+                tutorialExplanationFirstTab = getString(R.string.tutorial_explanation_first_tab),
+                tutorialExplanationPeculiarities = getString(R.string.tutorial_explanation_peculiarities)
             )
             
             val historyManager = AnalysisHistoryManager(this)

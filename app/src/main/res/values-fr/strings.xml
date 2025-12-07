@@ -71,6 +71,26 @@
     <string name="model_selection_ultra_precise_option">Ultra-précis (5 crédits)</string>
     <string name="model_selection_analyze_button">Analyser</string>
 
+    <!-- Tutorial Type Badge -->
+    <string name="tutorial_type_badge_text">Badge espèce</string>
+
+    <!-- Tutorial Analysis Entry Texts -->
+    <string name="tutorial_entry_local_name">Nom commun</string>
+    <string name="tutorial_entry_scientific_name">Nom scientifique</string>
+    <string name="tutorial_entry_type">Origine</string>
+    <string name="tutorial_entry_habitat">Cette section vous indique où l\'espèce vit naturellement. Vous y trouverez des informations sur son environnement préféré.</string>
+    <string name="tutorial_entry_characteristics">Ici vous découvrirez les traits distinctifs qui vous aident à identifier l\'espèce. Les détails visuels importants y sont décrits.</string>
+    <string name="tutorial_entry_local_context">Des informations spécifiques à votre région apparaissent ici. Vous saurez si l\'espèce est protégée ou si elle présente des particularités locales.</string>
+    <string name="tutorial_entry_description">Ceci est un exemple de fiche d\'analyse</string>
+    <string name="tutorial_explanation_first_tab">Découvrez ici le score de certitude de l\'identification ainsi que des propositions d\'alternatives avec les différences clés pour vous aider à affiner votre analyse.</string>
+    <string name="tutorial_explanation_peculiarities">Explorez ici les traits uniques, comportements et informations de sécurité pour chaque espèce. Ces détails vous aideront à mieux comprendre et interagir avec la nature.</string>
+
+    <!-- Confidence Scores -->
+    <string name="confidence_score_very_reliable">Identification très fiable</string>
+    <string name="confidence_score_reliable">Identification fiable</string>
+    <string name="confidence_score_probable">Identification probable</string>
+    <string name="confidence_score_uncertain">Identification incertaine</string>
+
     <!-- Fragment Confidence and Alternatives -->
     <string name="confidence_score_label">Indice de certitude</string>
     <string name="confidence_description">Niveau de confiance de l\'IA dans cette identification</string>
@@ -96,6 +116,15 @@
 
     <!-- Item Info Card -->
     <!-- Titles et contenu pour ces cartes sont dynamiques et seront gérés dans les fichiers Kotlin si nécessaire -->
+    <string name="tutorial_info_card_title_habitat">Habitat</string>
+    <string name="tutorial_info_card_title_characteristics">Caractéristiques</string>
+    <string name="tutorial_info_card_title_peculiarities">Particularités</string>
+    <string name="tutorial_info_card_title_local_context">Contexte Local</string>
+
+    <!-- Alternative Subtitle -->
+    <string name="alternatives_subtitle_single">L\'IA a identifié 1 autre possibilité</string>
+    <string name="alternatives_subtitle_multiple">L\'IA a identifié %1$d autres possibilités</string>
+
 </resources>
 
 

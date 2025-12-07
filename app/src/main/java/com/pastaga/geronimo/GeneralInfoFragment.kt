@@ -29,7 +29,7 @@ class GeneralInfoFragment : Fragment() {
         val habitatTitle = habitatCard.findViewById<TextView>(R.id.title_info)
         val habitatContent = habitatCard.findViewById<TextView>(R.id.content_info)
 
-        habitatTitle.text = "Habitat"
+        habitatTitle.text = getString(R.string.tutorial_info_card_title_habitat)
         habitatContent.text = habitat
         habitatCard.visibility = if (habitat != null && habitat != "N/C") View.VISIBLE else View.GONE
 
@@ -37,7 +37,7 @@ class GeneralInfoFragment : Fragment() {
         val characteristicsTitle = characteristicsCard.findViewById<TextView>(R.id.title_info)
         val characteristicsContent = characteristicsCard.findViewById<TextView>(R.id.content_info)
 
-        characteristicsTitle.text = "Caractéristiques"
+        characteristicsTitle.text = getString(R.string.tutorial_info_card_title_characteristics)
         characteristicsContent.text = characteristics
         characteristicsCard.visibility = if (characteristics != null && characteristics != "N/C") View.VISIBLE else View.GONE
 

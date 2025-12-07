@@ -27,7 +27,7 @@ class LocalContextFragment : Fragment() {
         val localContextTitle = localContextCard.findViewById<TextView>(R.id.title_info)
         val localContextContent = localContextCard.findViewById<TextView>(R.id.content_info)
 
-        localContextTitle.text = "Contexte Local"
+        localContextTitle.text = getString(R.string.tutorial_info_card_title_local_context)
         localContextContent.text = localContext
         localContextCard.visibility = if (localContext != null && localContext != "N/C") View.VISIBLE else View.GONE
 

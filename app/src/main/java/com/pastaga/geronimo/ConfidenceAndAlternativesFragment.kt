@@ -56,10 +56,10 @@ class ConfidenceAndAlternativesFragment : Fragment() {
 
                 // Changer la description selon le score
                 confidenceDescription.text = when {
-                    score >= 90 -> "Identification très fiable"
-                    score >= 70 -> "Identification fiable"
-                    score >= 50 -> "Identification probable"
-                    else -> "Identification incertaine"
+                    score >= 90 -> getString(R.string.confidence_score_very_reliable)
+                    score >= 70 -> getString(R.string.confidence_score_reliable)
+                    score >= 50 -> getString(R.string.confidence_score_probable)
+                    else -> getString(R.string.confidence_score_uncertain)
                 }
                 confidenceCard.visibility = View.VISIBLE
             } ?: run { // Si confidenceScore est null
@@ -84,8 +84,8 @@ class ConfidenceAndAlternativesFragment : Fragment() {
 
                         // Afficher le subtitle adapté au nombre d'alternatives
                         alternativesSubtitle.text = when (alternatives.size) {
-                            1 -> "L'IA a identifié 1 autre possibilité"
-                            else -> "L'IA a identifié ${alternatives.size} autres possibilités"
+                            1 -> getString(R.string.alternatives_subtitle_single)
+                            else -> getString(R.string.alternatives_subtitle_multiple, alternatives.size)
                         }
                         alternativesSubtitle.visibility = View.VISIBLE
 

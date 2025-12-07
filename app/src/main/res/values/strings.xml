@@ -90,11 +90,42 @@
     <!-- Titles and content for these cards are dynamic and will be handled in Kotlin files if needed -->
     <!-- Lignes pour LastAnalysisFragment -->
     <!-- Lignes pour item_analysis_history -->
-    <string name="model_selection_title">Sélection du modèle</string>
-    <string name="model_selection_quick_option">Rapide</string>
-    <string name="model_selection_balanced_option">Équilibré</string>
-    <string name="model_selection_ultra_precise_option">Ultra-précis</string>
-    <string name="model_selection_analyze_button">Analyser</string>
+    <string name="model_selection_title">Select desired analysis precision level:</string>
+    <string name="model_selection_quick_option">Quick (1 credit)</string>
+    <string name="model_selection_balanced_option">Balanced (2 credits)</string>
+    <string name="model_selection_ultra_precise_option">Ultra-Precise (5 credits)</string>
+    <string name="model_selection_analyze_button">Analyze</string>
+
+    <!-- Tutorial Type Badge -->
+    <string name="tutorial_type_badge_text">Species Badge</string>
+
+    <!-- Tutorial Analysis Entry Texts -->
+    <string name="tutorial_entry_local_name">Common Name</string>
+    <string name="tutorial_entry_scientific_name">Scientific Name</string>
+    <string name="tutorial_entry_type">Origin</string>
+    <string name="tutorial_entry_habitat">This section tells you where the species naturally lives. You will find information about its preferred environment here.</string>
+    <string name="tutorial_entry_characteristics">Here you will discover the distinctive traits that help you identify the species. Important visual details are described here.</string>
+    <string name="tutorial_entry_local_context">Specific information for your region appears here. You will know if the species is protected or if it has local peculiarities.</string>
+    <string name="tutorial_entry_description">This is an example analysis card</string>
+    <string name="tutorial_explanation_first_tab">Discover here the certainty score of the identification as well as alternative proposals with key differences to help you refine your analysis.</string>
+    <string name="tutorial_explanation_peculiarities">Explore unique traits, behaviors, and safety information for each species here. These details will help you better understand and interact with nature.</string>
+
+    <!-- Confidence Scores -->
+    <string name="confidence_score_very_reliable">Very reliable identification</string>
+    <string name="confidence_score_reliable">Reliable identification</string>
+    <string name="confidence_score_probable">Probable identification</string>
+    <string name="confidence_score_uncertain">Uncertain identification</string>
+
+    <!-- Info Card Titles -->
+    <string name="tutorial_info_card_title_habitat">Habitat</string>
+    <string name="tutorial_info_card_title_characteristics">Characteristics</string>
+    <string name="tutorial_info_card_title_peculiarities">Peculiarities</string>
+    <string name="tutorial_info_card_title_local_context">Local Context</string>
+
+    <!-- Alternative Subtitle -->
+    <string name="alternatives_subtitle_single">AI identified 1 other possibility</string>
+    <string name="alternatives_subtitle_multiple">AI identified %1$d other possibilities</string>
+
 </resources>
 
 

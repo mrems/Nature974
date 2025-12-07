@@ -32,7 +32,7 @@ class PeculiaritiesFragment : Fragment() {
         val peculiaritiesContent = peculiaritiesCard.findViewById<TextView>(R.id.content_info)
         val dangerTitleIcon = peculiaritiesCard.findViewById<ImageView>(R.id.icon_danger_title)
 
-        peculiaritiesTitle.text = "Particularités"
+        peculiaritiesTitle.text = getString(R.string.tutorial_info_card_title_peculiarities)
         // Afficher le texte d'explication du tutoriel dans le contenu de la carte si disponible, sinon les particularités normales.
         peculiaritiesContent.text = tutorialExplanation ?: Peculiarities
 

@@ -170,7 +170,7 @@ class LastAnalysisFragment : Fragment() {
                         lastAnalysisScientificNameTextView.text = tutorialEntry.scientificName
 
                         
-                        lastAnalysisTypeBadge.text = "Badge espèce"
+                        lastAnalysisTypeBadge.text = getString(R.string.tutorial_type_badge_text)
                         lastAnalysisTypeBadge.visibility = View.VISIBLE
                         
                         lastAnalysisTypeBadge.setBackgroundResource(R.drawable.badge_origine)
