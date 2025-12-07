@@ -1085,6 +1085,10 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                     }
                     Log.d("CameraFragment", "Utilisateur connecté: ${currentUser.uid}")
 
+                    // Récupérer la langue du système d'exploitation du téléphone
+                    val systemLanguage = Locale.getDefault().language
+                    Log.d("GEMINI_LANG_DEBUG", "Langue du système: $systemLanguage")
+
                     // --- AJOUT DE LA VÉRIFICATION CÔTÉ CLIENT (sans Toast) ---
                     val currentCreditsText = creditsTextView.text.toString()
                     val currentCredits = currentCreditsText.toIntOrNull() ?: 0
@@ -1102,7 +1106,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                     // --- FIN DE L'AJOUT ---
 
                     val response = try {
-                        imageAnalyzer.analyzeImage(uri, modelId, currentUser.uid, userCountry, userRegion)
+                        imageAnalyzer.analyzeImage(uri, modelId, currentUser.uid, userCountry, userRegion, systemLanguage)
                     } catch (e: InsufficientCreditsException) {
                         withContext(Dispatchers.Main) {
                             loadingDialog.dismiss()

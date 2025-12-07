@@ -23,6 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import android.os.Parcelable
+import java.util.Locale
 
 class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
 
@@ -230,7 +231,8 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                     modelId,
                     currentUser.uid,
                     entry.country,
-                    entry.region
+                    entry.region,
+                    Locale.getDefault().language // Passer le paramètre de langue
                 )
             } catch (e: InsufficientCreditsException) {
                 withContext(Dispatchers.Main) {

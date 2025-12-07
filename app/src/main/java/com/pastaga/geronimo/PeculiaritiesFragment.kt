@@ -42,8 +42,7 @@ class PeculiaritiesFragment : Fragment() {
             dangerTitleIcon.visibility = View.GONE
         }
 
-        // La carte des particularités est toujours visible.
-        peculiaritiesCard.visibility = View.VISIBLE
+        peculiaritiesCard.visibility = if (Peculiarities != null && Peculiarities != "N/C") View.VISIBLE else View.GONE
 
         return view
     }

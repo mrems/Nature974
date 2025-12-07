@@ -120,9 +120,8 @@ class ImageAnalyzer(private val context: Context) {
         val country: String? = null,
         val region: String? = null,
         val modelId: String,
-        val uid: String
-        // Le prompt n'est plus envoyé par l'application, il est construit par le backend.
-        // val prompt: String
+        val uid: String,
+        val language: String? = null // Nouveau champ pour la langue
     )
 
     data class AnalyzeImageResponse(
@@ -141,7 +140,7 @@ class ImageAnalyzer(private val context: Context) {
     )
 
 
-    suspend fun analyzeImage(imageUri: Uri, modelId: String, uid: String, country: String? = null, region: String? = null): AnalyzeImageResponse? {
+    suspend fun analyzeImage(imageUri: Uri, modelId: String, uid: String, country: String? = null, region: String? = null, language: String? = null): AnalyzeImageResponse? {
         return withContext(Dispatchers.IO) {
             try {
                 val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -160,7 +159,8 @@ class ImageAnalyzer(private val context: Context) {
                     country = country,
                     region = region,
                     modelId = modelId,
-                    uid = uid
+                    uid = uid,
+                    language = language // Inclure le paramètre language
                 )
 
                 // Suppression de la boucle de relance explicite (maxRetries, attempt, success)

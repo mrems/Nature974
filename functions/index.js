@@ -63,7 +63,10 @@ async function analyzeImage(req, res) {
     console.log(
       `[${new Date().toISOString()}] Validation des champs. Temps écoulé depuis le début: ${Date.now() - startTime} ms.`
     );
-    const { image, mimeType, prompt, country, region, modelId, uid } = req.body;
+    const { image, mimeType, prompt, country, region, modelId, uid, language } = req.body;
+
+    // Log de la langue reçue
+    console.log(`[${new Date().toISOString()}] Langue reçue du frontend: ${language ?? 'Non spécifiée'}`);
 
     if (!image || !mimeType) {
       console.warn("Validation échouée: champs image ou mimeType manquants.");
@@ -132,44 +135,46 @@ async function analyzeImage(req, res) {
     );
     let locationContext = "";
     if (country) {
-      locationContext = `L'utilisateur se trouve en ${country}.`;
+      locationContext = `The user is located in ${country}.`;
       if (region) {
-        locationContext += ` Région indiquée: ${region}. N'utilisez la région que si vous disposez d'informations factuelles, spécifiques et non génériques propres à cette région (habitat, statut, usages). Si vous n'êtes pas certain ou si la région ressemble à une ville/quartier, ignorez-la et ne la mentionnez pas.`;
+        locationContext += ` The region provided is: ${region}. Only use the region if you have factual, specific, and non-generic information relevant to this region (habitat, status, uses). If you are unsure or if the region resembles a city/neighborhood, ignore it and do not mention it.`;
       }
       locationContext += "\n\n"; // Ajouter une ligne vide pour une meilleure séparation
     }
     // Construire dynamiquement la spécialisation selon la localisation fournie
-    let expertiseLine = "Vous êtes un expert en biodiversité (faune et flore), pierres et minéraux.";
+    let expertiseLine = "You are an expert in biodiversity (fauna and flora), stones, and minerals.";
     if (country) {
-      expertiseLine = `Vous êtes un expert en biodiversité (faune et flore), pierres et minéraux, spécialisé dans les espèces et formations géologiques de ${country}.`;
+      expertiseLine = `You are an expert in biodiversity (fauna and flora), stones, and minerals, specialized in the species and geological formations of ${country}.`;
     }
 
-    const geminiPrompt = `${locationContext}${expertiseLine}
+    const geminiPrompt = `Respond in ${language ?? 'en'}. Please respond ONLY with the following JSON. The JSON FIELD NAMES must remain in English. All textual values MUST IMPERATIVELY be provided in the following language: ${language ?? 'en'}.
 
-Si on t'envoie la photo d'un humain ou d'un objet manufacturé et qu'il n'est pas le sujet principal et évident de l'image, ignore-le. Concentre-toi sur l'identification et l'analyse de la faune, la flore, les champignons, les pierres et minéraux. Si l'humain est le sujet principal, alors tu dois remplir tous les champs de manière humoristique et sarcastique, toujours nouvelle, qui exprime ton imagination et ton humour.
+${locationContext}${expertiseLine}
 
-Règle d'utilisation de la région: La variable 'country' est toujours utilisée. La variable 'region' est optionnelle et NE DOIT ÊTRE utilisée que si vous avez des informations spécifiques et vérifiables pour cette région. Sinon, n'incluez aucune référence à la région dans la réponse.
+If you are sent a photo of a human or a manufactured object and it is not the main and obvious subject of the image, ignore it. Focus on identifying and analyzing fauna, flora, fungi, stones, and minerals. If the human is the main subject, you must fill in all fields humorously and sarcastically, always with new content, expressing your imagination and humor.
 
-Analysez cette image et fournissez une réponse JSON stricte avec les 12 champs suivants:
-1.  "localName": Nom commun en français (ex: "Merle noir") ou "N/C" si inconnu.
-2.  "scientificName": Nom scientifique latin (ex: "Turdus merula") ou "N/C" si inconnu.
-3.  "type": Type d'espèce et statut (si pertinent). Soyez concis. Utilisez des termes comme "Plante endémique", "Oiseau", "Poisson tropical", "Liane grimpante", "Felin", "Insecte", "Plante carnivore", "Coquillage marin", "Crustacé", "Plante ornementale". Évitez les redondances comme "cultivée" ou "introduite" si le type est déjà clair. Utilisez "N/C" si inconnu.
-4.  "habitat": Habitat principal (ex: "Forêts humides >1200m", "Littoral", "Milieux urbains") ou "N/C" si inconnu.
-5.  "characteristics": Description physique COURTE et synthétique (taille, couleur, forme, max 2-3 phrases) ou "N/C" si inconnu.
-6.  "localContext": Contexte local basé sur country="${country ?? 'N/C'}".${region ? ` N'incluez region="${region}" QUE si vous disposez d'informations concrètes, spécifiques et non génériques à cette région; sinon, n'évoquez pas la région.` : ''} (usages, écologie, anecdote culturelle, max 2-3 phrases) ou "N/C" si inconnu.
-7.  "Peculiarities": Particularités (vertus médicinales, propriétés en lithothérapie, comportement, caractère, alimentation, reproduction). **EXCLUSIVEMENT** si un DANGER GRAVE ET RÉEL existe : inclure sa dangerosité/toxicité spécifique pour les humains (y compris les enfants), les chiens et les chats domestiques (ex: "plante toxique pour les reins", "morsure venimeuse", "animal venimeux, morsure douloureuse"). **DANS TOUS LES AUTRES CAS (AUCUN DANGER GRAVE, OU INFORMATION NON PERTINENTE SUR L'ABSENCE DE DANGER), NE MENTIONNEZ JAMAIS L'ABSENCE DE DANGER OU DE TOXICITÉ**. Soyez concis.
-8.  "representativeColorHex": "Un code couleur hexadécimal (ex: \"#FF5733\") qui représente le mieux l'espèce identifiée dans l'image. Si l'espèce ne peut être identifiée, utilisez \"#CCCCCC\". **LA VALEUR DOIT IMPÉRATIVEMENT ÊTRE ENTRE GUILLEMETS DOUBLES.**"
-9.  "danger": true si l'espèce analysée présente un DANGER MORTEL pour les humains (adultes et enfants) ou les animaux de compagnie (chiens et chats) (par exemple, plantes/champignons toxiques, prédateurs dangereux, animaux venimeux, etc.). Sinon, false.
-10. "confidenceScore": Un entier représentant le pourcentage de confiance de l'IA dans son identification (0-100). N'utilisez "N/C" que si l'identification principale est "N/C".
-11. "alternativeIdentifications": Un tableau d'objets JSON si l'IA hésite entre plusieurs identifications. Chaque objet doit avoir:
-    - "scientificName": Nom scientifique latin de l'alternative.
-    - "localName": Nom commun français de l'alternative, ou "N/C" si inconnu.
-    - "difference": Description COURTE et précise (max 2-3 phrases) des caractéristiques permettant de la distinguer de l'identification principale (ex: "Se différencie par la taille des feuilles plus grandes et l'absence de poils sur la tige."). Si aucune différence notable, utilisez "N/C".
-    Si aucune alternative n'est pertinente, renvoyez un tableau vide [].
-12. "justificationText": Une explication concise (environ 20 mots) du score de confiance et de l'absence d'alternatives, UNIQUEMENT si "alternativeIdentifications" est un tableau vide. Sinon, "N/A".
+Rule for region usage: The 'country' variable is always used. The 'region' variable is optional and MUST ONLY be used if you have factual, specific, and non-generic information relevant to this region (habitat, status, uses). If you are unsure or if the region resembles a city/neighborhood, ignore it and do not mention it.
 
-Si l'espèce ne peut pas être identifiée ou si un champ est inconnu, utilisez "N/C".
-Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
+Analyze this image and provide a strict JSON response with the following 12 fields:
+1.  "localName": Common name in the requested language (e.g., "Blackbird" for English) or "N/C" if unknown.
+2.  "scientificName": Latin scientific name (e.g., "Turdus merula") or "N/C" if unknown.
+3.  "type": Species type and status (if relevant). Be concise. Use terms like "Endemic Plant", "Bird", "Tropical Fish", "Climbing Vine", "Feline", "Insect", "Carnivorous Plant", "Marine Shellfish", "Crustacean", "Ornamental Plant". Avoid redundancies like "cultivated" or "introduced" if the type is already clear. Use "N/C" if unknown.
+4.  "habitat": Main habitat (e.g., "Humid forests >1200m", "Coastline", "Urban areas") or "N/C" if unknown.
+5.  "characteristics": SHORT and synthetic physical description (size, color, shape, max 2-3 sentences) or "N/C" if unknown.
+6.  "localContext": Local context based on country="${country ?? 'N/C'}".${region ? ` Only include region="${region}" IF you have concrete, specific, and non-generic information for that region; otherwise, do not mention the region.` : ''} (uses, ecology, cultural anecdote, max 2-3 sentences) or "N/C" if unknown.
+7.  "Peculiarities": Peculiarities (medicinal virtues, lithotherapy properties, behavior, character, diet, reproduction). **EXCLUSIVELY** if a SERIOUS AND REAL DANGER exists: include its specific dangerousness/toxicity for humans (including children), domestic dogs, and cats (e.g., "kidney toxic plant", "venomous bite", "venomous animal, painful bite"). **IN ALL OTHER CASES (NO SERIOUS DANGER, OR IRRELEVANT INFORMATION ABOUT LACK OF DANGER), NEVER MENTION THE ABSENCE OF DANGER OR TOXICITY**. Be concise.
+8.  "representativeColorHex": "A hexadecimal color code (e.g., \"#FF5733\") that best represents the identified species in the image. If the species cannot be identified, use \"#CCCCCC\". **THE VALUE MUST IMPERATIVELY BE ENCLOSED IN DOUBLE QUOTES.**"
+9.  "danger": true if the analyzed species presents a MORTAL DANGER to humans (adults and children) or pets (dogs and cats) (e.g., toxic plants/mushrooms, dangerous predators, venomous animals, etc.). Otherwise, false.
+10. "confidenceScore": An integer representing the AI's confidence percentage in its identification (0-100). Only use "N/C" if the primary identification is "N/C".
+11. "alternativeIdentifications": A JSON array if the AI hesitates between multiple identifications. Each object must have:
+    - "scientificName": Scientific Latin name of the alternative.
+    - "localName": Common name of the alternative in the requested language, or "N/C" if unknown.
+    - "difference": SHORT and precise description (max 2-3 sentences) of the characteristics distinguishing it from the primary identification (e.g., "Distinguished by larger leaf size and absence of stem hairs."). If no notable difference, use "N/C".
+    If no alternatives are relevant, return an empty array [].
+12. "justificationText": A concise explanation (around 20 words) of the confidence score and the absence of alternatives, ONLY if "alternativeIdentifications" is an empty array. Otherwise, "N/A".
+
+If the species cannot be identified or if a field is unknown, use "N/C".
+`;
 
     let result, response, text;
     console.log(
