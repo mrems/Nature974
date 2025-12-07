@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+            
+                
+    <!-- ONBOARDING STRINGS --> 
     <!-- Intro Page 1 -->
     <string name="intro_page1_welcome_title">Bienvenue sur</string>
     <string name="intro_page1_subtitle">Avec Geki vous allez pouvoir identifier n\'importe quoi sur votre chemin :</string>
@@ -44,34 +47,25 @@
     <string name="model_selection_title">Choisir le niveau d\'analyse</string>
     <string name="permission_button_accept">Accepter</string>
 
-    <!-- Activity Purchase -->
-    <string name="purchase_unlock_adventure_title">Débloquez Votre Aventure !</string>
-    <string name="purchase_choose_plan_description">Choisissez votre plan et commencez à explorer la nature.</string>
-    <string name="purchase_50_credits">50 crédits</string>
-    <string name="purchase_100_credits">100 crédits</string>
-    <string name="purchase_300_credits">300 crédits</string>
-    <string name="purchase_per_month">/mois</string>
-    <string name="purchase_continue_button">Continuer</string>
-    <string name="purchase_payment_info">Annulez à tout moment depuis votre compte Google Play</string>
+    
+                
+    <!-- APP STRINGS -->
+    
+    <!-- FRAGMENT CAMERA -->
+    <!-- Indicators -->
+    <string name="camera_hint_click_menu_buy_credits">Cliquez ici pour ouvrir le Menu ou pour acheter des crédits</string>
+    <string name="camera_hint_slide_left">←  Glisser</string>
+    <string name="camera_hint_slide_right">Glisser  →</string>
+    <string name="camera_hint_slide_bottom">↓ Glisser ↓</string>
 
-    <!-- Activity History -->
-    <string name="history_title">Historique des Analyses</string>
+    <!-- Fragment Title Menu -->
+    <string name="menu_preferences">Préférences</string>
+    <string name="menu_subscription">Abonnement</string>
+    <string name="menu_manual">Mode d\'emploi</string>
+    <string name="menu_feedback">Feedback</string>
 
-    <!-- Dialog History Options -->
-    <string name="history_option_reanalyze">Ré-analyser</string>
-    <string name="history_option_delete">Supprimer</string>
-
-    <!-- Dialog Loading -->
-    <string name="loading_analysis_in_progress">Analyse en cours...</string>
-    <string name="loading_identifying_photo">Identification de votre photo</string>
-
-
-    <!-- Dialog Model Selection -->
-    <string name="model_selection_quick_option">Rapide (1 crédit)</string>
-    <string name="model_selection_balanced_option">Équilibré (2 crédits)</string>
-    <string name="model_selection_ultra_precise_option">Ultra-précis (5 crédits)</string>
-    <string name="model_selection_analyze_button">Analyser</string>
-
+    
+    <!-- FRAGMENT LAST ANALYSIS -->
     <!-- Tutorial Type Badge -->
     <string name="tutorial_type_badge_text">Badge espèce</string>
 
@@ -86,6 +80,12 @@
     <string name="tutorial_explanation_first_tab">Découvrez ici le score de certitude de l\'identification ainsi que des propositions d\'alternatives avec les différences clés pour vous aider à affiner votre analyse.</string>
     <string name="tutorial_explanation_peculiarities">Explorez ici les traits uniques, comportements et informations de sécurité pour chaque espèce. Ces détails vous aideront à mieux comprendre et interagir avec la nature.</string>
 
+    <!-- Item Info Card -->
+    <string name="tutorial_info_card_title_habitat">Habitat</string>
+    <string name="tutorial_info_card_title_characteristics">Caractéristiques</string>
+    <string name="tutorial_info_card_title_peculiarities">Particularités</string>
+    <string name="tutorial_info_card_title_local_context">Contexte Local</string>
+    
     <!-- Confidence Scores -->
     <string name="confidence_score_very_reliable">Identification très fiable</string>
     <string name="confidence_score_reliable">Identification fiable</string>
@@ -97,38 +97,54 @@
     <string name="confidence_description">Niveau de confiance de l\'IA dans cette identification</string>
     <string name="alternatives_label">Identifications alternatives</string>
     <string name="alternatives_subtitle">L\'IA a identifié d\'autres possibilités</string>
+    <string name="alternatives_subtitle_single">L\'IA a identifié 1 autre possibilité</string>
+    <string name="alternatives_subtitle_multiple">L\'IA a identifié %1$d autres possibilités</string>
 
-    <!-- Fragment Camera -->
-    <string name="camera_hint_click_menu_buy_credits">Click here to open the Menu or to Buy Credits</string>
-    <string name="camera_hint_slide_left">←  Swipe</string>
-    <string name="camera_hint_slide_right">Swipe  →</string>
-    <string name="camera_hint_slide_bottom">↓ Swipe ↓</string>
+    
+    <!-- FRAGMENT HISTORY LIST -->
+    <!-- Activity History -->
+    <string name="history_title">Historique des Analyses</string>
 
-    <!-- Fragment Title Menu -->
-    <string name="menu_preferences">Préférences</string>
-    <string name="menu_subscription">Abonnement</string>
-    <string name="menu_manual">Mode d\'emploi</string>
-    <string name="menu_feedback">Feedback</string>
-
-    <!-- Fragment History List -->
+    <!-- Empty History List -->
     <string name="history_list_title">Historique des analyses</string>
     <string name="history_list_empty_state_title">Pas encore d\'analyses</string>
     <string name="history_list_empty_state_description">Capturez votre première plante ou\nanimal pour commencer votre collection !</string>
 
-    <!-- Item Info Card -->
-    <!-- Titles et contenu pour ces cartes sont dynamiques et seront gérés dans les fichiers Kotlin si nécessaire -->
-    <string name="tutorial_info_card_title_habitat">Habitat</string>
-    <string name="tutorial_info_card_title_characteristics">Caractéristiques</string>
-    <string name="tutorial_info_card_title_peculiarities">Particularités</string>
-    <string name="tutorial_info_card_title_local_context">Contexte Local</string>
 
-    <!-- Alternative Subtitle -->
-    <string name="alternatives_subtitle_single">L\'IA a identifié 1 autre possibilité</string>
-    <string name="alternatives_subtitle_multiple">L\'IA a identifié %1$d autres possibilités</string>
+    <!-- DIALOGS -->
+    <!-- Dialog History Options -->
+    <string name="history_option_reanalyze">Ré-analyser</string>
+    <string name="history_option_delete">Supprimer</string>
+
+    <!-- Dialog Loading -->
+    <string name="loading_analysis_in_progress">Analyse en cours...</string>
+    <string name="loading_identifying_photo">Identification de votre photo</string>
+
+    <!-- Dialog Model Selection -->
+    <string name="model_selection_quick_option">Rapide (1 crédit)</string>
+    <string name="model_selection_balanced_option">Équilibré (2 crédits)</string>
+    <string name="model_selection_ultra_precise_option">Ultra-précis (5 crédits)</string>
+    <string name="model_selection_analyze_button">Analyser</string>
+
+    <!-- Dialog Delete -->
     <string name="dialog_delete_title">Confirmer la suppression</string>
     <string name="dialog_delete_message">Êtes-vous sûr de vouloir supprimer cette fiche d\'analyse ?</string>
     <string name="dialog_delete_button">Supprimer</string>
     <string name="dialog_cancel_button">Annuler</string>
+    
+    
+    
+    <!-- Activity Purchase -->
+    <string name="purchase_unlock_adventure_title">Débloquez Votre Aventure !</string>
+    <string name="purchase_choose_plan_description">Choisissez votre plan et commencez à explorer la nature.</string>
+    <string name="purchase_50_credits">50 crédits</string>
+    <string name="purchase_100_credits">100 crédits</string>
+    <string name="purchase_300_credits">300 crédits</string>
+    <string name="purchase_per_month">/mois</string>
+    <string name="purchase_continue_button">Continuer</string>
+    <string name="purchase_payment_info">Annulez à tout moment depuis votre compte Google Play</string>
+
+
 </resources>
 
 
