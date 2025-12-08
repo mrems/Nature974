@@ -5,9 +5,9 @@
     <!-- ONBOARDING STRINGS --> 
     <!-- Intro Page 1 -->
     <string name="intro_page1_welcome_title">Bienvenue sur</string>
-    <string name="intro_page1_subtitle">Avec Geki vous allez pouvoir identifier n\'importe quoi sur votre chemin :</string>
+    <string name="intro_page1_subtitle">La première application au monde qui identifie tout le règne animal, végétal et minéral</string>
     <string name="intro_page1_list_items">• Un oiseau qui passe par la,\n• Une nouvelle plante mystérieuse,\n• Un insecte posé sur votre terrasse,\n• Une fleur qu\'on vous a offerte,\n• Un champignon dans la forêt,\n• Un fruit sur un marché exotique,\n• Une empreinte animale par terre,\n• Un coquillage ramassé sur la plage,\n• Une pierre sur un collier,\n• etc…</string>
-    <string name="intro_page1_bold_text">littéralement n\'importe quoi !</string>
+    <string name="intro_page1_bold_text">Vous n\'avez plus de limites !</string>
     <string name="intro_page1_button_start">Commencer</string>
 
     <!-- Intro Page 2 -->

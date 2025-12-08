@@ -51,6 +51,7 @@
                 android:text="@string/intro_page4_description"
                 android:textSize="16sp"
                 android:gravity="center_horizontal"
+                android:lineSpacingExtra="4dp"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
                 android:layout_marginTop="44dp" />
