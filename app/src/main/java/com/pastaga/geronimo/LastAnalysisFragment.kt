@@ -24,6 +24,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import coil.load
 
 class LastAnalysisFragment : Fragment() {
 
@@ -63,9 +64,10 @@ class LastAnalysisFragment : Fragment() {
         dangerImageOverlay = view.findViewById(R.id.danger_image_overlay)
 
         lastAnalysisImageView.setOnClickListener {
-            lastEntry?.imageUri?.let { uriString ->
+            lastEntry?.let { entry ->
                 val intent = Intent(requireContext(), FullScreenImageActivity::class.java).apply {
-                    putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, uriString)
+                    putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, entry.imageUri)
+                    putExtra(FullScreenImageActivity.EXTRA_IS_TUTORIAL, entry.isTutorial)
                 }
                 startActivity(intent)
             }
@@ -104,10 +106,18 @@ class LastAnalysisFragment : Fragment() {
             withContext(Dispatchers.Main) {
                 if (entry != null) {
                     lastEntry = entry
-                   
 
-                    entry.imageUri.let { uriString ->
-                        lastAnalysisImageView.setImageURI(Uri.parse(uriString))
+                    // Utiliser Coil pour charger l'image de manière fiable
+                    // Détecter aussi les anciennes URIs de ressources Android (fallback pour fiches tutoriel existantes)
+                    if (entry.isTutorial || entry.imageUri.startsWith("android.resource://")) {
+                        // Pour les fiches tutoriel, charger directement depuis les ressources drawable
+                        lastAnalysisImageView.load(R.drawable.illustration) {
+                            crossfade(true)
+                        }
+                    } else {
+                        lastAnalysisImageView.load(Uri.parse(entry.imageUri)) {
+                            crossfade(true)
+                        }
                     }
                     lastAnalysisLocalNameTextView.text = entry.localName
                     lastAnalysisScientificNameTextView.text = entry.scientificName
@@ -161,10 +171,10 @@ class LastAnalysisFragment : Fragment() {
                     val tutorialEntry = history.firstOrNull { it.isTutorial }
                     if (tutorialEntry != null) {
                         lastEntry = tutorialEntry
-                       
 
-                        tutorialEntry.imageUri.let { uriString ->
-                            lastAnalysisImageView.setImageURI(Uri.parse(uriString))
+                        // Pour les fiches tutoriel, charger directement depuis les ressources drawable
+                        lastAnalysisImageView.load(R.drawable.illustration) {
+                            crossfade(true)
                         }
                         lastAnalysisLocalNameTextView.text = tutorialEntry.localName
                         lastAnalysisScientificNameTextView.text = tutorialEntry.scientificName

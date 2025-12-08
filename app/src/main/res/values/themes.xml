@@ -98,7 +98,7 @@
     </style>
 
     <style name="Theme.Geronimo.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="colorSurface">@android:color/white</item>
         <item name="colorPrimary">@android:color/black</item>
         <item name="colorOnSurface">@android:color/black</item>
@@ -107,6 +107,7 @@
         <item name="buttonBarPositiveButtonStyle">@style/CustomAlertDialogButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/CustomAlertDialogButton</item>
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.MediumComponent.RoundedCorners</item>
+        <item name="android:backgroundDimAmount">0.7</item>
     </style>
 
     <style name="CustomAlertDialogTitleTextStyle" parent="MaterialAlertDialog.MaterialComponents.Title.Text">

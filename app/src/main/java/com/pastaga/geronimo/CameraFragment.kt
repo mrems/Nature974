@@ -70,6 +70,11 @@ import android.os.Handler
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import android.hardware.camera2.CaptureFailure
+// Ajout des imports pour MediaStore
+import android.content.ContentValues
+import android.provider.MediaStore
+import java.io.FileInputStream
+import java.io.OutputStream
  
  
 import android.widget.TextView
@@ -105,6 +110,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
     private var currentPhotoUri: Uri? = null
     private var croppedImageUri: Uri? = null
     private var imageFile: File? = null
+    private var uCropTempSourceUri: Uri? = null // Nouvelle variable pour stocker l'URI temporaire source de UCrop
 
     private var cameraDevice: CameraDevice? = null
     private var captureSession: CameraCaptureSession? = null
@@ -662,7 +668,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
      * Cible ~2048px pour le bord long
      */
     private fun chooseOptimalCaptureSize(sizes: Array<Size>): Size {
-        val maxLongEdge = 4096
+        val maxLongEdge = Int.MAX_VALUE
         val ratio16by9 = 16.0 / 9.0
         val ratio4by3 = 4.0 / 3.0
         val tolerance = 0.06
@@ -854,13 +860,18 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         val bytes = ByteArray(buffer.remaining())
         buffer.get(bytes)
 
-        val file = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "pic_${System.currentTimeMillis()}.jpg")
+        // CrÃ©er un fichier temporaire dans le cache de l'application pour UCrop
+        val file = File.createTempFile(
+            "IMG_${System.currentTimeMillis()}_",
+            ".jpg",
+            requireActivity().cacheDir // Utiliser le rÃ©pertoire de cache pour les fichiers temporaires
+        )
         FileOutputStream(file).use { output ->
             output.write(bytes)
         }
         val savedUri = Uri.fromFile(file)
         image.close()
-        Log.d("CameraFragment", "Image enregistrÃ©e sous: $savedUri")
+        Log.d("CameraFragment", "Image brute temporaire enregistrÃ©e sous: $savedUri")
         startCrop(savedUri)
     }
 
@@ -967,46 +978,81 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
     }
 
     private fun startCrop(sourceUri: Uri) {
-        Log.d("CameraFragment", "startCrop: DÃ©marrage du recadrage pour URI: $sourceUri")
-        val photoFile: File? = try {
-            createImageFile()
-        } catch (ex: IOException) {
-            Log.e("CameraFragment", "startCrop: Erreur lors de la crÃ©ation du fichier image pour le recadrage.", ex)
-            null
+        Log.d("CameraFragment", "startCrop: Démarrage du recadrage pour URI: $sourceUri")
+
+        // Déterminer l'URI source réelle pour UCrop
+        val uCropActualSourceUri: Uri? = if (sourceUri.scheme == "file" && sourceUri.path?.startsWith(requireActivity().cacheDir.absolutePath) == true) {
+            // Si sourceUri est déjà un fichier temporaire de notre cache, l'utiliser directement
+            sourceUri
+        } else {
+            // Sinon, créer un fichier temporaire en copiant le contenu de sourceUri
+            try {
+                val tempFile = File.createTempFile(
+                    "UCROP_SOURCE_COPY_${System.currentTimeMillis()}_",
+                    ".jpg",
+                    requireActivity().cacheDir
+                )
+                requireActivity().contentResolver.openInputStream(sourceUri)?.use { input ->
+                    FileOutputStream(tempFile).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                Uri.fromFile(tempFile)
+            } catch (ex: IOException) {
+                Log.e("CameraFragment", "startCrop: Erreur lors de la création du fichier temporaire source pour le recadrage (copie).", ex)
+                null
+            }
         }
-        photoFile?.also { file ->
-            val destinationUri = Uri.fromFile(file)
-            Log.d("CameraFragment", "startCrop: URI de destination pour le recadrage: $destinationUri")
-            val uCropOptions = UCrop.Options()
-            uCropOptions.setHideBottomControls(true) // Cacher les contrôles inférieurs (rotation et scale)
-            uCropOptions.setFreeStyleCropEnabled(false) // Désactiver le recadrage libre pour assurer un ratio fixe
-            uCropOptions.setCropGridColumnCount(3)
-            uCropOptions.setCropGridRowCount(3)
-            uCropOptions.setShowCropGrid(false) // Désactiver le quadrillage
-            uCropOptions.setShowCropFrame(true)
-            uCropOptions.setCropGridStrokeWidth(2)
-            uCropOptions.setCropFrameStrokeWidth(4)
-            uCropOptions.setDimmedLayerColor(ContextCompat.getColor(requireContext(), R.color.dimmed_background)) // Utilise le noir semi-transparent
-            uCropOptions.setRootViewBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black)) // Fond noir pour la zone de recadrage
-            uCropOptions.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.white))
-            uCropOptions.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.white))
-            uCropOptions.setToolbarWidgetColor(ContextCompat.getColor(requireContext(), R.color.black)) // Couleur des boutons de la barre d'outils en noir
-            uCropOptions.setActiveControlsWidgetColor(ContextCompat.getColor(requireContext(), R.color.black)) // Couleur des contrôles actifs en noir
-            uCropOptions.setCropFrameColor(ContextCompat.getColor(requireContext(), R.color.white))
-            uCropOptions.setCropGridColor(ContextCompat.getColor(requireContext(), R.color.white))
-            uCropOptions.setToolbarTitle(getString(R.string.crop_image_title))
 
-            val uCropIntent = UCrop.of(sourceUri, destinationUri)
-                .withOptions(uCropOptions)
-                .withAspectRatio(1F, 1F)
-                .getIntent(requireContext())
+        uCropActualSourceUri?.let { finalUCropSourceUri ->
+            uCropTempSourceUri = finalUCropSourceUri // Stocker pour le nettoyage
 
-            uCropActivityResultLauncher.launch(uCropIntent)
-            // Fermer la galerie discrÃ¨tement en arriÃ¨re-plan juste aprÃ¨s l'ouverture du recadrage
-            view?.postDelayed({ closeBottomSheet() }, 150)
+            val photoFile: File? = try {
+                createImageFile() // Ceci crée un fichier temporaire pour la destination UCrop
+            } catch (ex: IOException) {
+                Log.e("CameraFragment", "startCrop: Erreur lors de la création du fichier image pour le recadrage.", ex)
+                null
+            }
+            photoFile?.also { file ->
+                val destinationUri = Uri.fromFile(file)
+                Log.d("CameraFragment", "startCrop: URI de destination pour le recadrage: $destinationUri")
+                val uCropOptions = UCrop.Options()
+                uCropOptions.setHideBottomControls(true) // Cacher les contrôles inférieurs (rotation et scale)
+                uCropOptions.setFreeStyleCropEnabled(false) // Désactiver le recadrage libre pour assurer un ratio fixe
+                uCropOptions.setCropGridColumnCount(3)
+                uCropOptions.setCropGridRowCount(3)
+                uCropOptions.setShowCropGrid(false) // Désactiver le quadrillage
+                uCropOptions.setShowCropFrame(true)
+                uCropOptions.setCropGridStrokeWidth(2)
+                uCropOptions.setCropFrameStrokeWidth(4)
+                uCropOptions.setDimmedLayerColor(ContextCompat.getColor(requireContext(), R.color.dimmed_background)) // Utilise le noir semi-transparent
+                uCropOptions.setRootViewBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black)) // Fond noir pour la zone de recadrage
+                uCropOptions.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.white))
+                uCropOptions.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.white))
+                uCropOptions.setToolbarWidgetColor(ContextCompat.getColor(requireContext(), R.color.black)) // Couleur des boutons de la barre d'outils en noir
+                uCropOptions.setActiveControlsWidgetColor(ContextCompat.getColor(requireContext(), R.color.black)) // Couleur des contrôles actifs en noir
+                uCropOptions.setCropFrameColor(ContextCompat.getColor(requireContext(), R.color.white))
+                uCropOptions.setCropGridColor(ContextCompat.getColor(requireContext(), R.color.white))
+                uCropOptions.setToolbarTitle(getString(R.string.crop_image_title))
+
+                val uCropIntent = UCrop.of(finalUCropSourceUri, destinationUri) // Utiliser l'URI source déterminée
+                    .withOptions(uCropOptions)
+                    .withAspectRatio(1F, 1F)
+                    .getIntent(requireContext())
+
+                uCropActivityResultLauncher.launch(uCropIntent)
+                view?.postDelayed({ closeBottomSheet() }, 150)
+            } ?: run {
+                Log.e("CameraFragment", "startCrop: Impossible de créer un fichier pour l'URI de destination.")
+                Toast.makeText(requireContext(), "Erreur: Impossible de préparer le recadrage.", Toast.LENGTH_LONG).show()
+                // Nettoyer le fichier source temporaire si la destination n'a pas pu être créée
+                File(finalUCropSourceUri.path!!).delete()
+                uCropTempSourceUri = null
+            }
         } ?: run {
-            Log.e("CameraFragment", "startCrop: Impossible de crÃ©er un fichier pour l'URI de destination.")
-            Toast.makeText(requireContext(), "Erreur: Impossible de prÃ©parer le recadrage.", Toast.LENGTH_LONG).show()
+            Log.e("CameraFragment", "startCrop: Impossible de déterminer l'URI source pour le recadrage.")
+            Toast.makeText(requireContext(), "Erreur: Impossible de préparer le recadrage.", Toast.LENGTH_LONG).show()
+            uCropTempSourceUri = null
         }
     }
 
@@ -1034,10 +1080,87 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             if (data != null) {
                 val resultUri = UCrop.getOutput(data)
                 Log.d("CameraFragment", "Result URI: $resultUri")
-                croppedImageUri = resultUri
-                // Fermer la galerie discrÃ¨tement en arriÃ¨re-plan pendant l'analyse
-                closeBottomSheet()
-                showModelSelectionDialog(resultUri)
+
+                resultUri?.let { uri ->
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        var privateCopyUri: Uri? = null
+                        try {
+                            // 1. Enregistrer dans la galerie publique via MediaStore
+                            val contentValues = ContentValues().apply {
+                                put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
+                                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                                }
+                            }
+
+                            val resolver = requireActivity().contentResolver
+                            val publicUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+                            publicUri?.let { uriToSave ->
+                                resolver.openOutputStream(uriToSave)?.use { os ->
+                                    FileInputStream(File(uri.path!!)).copyTo(os)
+                                }
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    contentValues.clear()
+                                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                                    resolver.update(uriToSave, contentValues, null, null)
+                                }
+                                Log.d("CameraFragment", "Image recadrÃ©e sauvegardÃ©e dans la galerie publique: $uriToSave")
+                            }
+
+                            // 2. Copier cette mÃªme image recadrÃ©e vers le stockage privÃ© de l\'application
+                            val privateStorageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                            if (privateStorageDir == null) {
+                                Log.e("CameraFragment", "Le rÃ©pertoire de stockage privÃ© externe est null.")
+                                throw IOException("Impossible d'accÃ©der au rÃ©pertoire de stockage privÃ© externe.")
+                            }
+                            if (!privateStorageDir.exists()) {
+                                privateStorageDir.mkdirs()
+                            }
+                            val privateFile = File(privateStorageDir, "cropped_pic_${System.currentTimeMillis()}.jpg")
+                            FileInputStream(File(uri.path!!)).use { input ->
+                                FileOutputStream(privateFile).use { output ->
+                                    input.copyTo(output)
+                                }
+                            }
+                            privateCopyUri = Uri.fromFile(privateFile)
+                            Log.d("CameraFragment", "Image recadrÃ©e copiÃ©e dans le stockage privÃ©: $privateCopyUri")
+
+                        } catch (e: Exception) {
+                            Log.e("CameraFragment", "Erreur lors de la sauvegarde/copie de l'image recadrÃ©e.", e)
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), "Erreur lors de l'enregistrement de l'image.", Toast.LENGTH_LONG).show()
+                            }
+                        } finally {
+                            // 3. Nettoyage: Supprimer le fichier temporaire UCrop original
+                            val uCropTempFile = File(uri.path!!)
+                            if (uCropTempFile.exists()) {
+                                if (uCropTempFile.delete()) {
+                                    Log.d("CameraFragment", "Fichier temporaire UCrop supprimÃ©: ${uCropTempFile.absolutePath}")
+                                } else {
+                                    Log.e("CameraFragment", "Impossible de supprimer le fichier temporaire UCrop: ${uCropTempFile.absolutePath}")
+                                }
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                croppedImageUri = privateCopyUri // Utiliser l'URI de la copie privÃ©e
+                                closeBottomSheet()
+                                privateCopyUri?.let { showModelSelectionDialog(it) } ?: run {
+                                    Toast.makeText(requireContext(), "Erreur: Impossible d'obtenir l'image recadrÃ©e.", Toast.LENGTH_LONG).show()
+                                    cameraPreviewTextureView.visibility = View.VISIBLE
+                                    captureButton.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                Log.e("CameraFragment", "UCrop: data est null pour RESULT_OK")
+                Toast.makeText(requireContext(), "Erreur lors du recadrage.", Toast.LENGTH_LONG).show()
+                cameraPreviewTextureView.visibility = View.VISIBLE
+                captureButton.visibility = View.VISIBLE
             }
         } else if (result.resultCode == UCrop.RESULT_ERROR) {
             val data = result.data
@@ -1046,9 +1169,38 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 Log.e("CameraFragment", "Erreur de recadrage: ${cropError?.message}")
                 Toast.makeText(requireContext(), "Erreur de recadrage: ${cropError?.message}", Toast.LENGTH_LONG).show()
             }
+            // Nettoyer le fichier temporaire source de UCrop si le recadrage a échoué
+            uCropTempSourceUri?.let { uri ->
+                val fileToDelete = File(uri.path!!)
+                if (fileToDelete.exists()) {
+                    if (fileToDelete.delete()) {
+                        Log.d("CameraFragment", "Fichier temporaire source UCrop supprimé après échec recadrage: ${fileToDelete.absolutePath}")
+                    } else {
+                        Log.e("CameraFragment", "Impossible de supprimer le fichier temporaire source UCrop: ${fileToDelete.absolutePath}")
+                    }
+                }
+                uCropTempSourceUri = null
+            }
+            // Restaurer la visibilité des contrôles
+            cameraPreviewTextureView.visibility = View.VISIBLE
+            captureButton.visibility = View.VISIBLE
         } else { // Annulation du recadrage (Activity.RESULT_CANCELED)
-            Log.d("CameraFragment", "Recadrage annulÃ©.")
-            croppedImageUri = null // Nettoyer l'URI de l'image recadrÃ©e
+            Log.d("CameraFragment", "Recadrage annulé.")
+            croppedImageUri = null // Nettoyer l'URI de l'image recadrée
+
+            // Supprimer le fichier temporaire source de UCrop si le recadrage est annulé
+            uCropTempSourceUri?.let { uri ->
+                val fileToDelete = File(uri.path!!)
+                if (fileToDelete.exists()) {
+                    if (fileToDelete.delete()) {
+                        Log.d("CameraFragment", "Fichier temporaire source UCrop supprimé après annulation recadrage: ${fileToDelete.absolutePath}")
+                    } else {
+                        Log.e("CameraFragment", "Impossible de supprimer le fichier temporaire source UCrop: ${fileToDelete.absolutePath}")
+                    }
+                }
+                uCropTempSourceUri = null
+            }
+
             // Ne pas appeler openCamera() ici, laisser onResume le faire.
             cameraPreviewTextureView.visibility = View.VISIBLE
             captureButton.visibility = View.VISIBLE

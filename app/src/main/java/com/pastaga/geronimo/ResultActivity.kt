@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
+import coil.load
 
 class ResultActivity : AppCompatActivity() {
 
@@ -69,6 +70,7 @@ class ResultActivity : AppCompatActivity() {
         val confidenceScore = intent.getIntExtra(EXTRA_CONFIDENCE_SCORE, -1) // Nouveau champ confidenceScore
         val alternativeIdentifications: List<AlternativeIdentification>? = intent.getParcelableArrayListExtra(EXTRA_ALTERNATIVE_IDENTIFICATIONS)
         val justificationText = intent.getStringExtra(EXTRA_JUSTIFICATION_TEXT) // Nouveau champ justificationText
+        val isTutorial = intent.getBooleanExtra(EXTRA_IS_TUTORIAL, false) // Flag pour les fiches tutoriel
 
         if (imageUriString != null && localName != null && scientificName != null) {
             currentEntry = AnalysisEntry(
@@ -85,7 +87,8 @@ class ResultActivity : AppCompatActivity() {
                 danger = danger, // Assigner le nouveau champ danger
                 confidenceScore = if (confidenceScore != -1) confidenceScore else null, // Assigner le nouveau champ
                 alternativeIdentifications = alternativeIdentifications, // Assigner le nouveau champ
-                justificationText = justificationText // Assigner le nouveau champ
+                justificationText = justificationText, // Assigner le nouveau champ
+                isTutorial = isTutorial // Flag pour les fiches tutoriel
             )
             Log.d("NaturePei_Debug", "Confidence Score received: ${currentEntry?.confidenceScore}")
             displayResult(currentEntry!!)
@@ -95,9 +98,10 @@ class ResultActivity : AppCompatActivity() {
         }
 
         resultImageView.setOnClickListener { // Ajout du listener pour le clic sur l'image
-            currentEntry?.imageUri?.let { uriString ->
+            currentEntry?.let { entry ->
                 val intent = Intent(this, FullScreenImageActivity::class.java).apply {
-                    putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, uriString)
+                    putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, entry.imageUri)
+                    putExtra(FullScreenImageActivity.EXTRA_IS_TUTORIAL, entry.isTutorial)
                 }
                 startActivity(intent)
             }
@@ -105,8 +109,17 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun displayResult(entry: AnalysisEntry) {
-        entry.imageUri.let { uriString ->
-            resultImageView.setImageURI(Uri.parse(uriString))
+        // Utiliser Coil pour charger l'image de manière fiable
+        // Détecter aussi les anciennes URIs de ressources Android (fallback pour fiches tutoriel existantes)
+        if (entry.isTutorial || entry.imageUri.startsWith("android.resource://")) {
+            // Pour les fiches tutoriel, charger directement depuis les ressources drawable
+            resultImageView.load(R.drawable.illustration) {
+                crossfade(true)
+            }
+        } else {
+            resultImageView.load(Uri.parse(entry.imageUri)) {
+                crossfade(true)
+            }
         }
         resultLocalNameTextView.text = entry.localName
         resultScientificNameTextView.text = entry.scientificName
@@ -188,6 +201,7 @@ class ResultActivity : AppCompatActivity() {
         const val EXTRA_CONFIDENCE_SCORE = "confidenceScore"
         const val EXTRA_ALTERNATIVE_IDENTIFICATIONS = "alternativeIdentifications"
         const val EXTRA_JUSTIFICATION_TEXT = "justificationText"
+        const val EXTRA_IS_TUTORIAL = "isTutorial"
     }
 }
 
