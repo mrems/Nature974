@@ -80,7 +80,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Oiseaux"
+                        android:text="@string/intro_page1_item_birds"
                         android:textSize="12sp"
                         android:gravity="center_horizontal"/>
                 </LinearLayout>
@@ -109,7 +109,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Plantes"
+                        android:text="@string/intro_page1_item_plants"
                         android:textSize="12sp"
                         android:gravity="center_horizontal"/>
                 </LinearLayout>
@@ -138,7 +138,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Insectes"
+                        android:text="@string/intro_page1_item_insects"
                         android:textSize="12sp"
                         android:gravity="center_horizontal"/>
                 </LinearLayout>
@@ -167,7 +167,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Fleurs"
+                        android:text="@string/intro_page1_item_flowers"
                         android:textSize="12sp"
                         android:gravity="center_horizontal"/>
                 </LinearLayout>
@@ -196,7 +196,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Champignons"
+                        android:text="@string/intro_page1_item_mushrooms"
                         android:textSize="12sp"
                         android:gravity="center_horizontal"/>
                 </LinearLayout>
@@ -225,36 +225,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Coquillages"
-                        android:textSize="12sp"
-                        android:gravity="center_horizontal"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="4dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#FFFFFF">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:src="@drawable/empreinte"
-                        android:contentDescription="Empreinte"
-                        android:padding="2dp"
-                        android:scaleType="fitCenter"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Empreintes"
+                        android:text="@string/intro_page1_item_shells"
                         android:textSize="12sp"
                         android:gravity="center_horizontal"/>
                 </LinearLayout>
@@ -283,7 +254,36 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pierres"
+                        android:text="@string/intro_page1_item_stones"
+                        android:textSize="12sp"
+                        android:gravity="center_horizontal"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:src="@drawable/empreinte"
+                        android:contentDescription="Empreinte"
+                        android:padding="2dp"
+                        android:scaleType="fitCenter"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/intro_page1_item_tracks"
                         android:textSize="12sp"
                         android:gravity="center_horizontal"/>
                 </LinearLayout>
@@ -312,8 +312,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="etc..."
-                        android:textSize="12sp"
+                        android:text="@string/intro_page1_item_etc"
+                        android:textSize="14sp"
                         android:gravity="center_horizontal"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

@@ -5,9 +5,17 @@
     <!-- ONBOARDING STRINGS --> 
     <!-- Intro Page 1 -->
     <string name="intro_page1_welcome_title">Welcome to</string>
-    <string name="intro_page1_subtitle">With Geki you will be able to identify anything on your path:</string>
-    <string name="intro_page1_list_items">• A bird flying by,\n• A mysterious new plant,\n• An insect on your terrace,\n• A flower you were given,\n• A mushroom in the forest,\n• A fruit at an exotic market,\n• An animal footprint on the ground,\n• A seashell picked up on the beach,\n• A stone on a necklace,\n• etc…</string>
-    <string name="intro_page1_bold_text">literally anything!</string>
+    <string name="intro_page1_subtitle">The world\'s first application that identifies all animal, plant, and mineral kingdoms</string>
+    <string name="intro_page1_bold_text">You have no more limits!</string>
+    <string name="intro_page1_item_birds">Birds</string>
+    <string name="intro_page1_item_plants">Plants</string>
+    <string name="intro_page1_item_insects">Insects</string>
+    <string name="intro_page1_item_flowers">Flowers</string>
+    <string name="intro_page1_item_mushrooms">Mushrooms</string>
+    <string name="intro_page1_item_shells">Shells</string>
+    <string name="intro_page1_item_stones">Stones</string>
+    <string name="intro_page1_item_tracks">Tracks</string>
+    <string name="intro_page1_item_etc">etc...</string>
     <string name="intro_page1_button_start">Get Started</string>
 
     <!-- Intro Page 2 -->

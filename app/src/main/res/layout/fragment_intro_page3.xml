@@ -30,8 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/intro_page3_subtitle"
+            android:gravity="center_horizontal"
             android:textSize="16sp"
-            android:gravity="start"
             android:lineSpacingExtra="4dp"
             android:layout_marginTop="12dp" />
 
