@@ -203,10 +203,8 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                     loadingDialog.dismiss()
                     Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
                 }
-                Log.e("HistoryListFragment", "Erreur: Ré-analyse appelée sans utilisateur connecté.")
                 return@launch
             }
-            Log.d("HistoryListFragment", "Utilisateur connecté: ${currentUser.uid}")
 
             // --- AJOUT DE LA VÉRIFICATION CÔTÉ CLIENT (sans Toast) ---
             val userDocRef = FirebaseFirestore.getInstance().collection("users").document(currentUser.uid)
@@ -220,7 +218,6 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                     startActivity(intent)
                     // Toast supprimé ici
                 }
-                Log.d("HistoryListFragment", "Redirection vers PurchaseActivity: crédits épuisés (vérification client).")
                 return@launch
             }
             // --- FIN DE L'AJOUT ---
@@ -242,7 +239,6 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
                     startActivity(intent)
                     // Toast supprimé ici
                 }
-                Log.d("HistoryListFragment", "Redirection vers PurchaseActivity: InsufficientCreditsException.")
                 return@launch
             }
 

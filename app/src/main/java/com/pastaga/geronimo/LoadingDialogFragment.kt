@@ -30,7 +30,6 @@ class LoadingDialogFragment : DialogFragment() {
                 repeatCount = com.airbnb.lottie.LottieDrawable.INFINITE
                 playAnimation()
             } catch (e: Exception) {
-                android.util.Log.e("LoadingDialog", "Erreur lors du chargement de l'animation Lottie", e)
             }
         }
         

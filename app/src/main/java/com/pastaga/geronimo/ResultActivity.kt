@@ -90,7 +90,6 @@ class ResultActivity : AppCompatActivity() {
                 justificationText = justificationText, // Assigner le nouveau champ
                 isTutorial = isTutorial // Flag pour les fiches tutoriel
             )
-            Log.d("NaturePei_Debug", "Confidence Score received: ${currentEntry?.confidenceScore}")
             displayResult(currentEntry!!)
         } else {
             Toast.makeText(this, "Erreur: Données de résultat manquantes.", Toast.LENGTH_LONG).show()

@@ -42,7 +42,7 @@ class PeculiaritiesFragment : Fragment() {
             dangerTitleIcon.visibility = View.GONE
         }
 
-        peculiaritiesCard.visibility = if (Peculiarities != null && Peculiarities != "N/C") View.VISIBLE else View.GONE
+        peculiaritiesCard.visibility = if ((Peculiarities != null && Peculiarities != "N/C") || (tutorialExplanation != null && tutorialExplanation != "N/C")) View.VISIBLE else View.GONE
 
         return view
     }

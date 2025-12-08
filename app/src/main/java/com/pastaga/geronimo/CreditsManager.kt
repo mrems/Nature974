@@ -11,14 +11,11 @@ object CreditsManager {
      */
     suspend fun decrementOneCredit() {
         try {
-            android.util.Log.d("CreditsManager", "Appel decrementCredits: début")
             FirebaseFunctions.getInstance()
                 .getHttpsCallable("decrementCredits")
                 .call()
                 .await()
-            android.util.Log.d("CreditsManager", "Appel decrementCredits: succès")
         } catch (e: Exception) {
-            android.util.Log.e("CreditsManager", "Appel decrementCredits: erreur", e)
             throw e
         }
     }

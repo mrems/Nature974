@@ -83,7 +83,6 @@ class ImageAnalyzer(private val context: Context) {
         val newWidth = (width * ratio).toInt()
         val newHeight = (height * ratio).toInt()
         
-        Log.d("ImageAnalyzer", "Redimensionnement: ${width}x${height} -> ${newWidth}x${newHeight}")
         return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
     }
     
@@ -166,7 +165,6 @@ class ImageAnalyzer(private val context: Context) {
                 // Suppression de la boucle de relance explicite (maxRetries, attempt, success)
                 // La requête est effectuée une seule fois. Les délais d'attente OkHttpClient sont désormais à 150s.
                 val response = naturePeiService.analyzeImage(request)
-                Log.d("NaturePei_Debug", "[ImageAnalyzer] Réponse API réussie: ${response?.danger}")
                 response
             } catch (e: HttpException) {
                 // Gérer spécifiquement les erreurs HTTP (code 400 pour crédits insuffisants)
@@ -176,10 +174,8 @@ class ImageAnalyzer(private val context: Context) {
                         throw InsufficientCreditsException("Crédits insuffisants pour effectuer cette analyse.")
                     }
                 }
-                Log.e("NaturePei_Debug", "[ImageAnalyzer] Erreur HTTP lors de l'analyse: ", e)
                 null
             } catch (e: Exception) {
-                Log.e("NaturePei_Debug", "[ImageAnalyzer] Erreur générale lors de l'analyse: ", e)
                 null
             }
         }

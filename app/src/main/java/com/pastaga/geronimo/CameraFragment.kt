@@ -392,7 +392,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                     analysisJob?.isActive == true -> {
                         analysisJob?.cancel()
                         Toast.makeText(requireContext(), "Analyse annulÃ©e.", Toast.LENGTH_SHORT).show()
-                        Log.d("CameraFragment", "Analyse annulÃ©e par le bouton retour.")
                         croppedImageUri = null
                         closeCamera()
                         cameraPreviewTextureView.visibility = View.VISIBLE
@@ -416,7 +415,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         creditsListener = docRef.addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
             val credits = snapshot?.getLong("credits")?.toInt() ?: return@addSnapshotListener
-            Log.d("CameraFragment", "Mise à jour crédits temps réel: $credits")
             creditsTextView.text = "$credits"
             creditsContainer.visibility = View.VISIBLE
         }
@@ -514,7 +512,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
 
         override fun onCaptureFailed(session: CameraCaptureSession, request: CaptureRequest, failure: CaptureFailure) {
             super.onCaptureFailed(session, request, failure)
-            Log.e("CameraFragment", "Photo capturÃ©e Ã©chouÃ©e: ${failure.reason}")
         }
     }
 
@@ -551,11 +548,9 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
     private fun openCamera() {
         // VÃ©rifier d'abord que la permission est accordÃ©e
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            Log.e("CameraFragment", "Permission camÃ©ra non accordÃ©e, impossible d'ouvrir la camÃ©ra")
             return
         }
         if (cameraOpening || cameraStarted) {
-            Log.d("CameraFragment", "Ouverture camÃ©ra déjà en cours ou déjà démarrée.")
             return
         }
         cameraOpening = true
@@ -577,20 +572,16 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 // ImageReader pour la capture photo avec taille modÃ©rÃ©e (~2048px bord long)
                 val captureSize = chooseOptimalCaptureSize(map.getOutputSizes(android.graphics.ImageFormat.JPEG))
                 imageReader = ImageReader.newInstance(captureSize.width, captureSize.height, android.graphics.ImageFormat.JPEG, 2)
-                Log.d("CameraFragment", "Taille de capture sÃ©lectionnÃ©e: ${captureSize.width}x${captureSize.height}")
 
                 withContext(Dispatchers.Main) { // Revenir sur le thread principal pour ouvrir la camÃ©ra
                     cameraManager.openCamera(cameraId, stateCallback, backgroundHandler)
                 }
             } catch (e: CameraAccessException) {
-                Log.e("CameraFragment", "Erreur d'accÃ¨s Ã  la camÃ©ra", e)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "Erreur d'accÃ¨s Ã  la camÃ©ra", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: IllegalStateException) {
-                Log.e("CameraFragment", "Cannot open camera: Fragment not attached to activity", e)
             } catch (e: Exception) {
-                Log.e("CameraFragment", "Erreur inattendue lors de l'ouverture de la camÃ©ra", e)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "Erreur lors de l'ouverture de la camÃ©ra", Toast.LENGTH_SHORT).show()
                 }
@@ -627,7 +618,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
 
         if (candidates169.isNotEmpty()) {
             val pick = candidates169.last()
-            Log.d("CameraFragment", "Preview 16:9 s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
             return pick
         }
 
@@ -641,7 +631,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
 
         if (candidates43.isNotEmpty()) {
             val pick = candidates43.last()
-            Log.d("CameraFragment", "Preview 4:3 s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
             return pick
         }
 
@@ -653,13 +642,11 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         }.sortedBy { it.width * it.height }
         if (nonSquare.isNotEmpty()) {
             val pick = nonSquare.last()
-            Log.d("CameraFragment", "Preview non-carr\u00e9e s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
             return pick
         }
 
         // 4) Dernier recours: plus grande r\u00e9solution disponible
         val fallback = sizes.maxByOrNull { it.width * it.height } ?: sizes[0]
-        Log.d("CameraFragment", "Preview fallback s\u00e9lectionn\u00e9e: ${fallback.width}x${fallback.height}")
         return fallback
     }
     
@@ -688,7 +675,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
 
         if (candidates169.isNotEmpty()) {
             val pick = candidates169.last()
-            Log.d("CameraFragment", "Capture 16:9 s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
             return pick
         }
 
@@ -701,7 +687,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
 
         if (candidates43.isNotEmpty()) {
             val pick = candidates43.last()
-            Log.d("CameraFragment", "Capture 4:3 s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
             return pick
         }
 
@@ -713,7 +698,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         }.sortedBy { it.width * it.height }
         if (nonSquare.isNotEmpty()) {
             val pick = nonSquare.last()
-            Log.d("CameraFragment", "Capture non-carr\u00e9e s\u00e9lectionn\u00e9e: ${pick.width}x${pick.height}")
             return pick
         }
 
@@ -721,7 +705,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         val anyNonSquare = sizes.filter { s -> Math.abs(aspectRatio(s) - 1.0) > 0.05 }
         val fallback = (anyNonSquare.maxByOrNull { it.width * it.height }
             ?: sizes.maxByOrNull { it.width * it.height }) ?: sizes[0]
-        Log.d("CameraFragment", "Capture fallback s\u00e9lectionn\u00e9e: ${fallback.width}x${fallback.height}")
         return fallback
     }
 
@@ -775,7 +758,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         matrix.setScale(correctionScaleX, correctionScaleY, centerX, centerY)
         
         cameraPreviewTextureView.setTransform(matrix)
-        Log.d("CameraFragment", "configureTransform: view=${viewWidth}x${viewHeight}, buffer=${bufferWidth}x${bufferHeight}, correction=${correctionScaleX}x${correctionScaleY}")
     }
 
     @Suppress("DEPRECATION")
@@ -802,7 +784,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                         previewRequestBuilder!!.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
 
                         captureSession!!.setRepeatingRequest(previewRequestBuilder!!.build(), null, backgroundHandler)
-                        Log.d("CameraFragment", "Session de preview configurÃ©e avec succÃ¨s")
                     } catch (e: CameraAccessException) {
                         e.printStackTrace()
                     }
@@ -825,7 +806,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
 
     private fun takePicture() {
         if (cameraDevice == null) {
-            Log.e("CameraFragment", "CameraDevice est null")
             return
         }
         try {
@@ -840,7 +820,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             // Inversion car les axes sont inversÃ©s par rapport Ã  l'orientation EXIF
             val rotation = (sensorOrientation - currentOrientation + 360) % 360
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotation)
-            Log.d("CameraFragment", "Device orientation: ${currentOrientation}°, Sensor orientation: ${sensorOrientation}°, Final JPEG_ORIENTATION: ${rotation}°")
 
             imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler)
 
@@ -871,7 +850,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         }
         val savedUri = Uri.fromFile(file)
         image.close()
-        Log.d("CameraFragment", "Image brute temporaire enregistrÃ©e sous: $savedUri")
         startCrop(savedUri)
     }
 
@@ -937,13 +915,11 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                     location?.let {
                         getCountryAndRegionFromLocation(it)
                     } ?: run {
-                        Log.d("CameraFragment", "Aucune localisation connue.")
                         userCountry = null
                         userRegion = null
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.e("CameraFragment", "Erreur lors de la rÃ©cupÃ©ration de la localisation: ${e.message}")
                     userCountry = null
                     userRegion = null
                 }
@@ -963,14 +939,11 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 if (!addresses.isNullOrEmpty()) {
                     userCountry = addresses[0].countryName
                     userRegion = addresses[0].adminArea
-                    Log.d("CameraFragment", "Localisation obtenue: Pays = $userCountry, RÃ©gion = $userRegion")
                 } else {
-                    Log.d("CameraFragment", "Aucune adresse trouvÃ©e pour la localisation.")
                     userCountry = null
                     userRegion = null
                 }
             } catch (e: IOException) {
-                Log.e("CameraFragment", "Erreur de gÃ©ocodage: ${e.message}")
                 userCountry = null
                 userRegion = null
             }
@@ -978,8 +951,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
     }
 
     private fun startCrop(sourceUri: Uri) {
-        Log.d("CameraFragment", "startCrop: Démarrage du recadrage pour URI: $sourceUri")
-
         // Déterminer l'URI source réelle pour UCrop
         val uCropActualSourceUri: Uri? = if (sourceUri.scheme == "file" && sourceUri.path?.startsWith(requireActivity().cacheDir.absolutePath) == true) {
             // Si sourceUri est déjà un fichier temporaire de notre cache, l'utiliser directement
@@ -999,7 +970,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 }
                 Uri.fromFile(tempFile)
             } catch (ex: IOException) {
-                Log.e("CameraFragment", "startCrop: Erreur lors de la création du fichier temporaire source pour le recadrage (copie).", ex)
                 null
             }
         }
@@ -1010,12 +980,10 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             val photoFile: File? = try {
                 createImageFile() // Ceci crée un fichier temporaire pour la destination UCrop
             } catch (ex: IOException) {
-                Log.e("CameraFragment", "startCrop: Erreur lors de la création du fichier image pour le recadrage.", ex)
                 null
             }
             photoFile?.also { file ->
                 val destinationUri = Uri.fromFile(file)
-                Log.d("CameraFragment", "startCrop: URI de destination pour le recadrage: $destinationUri")
                 val uCropOptions = UCrop.Options()
                 uCropOptions.setHideBottomControls(true) // Cacher les contrôles inférieurs (rotation et scale)
                 uCropOptions.setFreeStyleCropEnabled(false) // Désactiver le recadrage libre pour assurer un ratio fixe
@@ -1043,14 +1011,12 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 uCropActivityResultLauncher.launch(uCropIntent)
                 view?.postDelayed({ closeBottomSheet() }, 150)
             } ?: run {
-                Log.e("CameraFragment", "startCrop: Impossible de créer un fichier pour l'URI de destination.")
                 Toast.makeText(requireContext(), "Erreur: Impossible de préparer le recadrage.", Toast.LENGTH_LONG).show()
                 // Nettoyer le fichier source temporaire si la destination n'a pas pu être créée
                 File(finalUCropSourceUri.path!!).delete()
                 uCropTempSourceUri = null
             }
         } ?: run {
-            Log.e("CameraFragment", "startCrop: Impossible de déterminer l'URI source pour le recadrage.")
             Toast.makeText(requireContext(), "Erreur: Impossible de préparer le recadrage.", Toast.LENGTH_LONG).show()
             uCropTempSourceUri = null
         }
@@ -1060,7 +1026,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir: File? = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         if (storageDir == null) {
-            Log.e("CameraFragment", "createImageFile: Le rÃ©pertoire de stockage externe est null.")
             throw IOException("Impossible d'accÃ©der au rÃ©pertoire de stockage externe.")
         }
         if (!storageDir.exists()) {
@@ -1079,8 +1044,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             val data = result.data
             if (data != null) {
                 val resultUri = UCrop.getOutput(data)
-                Log.d("CameraFragment", "Result URI: $resultUri")
-
                 resultUri?.let { uri ->
                     lifecycleScope.launch(Dispatchers.IO) {
                         var privateCopyUri: Uri? = null
@@ -1107,13 +1070,11 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                                     contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
                                     resolver.update(uriToSave, contentValues, null, null)
                                 }
-                                Log.d("CameraFragment", "Image recadrÃ©e sauvegardÃ©e dans la galerie publique: $uriToSave")
                             }
 
                             // 2. Copier cette mÃªme image recadrÃ©e vers le stockage privÃ© de l\'application
                             val privateStorageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                             if (privateStorageDir == null) {
-                                Log.e("CameraFragment", "Le rÃ©pertoire de stockage privÃ© externe est null.")
                                 throw IOException("Impossible d'accÃ©der au rÃ©pertoire de stockage privÃ© externe.")
                             }
                             if (!privateStorageDir.exists()) {
@@ -1126,10 +1087,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                                 }
                             }
                             privateCopyUri = Uri.fromFile(privateFile)
-                            Log.d("CameraFragment", "Image recadrÃ©e copiÃ©e dans le stockage privÃ©: $privateCopyUri")
-
                         } catch (e: Exception) {
-                            Log.e("CameraFragment", "Erreur lors de la sauvegarde/copie de l'image recadrÃ©e.", e)
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(requireContext(), "Erreur lors de l'enregistrement de l'image.", Toast.LENGTH_LONG).show()
                             }
@@ -1138,9 +1096,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                             val uCropTempFile = File(uri.path!!)
                             if (uCropTempFile.exists()) {
                                 if (uCropTempFile.delete()) {
-                                    Log.d("CameraFragment", "Fichier temporaire UCrop supprimÃ©: ${uCropTempFile.absolutePath}")
                                 } else {
-                                    Log.e("CameraFragment", "Impossible de supprimer le fichier temporaire UCrop: ${uCropTempFile.absolutePath}")
                                 }
                             }
 
@@ -1157,7 +1113,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                     }
                 }
             } else {
-                Log.e("CameraFragment", "UCrop: data est null pour RESULT_OK")
                 Toast.makeText(requireContext(), "Erreur lors du recadrage.", Toast.LENGTH_LONG).show()
                 cameraPreviewTextureView.visibility = View.VISIBLE
                 captureButton.visibility = View.VISIBLE
@@ -1166,7 +1121,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             val data = result.data
             if (data != null) {
                 val cropError = UCrop.getError(data)
-                Log.e("CameraFragment", "Erreur de recadrage: ${cropError?.message}")
                 Toast.makeText(requireContext(), "Erreur de recadrage: ${cropError?.message}", Toast.LENGTH_LONG).show()
             }
             // Nettoyer le fichier temporaire source de UCrop si le recadrage a échoué
@@ -1174,9 +1128,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 val fileToDelete = File(uri.path!!)
                 if (fileToDelete.exists()) {
                     if (fileToDelete.delete()) {
-                        Log.d("CameraFragment", "Fichier temporaire source UCrop supprimé après échec recadrage: ${fileToDelete.absolutePath}")
                     } else {
-                        Log.e("CameraFragment", "Impossible de supprimer le fichier temporaire source UCrop: ${fileToDelete.absolutePath}")
                     }
                 }
                 uCropTempSourceUri = null
@@ -1185,7 +1137,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             cameraPreviewTextureView.visibility = View.VISIBLE
             captureButton.visibility = View.VISIBLE
         } else { // Annulation du recadrage (Activity.RESULT_CANCELED)
-            Log.d("CameraFragment", "Recadrage annulé.")
             croppedImageUri = null // Nettoyer l'URI de l'image recadrée
 
             // Supprimer le fichier temporaire source de UCrop si le recadrage est annulé
@@ -1193,9 +1144,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 val fileToDelete = File(uri.path!!)
                 if (fileToDelete.exists()) {
                     if (fileToDelete.delete()) {
-                        Log.d("CameraFragment", "Fichier temporaire source UCrop supprimé après annulation recadrage: ${fileToDelete.absolutePath}")
                     } else {
-                        Log.e("CameraFragment", "Impossible de supprimer le fichier temporaire source UCrop: ${fileToDelete.absolutePath}")
                     }
                 }
                 uCropTempSourceUri = null
@@ -1232,14 +1181,11 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                             loadingDialog.dismiss()
                             Toast.makeText(requireContext(), "Utilisateur non connecté. Veuillez vous connecter.", Toast.LENGTH_LONG).show()
                         }
-                        Log.e("CameraFragment", "Erreur: analyzeImageWithGemini appelé sans utilisateur connecté.")
                         return@launch
                     }
-                    Log.d("CameraFragment", "Utilisateur connecté: ${currentUser.uid}")
 
                     // Récupérer la langue du système d'exploitation du téléphone
                     val systemLanguage = Locale.getDefault().language
-                    Log.d("GEMINI_LANG_DEBUG", "Langue du système: $systemLanguage")
 
                     // --- AJOUT DE LA VÉRIFICATION CÔTÉ CLIENT (sans Toast) ---
                     val currentCreditsText = creditsTextView.text.toString()
@@ -1252,7 +1198,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                             startActivity(intent)
                             // Toast supprimé ici
                         }
-                        Log.d("CameraFragment", "Redirection vers PurchaseActivity: crédits épuisés (vérification client).")
                         return@launch
                     }
                     // --- FIN DE L'AJOUT ---
@@ -1267,19 +1212,16 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                             startActivity(intent)
                             // Toast supprimé ici
                         }
-                        Log.d("CameraFragment", "Redirection vers PurchaseActivity: InsufficientCreditsException.")
                         return@launch
                     }
 
                     if (!currentCoroutineContext().isActive) {
-                        Log.d("CameraFragment", "Analyse annulÃ©e avant la mise Ã  jour UI.")
                         return@launch
                     }
 
                     withContext(Dispatchers.Main) {
                         loadingDialog.dismiss()
                         if (response != null) {
-                            Log.d("NaturePei_Debug", "[CameraFragment] Danger de la réponse de l'API: ${response.danger}")
                             val intent = Intent(requireContext(), ResultActivity::class.java).apply {
                                 putExtra(ResultActivity.EXTRA_IMAGE_URI, uri.toString())
                                 putExtra(ResultActivity.EXTRA_LOCAL_NAME, response.localName)
@@ -1327,7 +1269,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                     }
                 } catch (e: Exception) {
                     if (!currentCoroutineContext().isActive) {
-                        Log.d("CameraFragment", "Exception attrapÃ©e mais coroutine dÃ©jÃ  annulÃ©e.")
                         return@launch
                     }
                     withContext(Dispatchers.Main) {
@@ -1423,7 +1364,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             } else {
                 // Il y a eu un problème. Vous pouvez logguer l'erreur ou
                 // avoir un fallback, par exemple, ouvrir le Play Store directement.
-                Log.e("CameraFragment", "Erreur lors de la demande de l'API d'évaluation in-app: ${request.exception?.message}")
                 // Optionnel : Fallback vers l'ouverture directe du Play Store
                 val packageName = requireContext().packageName
                 try {
