@@ -176,7 +176,7 @@ class PurchaseActivity : AppCompatActivity() {
                 R.id.card_300_identifications -> linearLayout300Identifications
                 else -> null
             }
-            selectedLinearLayout?.background = ContextCompat.getDrawable(this, R.drawable.card_border_blue)
+            selectedLinearLayout?.background = ContextCompat.getDrawable(this, R.drawable.card_border_green)
         }
     }
 

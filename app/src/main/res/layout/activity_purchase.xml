@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_spla_opacity"
     tools:context=".PurchaseActivity">
 
     <ScrollView
@@ -28,21 +29,22 @@
             <ImageView
                 android:id="@+id/geronimo_title_image_view"
                 android:layout_width="wrap_content"
-                android:layout_height="70dp"
-                android:src="@drawable/geki_title"
+                android:layout_height="90dp"
+                android:src="@drawable/nuts_title"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:contentDescription="Titre Geronimo" />
+                android:contentDescription="Titre Geronimo" 
+                android:layout_marginTop="24dp"/>
             
             <!-- Image geronimo_splash.png ajoutée ici -->
             <ImageView
                 android:id="@+id/geronimo_splash_image_view"
-                android:layout_width="300dp" 
-                android:layout_height="210dp" 
-                android:src="@drawable/paywall"
+                android:layout_width="wrap_content" 
+                android:layout_height="160dp" 
+                android:src="@drawable/compteur_icon"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="-16dp"
                 android:contentDescription="Image du personnage Geronimo" />
             <!-- Ajustez la largeur et la hauteur de l'image geronimo_splash selon vos besoins -->
 
@@ -54,9 +56,10 @@
                 android:layout_width="wrap_content"
             android:layout_height="wrap_content"
                 android:text="@string/purchase_unlock_adventure_title"
+                android:gravity="center"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:layout_marginTop="0dp" />
+                android:layout_marginTop="24dp" />
 
             <TextView
                 android:id="@+id/choose_plan_description"
