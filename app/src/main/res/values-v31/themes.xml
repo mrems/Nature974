@@ -11,9 +11,9 @@
         <item name="colorOnSecondary">@color/black</item>
 
         <!-- Barres système (identiques au thème base) -->
-        <item name="android:statusBarColor">@android:color/white</item>
+        <item name="android:statusBarColor">@color/status_bar_translucent_green</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
+        <item name="android:navigationBarColor">@color/navigation_bar_translucent_green</item>
         <item name="android:windowLightNavigationBar">true</item>
 
         <!-- Styles personnalisés (identiques au thème base) -->

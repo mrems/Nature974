@@ -15,7 +15,6 @@
         android:textSize="26sp"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/open_sans_regular"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

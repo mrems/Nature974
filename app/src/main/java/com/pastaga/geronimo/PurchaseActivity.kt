@@ -47,8 +47,8 @@ class PurchaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.background_light_gray) // Utiliser la couleur définie
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.background_light_gray) // Utiliser la couleur définie
+        window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_translucent_green_0_4) // Utiliser la couleur définie
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.navigation_bar_translucent_green_0_4) // Utiliser la couleur définie
 
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = true
