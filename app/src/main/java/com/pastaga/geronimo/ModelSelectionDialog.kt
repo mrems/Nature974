@@ -54,18 +54,21 @@ class ModelSelectionDialog : DialogFragment() {
 
         val radioGroup = view.findViewById<RadioGroup>(R.id.model_radio_group)
 
-        // Configurer les boutons radio
-        val models = arrayOf(
-            "gemini-2.5-flash-lite-preview-09-2025" to R.id.radio_flash_lite,
-            "gemini-2.5-flash" to R.id.radio_flash,
-            "gemini-3-pro-preview" to R.id.radio_gemini_3_pro
-        )
+        val linearLayoutFlashLite = view.findViewById<View>(R.id.linear_layout_flash_lite)
+        val linearLayoutFlash = view.findViewById<View>(R.id.linear_layout_flash)
+        val linearLayoutGemini3Pro = view.findViewById<View>(R.id.linear_layout_gemini_3_pro)
+
+        // Configurer les listeners de clic pour les LinearLayouts
+        linearLayoutFlashLite.setOnClickListener { radioGroup.check(R.id.radio_flash_lite) }
+        linearLayoutFlash.setOnClickListener { radioGroup.check(R.id.radio_flash) }
+        linearLayoutGemini3Pro.setOnClickListener { radioGroup.check(R.id.radio_gemini_3_pro) }
 
         // Sélectionner le modèle par défaut
-        models.forEach { (modelId, radioId) ->
-            if (modelId == selectedModelId) {
-                view.findViewById<RadioButton>(radioId).isChecked = true
-            }
+        when (selectedModelId) {
+            "gemini-2.5-flash-lite-preview-09-2025" -> radioGroup.check(R.id.radio_flash_lite)
+            "gemini-2.5-flash" -> radioGroup.check(R.id.radio_flash)
+            "gemini-3-pro-preview" -> radioGroup.check(R.id.radio_gemini_3_pro)
+            else -> radioGroup.check(R.id.radio_flash) // Valeur par défaut
         }
 
         builder.setView(view)

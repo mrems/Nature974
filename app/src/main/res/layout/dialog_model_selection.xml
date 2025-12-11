@@ -12,29 +12,97 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/radio_flash_lite"
+        <LinearLayout
+            android:id="@+id/linear_layout_flash_lite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/model_selection_quick_option"
-            android:textSize="14sp"
-            android:layout_marginBottom="8dp" />
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackground">
 
-        <RadioButton
-            android:id="@+id/radio_flash"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/model_selection_balanced_option"
-            android:textSize="14sp"
-            android:layout_marginBottom="8dp" />
+            <RadioButton
+                android:id="@+id/radio_flash_lite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/custom_radio_button_selector"
+                android:clickable="false"
+                android:focusable="false"
+                android:background="@android:color/transparent"
+                android:theme="@style/NoRippleRadioButton"/>
 
-        <RadioButton
-            android:id="@+id/radio_gemini_3_pro"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/model_selection_quick_option"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_layout_flash"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/model_selection_ultra_precise_option"
-            android:textSize="14sp"
-            android:layout_marginBottom="8dp" />
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_marginTop="0dp">
+
+            <RadioButton
+                android:id="@+id/radio_flash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/custom_radio_button_selector"
+                android:clickable="false"
+                android:focusable="false"
+                android:background="@android:color/transparent"
+                android:theme="@style/NoRippleRadioButton"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/model_selection_balanced_option"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_layout_gemini_3_pro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_marginTop="0dp">
+
+            <RadioButton
+                android:id="@+id/radio_gemini_3_pro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/custom_radio_button_selector"
+                android:clickable="false"
+                android:focusable="false"
+                android:background="@android:color/transparent"
+                android:theme="@style/NoRippleRadioButton"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/model_selection_ultra_precise_option"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
 
     </RadioGroup>
 
@@ -44,7 +112,10 @@
         android:layout_height="wrap_content"
         android:text="@string/model_selection_analyze_button"
         android:layout_marginTop="24dp"
-        app:backgroundTint="#1976D2"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:backgroundTint="@color/offer_pro_primary"
+        app:cornerRadius="12dp"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"

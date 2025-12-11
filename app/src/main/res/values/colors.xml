@@ -25,6 +25,8 @@
 
     <color name="text_title_detail">#424242</color>
 
+    <color name="text_title_discreet">#616161</color>
+
     <!-- Couleurs pour les badges de statut -->
     <color name="badge_endemique_background">#4CAF50</color>
     <color name="badge_introduit_background">#FF9800</color>
