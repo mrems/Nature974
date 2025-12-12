@@ -19,19 +19,19 @@
     <string name="intro_page1_button_start">Começar</string>
 
     <!-- Intro Page 2 -->
-    <string name="intro_page2_title">Rápido e Intuitivo</string>
-    <string name="intro_page2_description">Basta tirar uma foto para obter uma resposta em segundos</string>
+    <string name="intro_page2_title">Nova Geração de Modelos de IA</string>
+    <string name="intro_page2_subtitle">Oferecemos os melhores modelos do mundo. Selecione entre nossos três níveis de identificação, cada um oferecendo profundidade analítica crescente.</string>
+    <string name="intro_page2_quick_title">Rápido</string>
+    <string name="intro_page2_quick_description">Identificação rápida e eficiente.</string>
+    <string name="intro_page2_standard_title">Padrão</string>
+    <string name="intro_page2_standard_description">Equilíbrio entre precisão e velocidade.</string>
+    <string name="intro_page2_precise_title">Extremamente Preciso</string>
+    <string name="intro_page2_precise_description">Análise aprofundada para casos difíceis.</string>
     <string name="intro_page2_button_next">Próximo</string>
 
     <!-- Intro Page 3 -->
-    <string name="intro_page3_title">Nova Geração de Modelos de IA</string>
-    <string name="intro_page3_subtitle">Oferecemos os melhores modelos do mundo. Selecione entre nossos três níveis de identificação, cada um oferecendo profundidade analítica crescente.</string>
-    <string name="intro_page3_quick_title">Rápido</string>
-    <string name="intro_page3_quick_description">Identificação rápida e eficiente.</string>
-    <string name="intro_page3_standard_title">Padrão</string>
-    <string name="intro_page3_standard_description">Equilíbrio entre precisão e velocidade.</string>
-    <string name="intro_page3_precise_title">Extremamente Preciso</string>
-    <string name="intro_page3_precise_description">Análise aprofundada para casos difíceis.</string>
+    <string name="intro_page3_title">Rápido e Intuitivo</string>
+    <string name="intro_page3_description">Basta tirar uma foto para obter uma resposta em segundos</string>
     <string name="intro_page3_button_next">Próximo</string>
 
     <!-- Intro Page 4 -->

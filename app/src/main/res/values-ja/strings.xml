@@ -19,19 +19,19 @@
     <string name="intro_page1_button_start">始める</string>
 
     <!-- Intro Page 2 -->
-    <string name="intro_page2_title">高速で直感的</string>
-    <string name="intro_page2_description">写真を撮るだけで数秒で答えが得られます</string>
+    <string name="intro_page2_title">新世代AIモデル</string>
+    <string name="intro_page2_subtitle">私たちは世界最高のモデルを提供しています。分析深度が増す3つの識別レベルから選択してください。</string>
+    <string name="intro_page2_quick_title">クイック</string>
+    <string name="intro_page2_quick_description">高速で効率的な識別。</string>
+    <string name="intro_page2_standard_title">標準</string>
+    <string name="intro_page2_standard_description">精度と速度のバランス。</string>
+    <string name="intro_page2_precise_title">超精密</string>
+    <string name="intro_page2_precise_description">困難なケースの深層分析。</string>
     <string name="intro_page2_button_next">次へ</string>
 
     <!-- Intro Page 3 -->
-    <string name="intro_page3_title">新世代AIモデル</string>
-    <string name="intro_page3_subtitle">私たちは世界最高のモデルを提供しています。分析深度が増す3つの識別レベルから選択してください。</string>
-    <string name="intro_page3_quick_title">クイック</string>
-    <string name="intro_page3_quick_description">高速で効率的な識別。</string>
-    <string name="intro_page3_standard_title">標準</string>
-    <string name="intro_page3_standard_description">精度と速度のバランス。</string>
-    <string name="intro_page3_precise_title">超精密</string>
-    <string name="intro_page3_precise_description">困難なケースの深層分析。</string>
+    <string name="intro_page3_title">高速で直感的</string>
+    <string name="intro_page3_description">写真を撮るだけで数秒で答えが得られます</string>
     <string name="intro_page3_button_next">次へ</string>
 
     <!-- Intro Page 4 -->

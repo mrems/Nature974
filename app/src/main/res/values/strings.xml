@@ -19,19 +19,19 @@
     <string name="intro_page1_button_start">Get Started</string>
 
     <!-- Intro Page 2 -->
-    <string name="intro_page2_title">Fast and Intuitive</string>
-    <string name="intro_page2_description">Just take a photo to get an answer in seconds</string>
+    <string name="intro_page2_title">New Generation of AI Models</string>
+    <string name="intro_page2_subtitle">We offer you the best models in the world. Select from our three levels of identification, each offering increasing analytical depth.</string>
+    <string name="intro_page2_quick_title">Quick</string>
+    <string name="intro_page2_quick_description">Fast and efficient identification.</string>
+    <string name="intro_page2_standard_title">Standard</string>
+    <string name="intro_page2_standard_description">Balance between precision and speed.</string>
+    <string name="intro_page2_precise_title">Extremely Precise</string>
+    <string name="intro_page2_precise_description">In-depth analysis for difficult cases.</string>
     <string name="intro_page2_button_next">Next</string>
 
     <!-- Intro Page 3 -->
-    <string name="intro_page3_title">New Generation of AI Models</string>
-    <string name="intro_page3_subtitle">We offer you the best models in the world. Select from our three levels of identification, each offering increasing analytical depth.</string>
-    <string name="intro_page3_quick_title">Quick</string>
-    <string name="intro_page3_quick_description">Fast and efficient identification.</string>
-    <string name="intro_page3_standard_title">Standard</string>
-    <string name="intro_page3_standard_description">Balance between precision and speed.</string>
-    <string name="intro_page3_precise_title">Extremely Precise</string>
-    <string name="intro_page3_precise_description">In-depth analysis for difficult cases.</string>
+    <string name="intro_page3_title">Fast and Intuitive</string>
+    <string name="intro_page3_description">Just take a photo to get an answer in seconds</string>
     <string name="intro_page3_button_next">Next</string>
 
     <!-- Intro Page 4 -->

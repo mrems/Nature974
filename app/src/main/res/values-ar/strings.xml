@@ -19,19 +19,19 @@
     <string name="intro_page1_button_start">ابدأ</string>
 
     <!-- Intro Page 2 -->
-    <string name="intro_page2_title">سريع وبديهي</string>
-    <string name="intro_page2_description">ما عليك سوى التقاط صورة للحصول على إجابة في ثوانٍ</string>
+    <string name="intro_page2_title">جيل جديد من نماذج الذكاء الاصطناعي</string>
+    <string name="intro_page2_subtitle">نقدم لك أفضل النماذج في العالم. اختر من بين مستوياتنا الثلاثة للتعرف، حيث يوفر كل مستوى عمقًا تحليليًا متزايدًا.</string>
+    <string name="intro_page2_quick_title">سريع</string>
+    <string name="intro_page2_quick_description">تعرف سريع وفعال.</string>
+    <string name="intro_page2_standard_title">قياسي</string>
+    <string name="intro_page2_standard_description">توازن بين الدقة والسرعة.</string>
+    <string name="intro_page2_precise_title">دقيق للغاية</string>
+    <string name="intro_page2_precise_description">تحليل متعمق للحالات الصعبة.</string>
     <string name="intro_page2_button_next">التالي</string>
 
     <!-- Intro Page 3 -->
-    <string name="intro_page3_title">جيل جديد من نماذج الذكاء الاصطناعي</string>
-    <string name="intro_page3_subtitle">نقدم لك أفضل النماذج في العالم. اختر من بين مستوياتنا الثلاثة للتعرف، حيث يوفر كل مستوى عمقًا تحليليًا متزايدًا.</string>
-    <string name="intro_page3_quick_title">سريع</string>
-    <string name="intro_page3_quick_description">تعرف سريع وفعال.</string>
-    <string name="intro_page3_standard_title">قياسي</string>
-    <string name="intro_page3_standard_description">توازن بين الدقة والسرعة.</string>
-    <string name="intro_page3_precise_title">دقيق للغاية</string>
-    <string name="intro_page3_precise_description">تحليل متعمق للحالات الصعبة.</string>
+    <string name="intro_page3_title">سريع وبديهي</string>
+    <string name="intro_page3_description">ما عليك سوى التقاط صورة للحصول على إجابة في ثوانٍ</string>
     <string name="intro_page3_button_next">التالي</string>
 
     <!-- Intro Page 4 -->

@@ -19,19 +19,19 @@
     <string name="intro_page1_button_start">Empezar</string>
 
     <!-- Intro Page 2 -->
-    <string name="intro_page2_title">Rápido e Intuitivo</string>
-    <string name="intro_page2_description">Solo toma una foto para obtener una respuesta en segundos</string>
+    <string name="intro_page2_title">Nueva Generación de Modelos de IA</string>
+    <string name="intro_page2_subtitle">Te ofrecemos los mejores modelos del mundo. Selecciona entre nuestros tres niveles de identificación, cada uno ofreciendo una profundidad analítica creciente.</string>
+    <string name="intro_page2_quick_title">Rápido</string>
+    <string name="intro_page2_quick_description">Identificación rápida y eficiente.</string>
+    <string name="intro_page2_standard_title">Estándar</string>
+    <string name="intro_page2_standard_description">Equilibrio entre precisión y velocidad.</string>
+    <string name="intro_page2_precise_title">Extremadamente Preciso</string>
+    <string name="intro_page2_precise_description">Análisis en profundidad para casos difíciles.</string>
     <string name="intro_page2_button_next">Siguiente</string>
 
     <!-- Intro Page 3 -->
-    <string name="intro_page3_title">Nueva Generación de Modelos de IA</string>
-    <string name="intro_page3_subtitle">Te ofrecemos los mejores modelos del mundo. Selecciona entre nuestros tres niveles de identificación, cada uno ofreciendo una profundidad analítica creciente.</string>
-    <string name="intro_page3_quick_title">Rápido</string>
-    <string name="intro_page3_quick_description">Identificación rápida y eficiente.</string>
-    <string name="intro_page3_standard_title">Estándar</string>
-    <string name="intro_page3_standard_description">Equilibrio entre precisión y velocidad.</string>
-    <string name="intro_page3_precise_title">Extremadamente Preciso</string>
-    <string name="intro_page3_precise_description">Análisis en profundidad para casos difíciles.</string>
+    <string name="intro_page3_title">Rápido e Intuitivo</string>
+    <string name="intro_page3_description">Solo toma una foto para obtener una respuesta en segundos</string>
     <string name="intro_page3_button_next">Siguiente</string>
 
     <!-- Intro Page 4 -->

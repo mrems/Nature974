@@ -19,19 +19,19 @@
     <string name="intro_page1_button_start">Начать</string>
 
     <!-- Intro Page 2 -->
-    <string name="intro_page2_title">Быстро и интуитивно</string>
-    <string name="intro_page2_description">Просто сделайте фото, чтобы получить ответ за секунды</string>
+    <string name="intro_page2_title">Новое поколение моделей ИИ</string>
+    <string name="intro_page2_subtitle">Мы предлагаем вам лучшие модели в мире. Выберите один из трех уровней идентификации, каждый из которых предлагает возрастающую глубину анализа.</string>
+    <string name="intro_page2_quick_title">Быстрый</string>
+    <string name="intro_page2_quick_description">Быстрая и эффективная идентификация.</string>
+    <string name="intro_page2_standard_title">Стандартный</string>
+    <string name="intro_page2_standard_description">Баланс между точностью и скоростью.</string>
+    <string name="intro_page2_precise_title">Чрезвычайно точный</string>
+    <string name="intro_page2_precise_description">Глубокий анализ для сложных случаев.</string>
     <string name="intro_page2_button_next">Далее</string>
 
     <!-- Intro Page 3 -->
-    <string name="intro_page3_title">Новое поколение моделей ИИ</string>
-    <string name="intro_page3_subtitle">Мы предлагаем вам лучшие модели в мире. Выберите один из трех уровней идентификации, каждый из которых предлагает возрастающую глубину анализа.</string>
-    <string name="intro_page3_quick_title">Быстрый</string>
-    <string name="intro_page3_quick_description">Быстрая и эффективная идентификация.</string>
-    <string name="intro_page3_standard_title">Стандартный</string>
-    <string name="intro_page3_standard_description">Баланс между точностью и скоростью.</string>
-    <string name="intro_page3_precise_title">Чрезвычайно точный</string>
-    <string name="intro_page3_precise_description">Глубокий анализ для сложных случаев.</string>
+    <string name="intro_page3_title">Быстро и интуитивно</string>
+    <string name="intro_page3_description">Просто сделайте фото, чтобы получить ответ за секунды</string>
     <string name="intro_page3_button_next">Далее</string>
 
     <!-- Intro Page 4 -->

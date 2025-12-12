@@ -19,19 +19,19 @@
     <string name="intro_page1_button_start">开始</string>
 
     <!-- Intro Page 2 -->
-    <string name="intro_page2_title">快速直观</string>
-    <string name="intro_page2_description">只需拍照即可在几秒钟内获得答案</string>
+    <string name="intro_page2_title">新一代AI模型</string>
+    <string name="intro_page2_subtitle">我们为您提供世界上最好的模型。从我们的三个识别级别中选择，每个级别都提供不断增加的分析深度。</string>
+    <string name="intro_page2_quick_title">快速</string>
+    <string name="intro_page2_quick_description">快速高效的识别。</string>
+    <string name="intro_page2_standard_title">标准</string>
+    <string name="intro_page2_standard_description">精度与速度之间的平衡。</string>
+    <string name="intro_page2_precise_title">极致精准</string>
+    <string name="intro_page2_precise_description">针对疑难案例的深度分析。</string>
     <string name="intro_page2_button_next">下一步</string>
 
     <!-- Intro Page 3 -->
-    <string name="intro_page3_title">新一代AI模型</string>
-    <string name="intro_page3_subtitle">我们为您提供世界上最好的模型。从我们的三个识别级别中选择，每个级别都提供不断增加的分析深度。</string>
-    <string name="intro_page3_quick_title">快速</string>
-    <string name="intro_page3_quick_description">快速高效的识别。</string>
-    <string name="intro_page3_standard_title">标准</string>
-    <string name="intro_page3_standard_description">精度与速度之间的平衡。</string>
-    <string name="intro_page3_precise_title">极致精准</string>
-    <string name="intro_page3_precise_description">针对疑难案例的深度分析。</string>
+    <string name="intro_page3_title">快速直观</string>
+    <string name="intro_page3_description">只需拍照即可在几秒钟内获得答案</string>
     <string name="intro_page3_button_next">下一步</string>
 
     <!-- Intro Page 4 -->

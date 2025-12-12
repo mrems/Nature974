@@ -19,19 +19,19 @@
     <string name="intro_page1_button_start">Commencer</string>
 
     <!-- Intro Page 2 -->
-    <string name="intro_page2_title">Rapide et intuitif</string>
-    <string name="intro_page2_description">Il suffit de prendre une photo pour avoir une réponse en quelques secondes</string>
+    <string name="intro_page2_title">Nouvelle génération de modèles IA</string>
+    <string name="intro_page2_subtitle">Nous vous offrons les meilleurs modèles au monde. Sélectionnez parmi nos trois niveaux d\'identification, chacun offrant une profondeur d\'analyse croissante.</string>
+    <string name="intro_page2_quick_title">Rapide</string>
+    <string name="intro_page2_quick_description">Identification rapide et efficace.</string>
+    <string name="intro_page2_standard_title">Standard</string>
+    <string name="intro_page2_standard_description">Équilibre entre précision et rapidité.</string>
+    <string name="intro_page2_precise_title">Extrêmement précis</string>
+    <string name="intro_page2_precise_description">Analyse approfondie pour les cas difficiles.</string>
     <string name="intro_page2_button_next">Suivant</string>
 
     <!-- Intro Page 3 -->
-    <string name="intro_page3_title">Nouvelle génération de modèles IA</string>
-    <string name="intro_page3_subtitle">Nous vous offrons les meilleurs modèles au monde. Sélectionnez parmi nos trois niveaux d\'identification, chacun offrant une profondeur d\'analyse croissante.</string>
-    <string name="intro_page3_quick_title">Rapide</string>
-    <string name="intro_page3_quick_description">Identification rapide et efficace.</string>
-    <string name="intro_page3_standard_title">Standard</string>
-    <string name="intro_page3_standard_description">Équilibre entre précision et rapidité.</string>
-    <string name="intro_page3_precise_title">Extrêmement précis</string>
-    <string name="intro_page3_precise_description">Analyse approfondie pour les cas difficiles.</string>
+    <string name="intro_page3_title">Rapide et intuitif</string>
+    <string name="intro_page3_description">Il suffit de prendre une photo pour avoir une réponse en quelques secondes</string>
     <string name="intro_page3_button_next">Suivant</string>
 
     <!-- Intro Page 4 -->

@@ -13,176 +13,42 @@
         android:gravity="center_vertical|center_horizontal"
         android:padding="24dp">
 
-        <!-- Titre Choisissez votre analyse -->
+        <!-- Titre de la page -->
         <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:id="@+id/title_page3"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/intro_page3_title"
             android:textSize="28sp"
             android:textStyle="bold"
             android:fontFamily="@font/montserrat_bold"
-            android:gravity="center_horizontal" />
+            android:gravity="center" />
 
-        <!-- Sous-titre -->
+        <!-- Image de la page -->
+        <ImageView
+            android:id="@+id/image_page3"
+            android:layout_width="wrap_content"
+            android:layout_height="350dp"
+            android:src="@drawable/photo"
+            android:contentDescription="@string/intro_page3_description"
+            android:layout_marginTop="24dp" />
+
+        <!-- Texte descriptif sous l'image -->
         <TextView
-            android:id="@+id/subtitle"
+            android:id="@+id/text_under_image_page3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/intro_page3_subtitle"
-            android:gravity="center_horizontal"
+            android:text="@string/intro_page3_description"
             android:textSize="16sp"
+            android:gravity="center"
             android:lineSpacingExtra="4dp"
-            android:layout_marginTop="12dp" />
-
-        <!-- Container des cartes -->
-        <LinearLayout
-            android:id="@+id/cards_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="32dp">
-
-            <!-- Carte Quick -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_analysis_card"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
-
-                <FrameLayout
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="@drawable/bg_icon_circle_blue">
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_lightning"
-                        android:contentDescription="@string/intro_page3_quick_title" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/intro_page3_quick_title"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/intro_page3_quick_description"
-                        android:textSize="14sp"
-                        android:layout_marginTop="2dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Carte Standard -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_analysis_card"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
-
-                <FrameLayout
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="@drawable/bg_icon_circle_green">
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_badge_check"
-                        android:contentDescription="@string/intro_page3_standard_title" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/intro_page3_standard_title"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/intro_page3_standard_description"
-                        android:textSize="14sp"
-                        android:layout_marginTop="2dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Carte Extremely Precise -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_analysis_card"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-
-                <FrameLayout
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="@drawable/bg_icon_circle_purple">
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_flask"
-                        android:contentDescription="@string/intro_page3_precise_title" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/intro_page3_precise_title"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/intro_page3_precise_description"
-                        android:textSize="14sp"
-                        android:textColor="#6B7280"
-                        android:layout_marginTop="2dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-        </LinearLayout>
+            android:layout_marginTop="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp" />
 
         <!-- Bouton Continuer -->
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/page2_button"
+            android:id="@+id/page3_button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="@string/intro_page3_button_next"

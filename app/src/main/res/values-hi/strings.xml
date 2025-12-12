@@ -19,19 +19,19 @@
     <string name="intro_page1_button_start">शुरू करें</string>
 
     <!-- Intro Page 2 -->
-    <string name="intro_page2_title">तेज़ और सहज</string>
-    <string name="intro_page2_description">सेकंडों में उत्तर पाने के लिए बस एक तस्वीर लें</string>
+    <string name="intro_page2_title">एआई मॉडल की नई पीढ़ी</string>
+    <string name="intro_page2_subtitle">हम आपको दुनिया के सर्वश्रेष्ठ मॉडल प्रदान करते हैं। पहचान के हमारे तीन स्तरों में से चुनें, प्रत्येक बढ़ती विश्लेषणात्मक गहराई प्रदान करता है।</string>
+    <string name="intro_page2_quick_title">त्वरित</string>
+    <string name="intro_page2_quick_description">तेज और कुशल पहचान।</string>
+    <string name="intro_page2_standard_title">मानक</string>
+    <string name="intro_page2_standard_description">सटीकता और गति के बीच संतुलन।</string>
+    <string name="intro_page2_precise_title">अत्यंत सटीक</string>
+    <string name="intro_page2_precise_description">कठिन मामलों के लिए गहन विश्लेषण।</string>
     <string name="intro_page2_button_next">अगला</string>
 
     <!-- Intro Page 3 -->
-    <string name="intro_page3_title">एआई मॉडल की नई पीढ़ी</string>
-    <string name="intro_page3_subtitle">हम आपको दुनिया के सर्वश्रेष्ठ मॉडल प्रदान करते हैं। पहचान के हमारे तीन स्तरों में से चुनें, प्रत्येक बढ़ती विश्लेषणात्मक गहराई प्रदान करता है।</string>
-    <string name="intro_page3_quick_title">त्वरित</string>
-    <string name="intro_page3_quick_description">तेज और कुशल पहचान।</string>
-    <string name="intro_page3_standard_title">मानक</string>
-    <string name="intro_page3_standard_description">सटीकता और गति के बीच संतुलन।</string>
-    <string name="intro_page3_precise_title">अत्यंत सटीक</string>
-    <string name="intro_page3_precise_description">कठिन मामलों के लिए गहन विश्लेषण।</string>
+    <string name="intro_page3_title">तेज़ और सहज</string>
+    <string name="intro_page3_description">सेकंडों में उत्तर पाने के लिए बस एक तस्वीर लें</string>
     <string name="intro_page3_button_next">अगला</string>
 
     <!-- Intro Page 4 -->

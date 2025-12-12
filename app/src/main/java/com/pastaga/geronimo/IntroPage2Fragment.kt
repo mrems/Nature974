@@ -20,7 +20,7 @@ class IntroPage2Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        val button = view.findViewById<Button>(R.id.page3_new_button)
+        val button = view.findViewById<Button>(R.id.page2_button)
         button.setOnClickListener {
             (activity as? IntroOnboardingActivity)?.goToNextPage()
         }
