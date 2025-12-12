@@ -21,8 +21,7 @@
             android:paddingEnd="16dp"
             android:paddingTop="0dp"
             android:paddingBottom="0dp"
-            android:gravity="center_vertical"
-            android:background="?android:attr/selectableItemBackground">
+            android:gravity="center_vertical">
 
             <RadioButton
                 android:id="@+id/radio_flash_lite"
@@ -51,9 +50,7 @@
             android:paddingEnd="16dp"
             android:paddingTop="0dp"
             android:paddingBottom="0dp"
-            android:gravity="center_vertical"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_marginTop="0dp">
+            android:gravity="center_vertical">
 
             <RadioButton
                 android:id="@+id/radio_flash"
@@ -82,9 +79,7 @@
             android:paddingEnd="16dp"
             android:paddingTop="0dp"
             android:paddingBottom="0dp"
-            android:gravity="center_vertical"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_marginTop="0dp">
+            android:gravity="center_vertical">
 
             <RadioButton
                 android:id="@+id/radio_gemini_3_pro"

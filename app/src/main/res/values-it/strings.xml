@@ -41,16 +41,16 @@
 
     <!-- Intro Page 5 -->
     <string name="intro_page5_title">Ultimo Passaggio</string>
-    <string name="intro_page5_description">Per utilizzare l'applicazione, devi ora connetterti con Google e accettare i permessi necessari.</string>
+    <string name="intro_page5_description">Per utilizzare l\'applicazione, devi ora connetterti con Google e accettare i permessi necessari.</string>
     <string name="intro_page5_button_login">Accedi</string>
 
     <!-- Onboarding Fragment (Permissions) -->
     <string name="permission_camera_title">Permesso Fotocamera</string>
-    <string name="permission_camera_description">Questa applicazione necessita dell'accesso alla fotocamera per catturare e analizzare foto di piante e animali.</string>
+    <string name="permission_camera_description">Questa applicazione necessita dell\'accesso alla fotocamera per catturare e analizzare foto di piante e animali.</string>
     <string name="permission_location_title">Permesso Posizione</string>
-    <string name="permission_location_description">L'accesso alla tua posizione migliora la precisione dell'identificazione delle specie in base alla tua regione.</string>
+    <string name="permission_location_description">L\'accesso alla tua posizione migliora la precisione dell\'identificazione delle specie in base alla tua regione.</string>
     <string name="permission_gallery_title">Permesso Galleria</string>
-    <string name="permission_gallery_description">L'accesso alle tue foto ti consente di analizzare immagini esistenti dalla tua galleria.</string>
+    <string name="permission_gallery_description">L\'accesso alle tue foto ti consente di analizzare immagini esistenti dalla tua galleria.</string>
     <string name="crop_image_title">Ritaglia Immagine</string>
     <string name="model_selection_title">Scegli il livello di analisi</string>
     <string name="permission_button_accept">Accetta</string>
@@ -84,7 +84,7 @@
     <string name="tutorial_entry_characteristics">Qui scoprirai i tratti distintivi che ti aiutano a identificare la specie. Dettagli visivi importanti sono descritti qui.</string>
     <string name="tutorial_entry_local_context">Informazioni specifiche per la tua regione appaiono qui. Saprai se la specie è protetta o se ha peculiarità locali.</string>
     <string name="tutorial_entry_description">Questa è una scheda di analisi di esempio</string>
-    <string name="tutorial_explanation_first_tab">Scopri qui il punteggio di certezza dell'identificazione, così come proposte alternative con differenze chiave per aiutarti a raffinare la tua analisi.</string>
+    <string name="tutorial_explanation_first_tab">Scopri qui il punteggio di certezza dell\'identificazione, così come proposte alternative con differenze chiave per aiutarti a raffinare la tua analisi.</string>
     <string name="tutorial_explanation_peculiarities">Esplora qui tratti unici, comportamenti e informazioni di sicurezza per ogni specie. Questi dettagli ti aiuteranno a comprendere e interagire meglio con la natura.</string>
 
     <!-- Item Info Card -->
@@ -101,11 +101,11 @@
 
     <!-- Fragment Confidence and Alternatives -->
     <string name="confidence_score_label">Punteggio di Confidenza</string>
-    <string name="confidence_description">Livello di confidenza dell'AI in questa identificazione</string>
+    <string name="confidence_description">Livello di confidenza dell\'AI in questa identificazione</string>
     <string name="alternatives_label">Identificazioni Alternative</string>
-    <string name="alternatives_subtitle">L'AI ha identificato altre possibilità</string>
-    <string name="alternatives_subtitle_single">L'AI ha identificato 1 altra possibilità</string>
-    <string name="alternatives_subtitle_multiple">L'AI ha identificato %1$d altre possibilità</string>
+    <string name="alternatives_subtitle">L\'AI ha identificato altre possibilità</string>
+    <string name="alternatives_subtitle_single">L\'AI ha identificato 1 altra possibilità</string>
+    <string name="alternatives_subtitle_multiple">L\'AI ha identificato %1$d altre possibilità</string>
 
     
     <!-- FRAGMENT HISTORY LIST -->
