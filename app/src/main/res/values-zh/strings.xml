@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+            
+                
+    <!-- ONBOARDING STRINGS --> 
+    <!-- Intro Page 1 -->
+    <string name="intro_page1_welcome_title">欢迎来到</string>
+    <string name="intro_page1_subtitle">世界上第一个识别所有动物、植物和矿物王国的应用程序</string>
+    <string name="intro_page1_bold_text">你不再有任何限制！</string>
+    <string name="intro_page1_item_birds">鸟类</string>
+    <string name="intro_page1_item_plants">植物</string>
+    <string name="intro_page1_item_insects">昆虫</string>
+    <string name="intro_page1_item_flowers">花卉</string>
+    <string name="intro_page1_item_mushrooms">蘑菇</string>
+    <string name="intro_page1_item_shells">贝壳</string>
+    <string name="intro_page1_item_stones">石头</string>
+    <string name="intro_page1_item_tracks">足迹</string>
+    <string name="intro_page1_item_etc">等等...</string>
+    <string name="intro_page1_button_start">开始</string>
+
+    <!-- Intro Page 2 -->
+    <string name="intro_page2_title">快速直观</string>
+    <string name="intro_page2_description">只需拍照即可在几秒钟内获得答案</string>
+    <string name="intro_page2_button_next">下一步</string>
+
+    <!-- Intro Page 3 -->
+    <string name="intro_page3_title">新一代AI模型</string>
+    <string name="intro_page3_subtitle">我们为您提供世界上最好的模型。从我们的三个识别级别中选择，每个级别都提供不断增加的分析深度。</string>
+    <string name="intro_page3_quick_title">快速</string>
+    <string name="intro_page3_quick_description">快速高效的识别。</string>
+    <string name="intro_page3_standard_title">标准</string>
+    <string name="intro_page3_standard_description">精度与速度之间的平衡。</string>
+    <string name="intro_page3_precise_title">极致精准</string>
+    <string name="intro_page3_precise_description">针对疑难案例的深度分析。</string>
+    <string name="intro_page3_button_next">下一步</string>
+
+    <!-- Intro Page 4 -->
+    <string name="intro_page4_title">与你同行</string>
+    <string name="intro_page4_description">无论是在散步还是旅行，你都将很快认识并识别你周围的所有自然事物</string>
+    <string name="intro_page4_button_next">下一步</string>
+
+    <!-- Intro Page 5 -->
+    <string name="intro_page5_title">最后一步</string>
+    <string name="intro_page5_description">要使用该应用程序，您现在必须连接到Google并接受必要的权限。</string>
+    <string name="intro_page5_button_login">登录</string>
+
+    <!-- Onboarding Fragment (Permissions) -->
+    <string name="permission_camera_title">相机权限</string>
+    <string name="permission_camera_description">此应用程序需要访问您的相机才能拍摄和分析植物和动物的照片。</string>
+    <string name="permission_location_title">位置权限</string>
+    <string name="permission_location_description">访问您的位置可根据您所在的地区提高物种识别的准确性。</string>
+    <string name="permission_gallery_title">图库权限</string>
+    <string name="permission_gallery_description">访问您的照片可让您分析图库中的现有图像。</string>
+    <string name="crop_image_title">裁剪图片</string>
+    <string name="model_selection_title">选择分析级别</string>
+    <string name="permission_button_accept">接受</string>
+
+                
+    <!-- APP STRINGS -->
+    
+    <!-- FRAGMENT CAMERA -->
+    <!-- Indicators -->
+    <string name="camera_hint_click_menu_buy_credits">点击此处打开菜单或购买积分</string>
+    <string name="camera_hint_slide_left">← 滑动</string>
+    <string name="camera_hint_slide_right">滑动 →</string>
+    <string name="camera_hint_slide_bottom">↓ 滑动 ↓</string>
+
+    <!-- Fragment Title Menu -->
+    <string name="menu_preferences">偏好设置</string>
+    <string name="menu_subscription">订阅</string>
+    <string name="menu_manual">用户手册</string>
+    <string name="menu_feedback">反馈</string>
+
+    
+    <!-- FRAGMENT LAST ANALYSIS -->
+    <!-- Tutorial Type Badge -->
+    <string name="tutorial_type_badge_text">物种徽章</string>
+
+    <!-- Tutorial Analysis Entry Texts -->
+    <string name="tutorial_entry_local_name">常用名称</string>
+    <string name="tutorial_entry_scientific_name">科学名称</string>
+    <string name="tutorial_entry_type">起源</string>
+    <string name="tutorial_entry_habitat">此部分告诉您该物种自然栖息地。您将在此处找到有关其首选环境的信息。</string>
+    <string name="tutorial_entry_characteristics">在这里您将发现有助于您识别该物种的独特特征。此处描述了重要的视觉细节。</string>
+    <string name="tutorial_entry_local_context">此处显示您所在地区的特定信息。您将知道该物种是否受保护或是否具有当地特色。</string>
+    <string name="tutorial_entry_description">这是一个示例分析卡</string>
+    <string name="tutorial_explanation_first_tab">在此处发现识别的确定性分数以及具有关键差异的替代建议，以帮助您完善分析。</string>
+    <string name="tutorial_explanation_peculiarities">在此处探索每个物种的独特特征、行为和安全信息。这些详细信息将帮助您更好地了解自然并与自然互动。</string>
+
+    <!-- Item Info Card -->
+    <string name="tutorial_info_card_title_habitat">栖息地</string>
+    <string name="tutorial_info_card_title_characteristics">特征</string>
+    <string name="tutorial_info_card_title_peculiarities">特性</string>
+    <string name="tutorial_info_card_title_local_context">本地环境</string>
+    
+    <!-- Confidence Scores -->
+    <string name="confidence_score_very_reliable">非常可靠的识别</string>
+    <string name="confidence_score_reliable">可靠的识别</string>
+    <string name="confidence_score_probable">可能的识别</string>
+    <string name="confidence_score_uncertain">不确定的识别</string>
+
+    <!-- Fragment Confidence and Alternatives -->
+    <string name="confidence_score_label">置信度分数</string>
+    <string name="confidence_description">AI对此识别的置信度</string>
+    <string name="alternatives_label">替代识别</string>
+    <string name="alternatives_subtitle">AI已识别出其他可能性</string>
+    <string name="alternatives_subtitle_single">AI已识别出 1 种其他可能性</string>
+    <string name="alternatives_subtitle_multiple">AI已识别出 %1$d 种其他可能性</string>
+
+    
+    <!-- FRAGMENT HISTORY LIST -->
+    <!-- Activity History -->
+    <string name="history_title">分析历史</string>
+
+    <!-- Empty History List -->
+    <string name="history_list_title">分析历史</string>
+    <string name="history_list_empty_state_title">暂无分析</string>
+    <string name="history_list_empty_state_description">捕捉您的第一株植物或动物，开始您的收藏！</string>
+
+
+    <!-- DIALOG -->
+    <!-- Dialog History Options -->
+    <string name="history_option_reanalyze">重新分析</string>
+    <string name="history_option_delete">删除</string>
+
+    <!-- Dialog Loading -->
+    <string name="loading_analysis_in_progress">分析进行中...</string>
+    <string name="loading_identifying_photo">正在识别您的照片</string>
+
+    <!-- Dialog Model Selection -->
+    <string name="model_selection_quick_option">快速（1 积分）</string>
+    <string name="model_selection_balanced_option">平衡（2 积分）</string>
+    <string name="model_selection_ultra_precise_option">超精准（5 积分）</string>
+    <string name="model_selection_analyze_button">分析</string>
+
+    <!-- Dialog Delete -->
+    <string name="dialog_delete_title">确认删除</string>
+    <string name="dialog_delete_message">您确定要删除此分析条目吗？</string>
+    <string name="dialog_delete_button">删除</string>
+    <string name="dialog_cancel_button">取消</string>
+    
+    
+    
+    <!-- Activity Purchase -->
+    <string name="purchase_unlock_adventure_title">解锁您的冒险！</string>
+    <string name="purchase_choose_plan_description">选择您的计划并开始探索大自然。</string>
+    <string name="purchase_50_credits">50 积分</string>
+    <string name="purchase_100_credits">100 积分</string>
+    <string name="purchase_300_credits">300 积分</string>
+    <string name="purchase_per_month">/月</string>
+    <string name="purchase_continue_button">继续</string>
+    <string name="purchase_payment_info">您可以随时从您的Google Play帐户取消</string>
+
+
+</resources>

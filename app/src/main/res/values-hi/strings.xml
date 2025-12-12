@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+            
+                
+    <!-- ONBOARDING STRINGS --> 
+    <!-- Intro Page 1 -->
+    <string name="intro_page1_welcome_title">आपका स्वागत है</string>
+    <string name="intro_page1_subtitle">दुनिया का पहला एप्लिकेशन जो सभी पशु, पौधे और खनिज साम्राज्यों को पहचानता है</string>
+    <string name="intro_page1_bold_text">आपकी कोई सीमा नहीं है!</string>
+    <string name="intro_page1_item_birds">पक्षी</string>
+    <string name="intro_page1_item_plants">पौधे</string>
+    <string name="intro_page1_item_insects">कीड़े</string>
+    <string name="intro_page1_item_flowers">फूल</string>
+    <string name="intro_page1_item_mushrooms">मशरूम</string>
+    <string name="intro_page1_item_shells">शंख</string>
+    <string name="intro_page1_item_stones">पत्थर</string>
+    <string name="intro_page1_item_tracks">निशान</string>
+    <string name="intro_page1_item_etc">आदि...</string>
+    <string name="intro_page1_button_start">शुरू करें</string>
+
+    <!-- Intro Page 2 -->
+    <string name="intro_page2_title">तेज़ और सहज</string>
+    <string name="intro_page2_description">सेकंडों में उत्तर पाने के लिए बस एक तस्वीर लें</string>
+    <string name="intro_page2_button_next">अगला</string>
+
+    <!-- Intro Page 3 -->
+    <string name="intro_page3_title">एआई मॉडल की नई पीढ़ी</string>
+    <string name="intro_page3_subtitle">हम आपको दुनिया के सर्वश्रेष्ठ मॉडल प्रदान करते हैं। पहचान के हमारे तीन स्तरों में से चुनें, प्रत्येक बढ़ती विश्लेषणात्मक गहराई प्रदान करता है।</string>
+    <string name="intro_page3_quick_title">त्वरित</string>
+    <string name="intro_page3_quick_description">तेज और कुशल पहचान।</string>
+    <string name="intro_page3_standard_title">मानक</string>
+    <string name="intro_page3_standard_description">सटीकता और गति के बीच संतुलन।</string>
+    <string name="intro_page3_precise_title">अत्यंत सटीक</string>
+    <string name="intro_page3_precise_description">कठिन मामलों के लिए गहन विश्लेषण।</string>
+    <string name="intro_page3_button_next">अगला</string>
+
+    <!-- Intro Page 4 -->
+    <string name="intro_page4_title">हर जगह आपके साथ</string>
+    <string name="intro_page4_description">चाहे टहलने पर हों या यात्रा पर, आप जल्द ही अपने आस-पास के सभी प्रकृति को जान और पहचान पाएंगे</string>
+    <string name="intro_page4_button_next">अगला</string>
+
+    <!-- Intro Page 5 -->
+    <string name="intro_page5_title">अंतिम चरण</string>
+    <string name="intro_page5_description">एप्लिकेशन का उपयोग करने के लिए, आपको अब Google से कनेक्ट होना चाहिए और आवश्यक अनुमतियों को स्वीकार करना चाहिए।</string>
+    <string name="intro_page5_button_login">लॉग इन</string>
+
+    <!-- Onboarding Fragment (Permissions) -->
+    <string name="permission_camera_title">कैमरा अनुमति</string>
+    <string name="permission_camera_description">इस एप्लिकेशन को पौधों और जानवरों की तस्वीरें लेने और उनका विश्लेषण करने के लिए आपके कैमरे तक पहुंच की आवश्यकता है।</string>
+    <string name="permission_location_title">स्थान अनुमति</string>
+    <string name="permission_location_description">आपके स्थान तक पहुंच आपके क्षेत्र के आधार पर प्रजाति पहचान की सटीकता में सुधार करती है।</string>
+    <string name="permission_gallery_title">गैलरी अनुमति</string>
+    <string name="permission_gallery_description">आपकी तस्वीरों तक पहुंच आपको आपकी गैलरी से मौजूदा छवियों का विश्लेषण करने की अनुमति देती है।</string>
+    <string name="crop_image_title">छवि काटें</string>
+    <string name="model_selection_title">विश्लेषण स्तर चुनें</string>
+    <string name="permission_button_accept">स्वीकार करें</string>
+
+                
+    <!-- APP STRINGS -->
+    
+    <!-- FRAGMENT CAMERA -->
+    <!-- Indicators -->
+    <string name="camera_hint_click_menu_buy_credits">मेनू खोलने या क्रेडिट खरीदने के लिए यहां क्लिक करें</string>
+    <string name="camera_hint_slide_left">← स्वाइप करें</string>
+    <string name="camera_hint_slide_right">स्वाइप करें →</string>
+    <string name="camera_hint_slide_bottom">↓ स्वाइप करें ↓</string>
+
+    <!-- Fragment Title Menu -->
+    <string name="menu_preferences">पसंद</string>
+    <string name="menu_subscription">सदस्यता</string>
+    <string name="menu_manual">उपयोगकर्ता पुस्तिका</string>
+    <string name="menu_feedback">प्रतिक्रिया</string>
+
+    
+    <!-- FRAGMENT LAST ANALYSIS -->
+    <!-- Tutorial Type Badge -->
+    <string name="tutorial_type_badge_text">प्रजाति बैज</string>
+
+    <!-- Tutorial Analysis Entry Texts -->
+    <string name="tutorial_entry_local_name">सामान्य नाम</string>
+    <string name="tutorial_entry_scientific_name">वैज्ञानिक नाम</string>
+    <string name="tutorial_entry_type">उत्पत्ति</string>
+    <string name="tutorial_entry_habitat">यह अनुभाग आपको बताता है कि प्रजाति स्वाभाविक रूप से कहां रहती है। आपको यहां उसके पसंदीदा वातावरण के बारे में जानकारी मिलेगी।</string>
+    <string name="tutorial_entry_characteristics">यहां आपको विशिष्ट लक्षण मिलेंगे जो आपको प्रजाति को पहचानने में मदद करते हैं। महत्वपूर्ण दृश्य विवरण यहां वर्णित हैं।</string>
+    <string name="tutorial_entry_local_context">आपके क्षेत्र के लिए विशिष्ट जानकारी यहां दिखाई देती है। आपको पता चलेगा कि प्रजाति संरक्षित है या उसमें स्थानीय विशेषताएं हैं।</string>
+    <string name="tutorial_entry_description">यह एक उदाहरण विश्लेषण कार्ड है</string>
+    <string name="tutorial_explanation_first_tab">यहां पहचान की निश्चितता स्कोर के साथ-साथ आपके विश्लेषण को परिष्कृत करने में मदद करने के लिए प्रमुख अंतरों के साथ वैकल्पिक प्रस्तावों का पता लगाएं।</string>
+    <string name="tutorial_explanation_peculiarities">यहां प्रत्येक प्रजाति के लिए अद्वितीय लक्षण, व्यवहार और सुरक्षा जानकारी का अन्वेषण करें। ये विवरण आपको प्रकृति को बेहतर ढंग से समझने और उसके साथ बातचीत करने में मदद करेंगे।</string>
+
+    <!-- Item Info Card -->
+    <string name="tutorial_info_card_title_habitat">निवास स्थान</string>
+    <string name="tutorial_info_card_title_characteristics">विशेषताएं</string>
+    <string name="tutorial_info_card_title_peculiarities">विशेषताएं</string>
+    <string name="tutorial_info_card_title_local_context">स्थानीय संदर्भ</string>
+    
+    <!-- Confidence Scores -->
+    <string name="confidence_score_very_reliable">बहुत विश्वसनीय पहचान</string>
+    <string name="confidence_score_reliable">विश्वसनीय पहचान</string>
+    <string name="confidence_score_probable">संभावित पहचान</string>
+    <string name="confidence_score_uncertain">अनिश्चित पहचान</string>
+
+    <!-- Fragment Confidence and Alternatives -->
+    <string name="confidence_score_label">आत्मविश्वास स्कोर</string>
+    <string name="confidence_description">इस पहचान में एआई का आत्मविश्वास स्तर</string>
+    <string name="alternatives_label">वैकल्पिक पहचान</string>
+    <string name="alternatives_subtitle">एआई ने अन्य संभावनाओं की पहचान की है</string>
+    <string name="alternatives_subtitle_single">एआई ने 1 अन्य संभावना की पहचान की है</string>
+    <string name="alternatives_subtitle_multiple">एआई ने %1$d अन्य संभावनाओं की पहचान की है</string>
+
+    
+    <!-- FRAGMENT HISTORY LIST -->
+    <!-- Activity History -->
+    <string name="history_title">विश्लेषण इतिहास</string>
+
+    <!-- Empty History List -->
+    <string name="history_list_title">विश्लेषण इतिहास</string>
+    <string name="history_list_empty_state_title">अभी तक कोई विश्लेषण नहीं</string>
+    <string name="history_list_empty_state_description">अपना पहला पौधा या जानवर कैप्चर करके अपना संग्रह शुरू करें!</string>
+
+
+    <!-- DIALOG -->
+    <!-- Dialog History Options -->
+    <string name="history_option_reanalyze">पुनः विश्लेषण करें</string>
+    <string name="history_option_delete">मिटाएँ</string>
+
+    <!-- Dialog Loading -->
+    <string name="loading_analysis_in_progress">विश्लेषण प्रगति पर है...</string>
+    <string name="loading_identifying_photo">आपकी तस्वीर की पहचान की जा रही है</string>
+
+    <!-- Dialog Model Selection -->
+    <string name="model_selection_quick_option">त्वरित (1 क्रेडिट)</string>
+    <string name="model_selection_balanced_option">संतुलित (2 क्रेडिट)</string>
+    <string name="model_selection_ultra_precise_option">अत्यंत सटीक (5 क्रेडिट)</string>
+    <string name="model_selection_analyze_button">विश्लेषण करें</string>
+
+    <!-- Dialog Delete -->
+    <string name="dialog_delete_title">हटाने की पुष्टि करें</string>
+    <string name="dialog_delete_message">क्या आप वाकई इस विश्लेषण प्रविष्टि को हटाना चाहते हैं?</string>
+    <string name="dialog_delete_button">मिटाएँ</string>
+    <string name="dialog_cancel_button">रद्द करें</string>
+    
+    
+    
+    <!-- Activity Purchase -->
+    <string name="purchase_unlock_adventure_title">अपने साहसिक कार्य को अनलॉक करें!</string>
+    <string name="purchase_choose_plan_description">अपनी योजना चुनें और प्रकृति की खोज शुरू करें।</string>
+    <string name="purchase_50_credits">50 क्रेडिट</string>
+    <string name="purchase_100_credits">100 क्रेडिट</string>
+    <string name="purchase_300_credits">300 क्रेडिट</string>
+    <string name="purchase_per_month">/माह</string>
+    <string name="purchase_continue_button">जारी रखें</string>
+    <string name="purchase_payment_info">अपने Google Play खाते से कभी भी रद्द करें</string>
+
+
+</resources>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+            
+                
+    <!-- ONBOARDING STRINGS --> 
+    <!-- Intro Page 1 -->
+    <string name="intro_page1_welcome_title">مرحباً بك في</string>
+    <string name="intro_page1_subtitle">أول تطبيق في العالم يحدد جميع ممالك الحيوان والنبات والمعادن</string>
+    <string name="intro_page1_bold_text">لم تعد لديك أي قيود!</string>
+    <string name="intro_page1_item_birds">الطيور</string>
+    <string name="intro_page1_item_plants">النباتات</string>
+    <string name="intro_page1_item_insects">الحشرات</string>
+    <string name="intro_page1_item_flowers">الزهور</string>
+    <string name="intro_page1_item_mushrooms">الفطر</string>
+    <string name="intro_page1_item_shells">الأصداف</string>
+    <string name="intro_page1_item_stones">الأحجار</string>
+    <string name="intro_page1_item_tracks">المسارات</string>
+    <string name="intro_page1_item_etc">إلخ...</string>
+    <string name="intro_page1_button_start">ابدأ</string>
+
+    <!-- Intro Page 2 -->
+    <string name="intro_page2_title">سريع وبديهي</string>
+    <string name="intro_page2_description">ما عليك سوى التقاط صورة للحصول على إجابة في ثوانٍ</string>
+    <string name="intro_page2_button_next">التالي</string>
+
+    <!-- Intro Page 3 -->
+    <string name="intro_page3_title">جيل جديد من نماذج الذكاء الاصطناعي</string>
+    <string name="intro_page3_subtitle">نقدم لك أفضل النماذج في العالم. اختر من بين مستوياتنا الثلاثة للتعرف، حيث يوفر كل مستوى عمقًا تحليليًا متزايدًا.</string>
+    <string name="intro_page3_quick_title">سريع</string>
+    <string name="intro_page3_quick_description">تعرف سريع وفعال.</string>
+    <string name="intro_page3_standard_title">قياسي</string>
+    <string name="intro_page3_standard_description">توازن بين الدقة والسرعة.</string>
+    <string name="intro_page3_precise_title">دقيق للغاية</string>
+    <string name="intro_page3_precise_description">تحليل متعمق للحالات الصعبة.</string>
+    <string name="intro_page3_button_next">التالي</string>
+
+    <!-- Intro Page 4 -->
+    <string name="intro_page4_title">معك في كل مكان</string>
+    <string name="intro_page4_description">سواء كنت في نزهة أو مسافراً، ستتعرف قريباً على جميع الكائنات الطبيعية من حولك</string>
+    <string name="intro_page4_button_next">التالي</string>
+
+    <!-- Intro Page 5 -->
+    <string name="intro_page5_title">الخطوة الأخيرة</string>
+    <string name="intro_page5_description">لاستخدام التطبيق، يجب عليك الآن الاتصال بـ Google وقبول الأذونات اللازمة.</string>
+    <string name="intro_page5_button_login">تسجيل الدخول</string>
+
+    <!-- Onboarding Fragment (Permissions) -->
+    <string name="permission_camera_title">إذن الكاميرا</string>
+    <string name="permission_camera_description">يحتاج هذا التطبيق إلى الوصول إلى الكاميرا الخاصة بك لالتقاط وتحليل صور النباتات والحيوانات.</string>
+    <string name="permission_location_title">إذن الموقع</string>
+    <string name="permission_location_description">يؤدي الوصول إلى موقعك إلى تحسين دقة تحديد الأنواع بناءً على منطقتك.</string>
+    <string name="permission_gallery_title">إذن المعرض</string>
+    <string name="permission_gallery_description">يسمح لك الوصول إلى صورك بتحليل الصور الموجودة من معرضك.</string>
+    <string name="crop_image_title">قص الصورة</string>
+    <string name="model_selection_title">اختر مستوى التحليل</string>
+    <string name="permission_button_accept">قبول</string>
+
+                
+    <!-- APP STRINGS -->
+    
+    <!-- FRAGMENT CAMERA -->
+    <!-- Indicators -->
+    <string name="camera_hint_click_menu_buy_credits">انقر هنا لفتح القائمة أو لشراء الاعتمادات</string>
+    <string name="camera_hint_slide_left">← اسحب</string>
+    <string name="camera_hint_slide_right">اسحب →</string>
+    <string name="camera_hint_slide_bottom">↓ اسحب ↓</string>
+
+    <!-- Fragment Title Menu -->
+    <string name="menu_preferences">التفضيلات</string>
+    <string name="menu_subscription">الاشتراك</string>
+    <string name="menu_manual">دليل المستخدم</string>
+    <string name="menu_feedback">ملاحظات</string>
+
+    
+    <!-- FRAGMENT LAST ANALYSIS -->
+    <!-- Tutorial Type Badge -->
+    <string name="tutorial_type_badge_text">شارة النوع</string>
+
+    <!-- Tutorial Analysis Entry Texts -->
+    <string name="tutorial_entry_local_name">الاسم الشائع</string>
+    <string name="tutorial_entry_scientific_name">الاسم العلمي</string>
+    <string name="tutorial_entry_type">الأصل</string>
+    <string name="tutorial_entry_habitat">يخبرك هذا القسم أين تعيش الأنواع بشكل طبيعي. ستجد هنا معلومات حول بيئتها المفضلة.</string>
+    <string name="tutorial_entry_characteristics">هنا ستكتشف السمات المميزة التي تساعدك على تحديد الأنواع. يتم وصف التفاصيل البصرية الهامة هنا.</string>
+    <string name="tutorial_entry_local_context">تظهر هنا معلومات محددة لمنطقتك. ستعرف ما إذا كانت الأنواع محمية أو إذا كانت لها خصائص محلية.</string>
+    <string name="tutorial_entry_description">هذه بطاقة تحليل مثال</string>
+    <string name="tutorial_explanation_first_tab">اكتشف هنا درجة اليقين في التحديد بالإضافة إلى المقترحات البديلة مع الاختلافات الرئيسية لمساعدتك على تحسين تحليلك.</string>
+    <string name="tutorial_explanation_peculiarities">استكشف هنا السمات الفريدة والسلوكيات ومعلومات السلامة لكل نوع. ستساعدك هذه التفاصيل على فهم الطبيعة والتفاعل معها بشكل أفضل.</string>
+
+    <!-- Item Info Card -->
+    <string name="tutorial_info_card_title_habitat">الموطن</string>
+    <string name="tutorial_info_card_title_characteristics">الخصائص</string>
+    <string name="tutorial_info_card_title_peculiarities">الخصائص</string>
+    <string name="tutorial_info_card_title_local_context">السياق المحلي</string>
+    
+    <!-- Confidence Scores -->
+    <string name="confidence_score_very_reliable">تحديد موثوق للغاية</string>
+    <string name="confidence_score_reliable">تحديد موثوق</string>
+    <string name="confidence_score_probable">تحديد محتمل</string>
+    <string name="confidence_score_uncertain">تحديد غير مؤكد</string>
+
+    <!-- Fragment Confidence and Alternatives -->
+    <string name="confidence_score_label">درجة الثقة</string>
+    <string name="confidence_description">مستوى ثقة الذكاء الاصطناعي في هذا التحديد</string>
+    <string name="alternatives_label">تحديدات بديلة</string>
+    <string name="alternatives_subtitle">حدد الذكاء الاصطناعي احتمالات أخرى</string>
+    <string name="alternatives_subtitle_single">حدد الذكاء الاصطناعي احتمالاً آخر</string>
+    <string name="alternatives_subtitle_multiple">حدد الذكاء الاصطناعي %1$d احتمالات أخرى</string>
+
+    
+    <!-- FRAGMENT HISTORY LIST -->
+    <!-- Activity History -->
+    <string name="history_title">سجل التحليلات</string>
+
+    <!-- Empty History List -->
+    <string name="history_list_title">سجل التحليلات</string>
+    <string name="history_list_empty_state_title">لا توجد تحليلات حتى الآن</string>
+    <string name="history_list_empty_state_description">التقط أول نبتة أو حيوان لتبدأ مجموعتك!</string>
+
+
+    <!-- DIALOG -->
+    <!-- Dialog History Options -->
+    <string name="history_option_reanalyze">إعادة التحليل</string>
+    <string name="history_option_delete">حذف</string>
+
+    <!-- Dialog Loading -->
+    <string name="loading_analysis_in_progress">التحليل قيد التقدم...</string>
+    <string name="loading_identifying_photo">تحديد صورتك</string>
+
+    <!-- Dialog Model Selection -->
+    <string name="model_selection_quick_option">سريع (1 رصيد)</string>
+    <string name="model_selection_balanced_option">متوازن (2 رصيد)</string>
+    <string name="model_selection_ultra_precise_option">دقيق للغاية (5 رصيد)</string>
+    <string name="model_selection_analyze_button">تحليل</string>
+
+    <!-- Dialog Delete -->
+    <string name="dialog_delete_title">تأكيد الحذف</string>
+    <string name="dialog_delete_message">هل أنت متأكد أنك تريد حذف إدخال التحليل هذا؟</string>
+    <string name="dialog_delete_button">حذف</string>
+    <string name="dialog_cancel_button">إلغاء</string>
+    
+    
+    
+    <!-- Activity Purchase -->
+    <string name="purchase_unlock_adventure_title">افتح مغامرتك!</string>
+    <string name="purchase_choose_plan_description">اختر خطتك وابدأ في استكشاف الطبيعة.</string>
+    <string name="purchase_50_credits">50 رصيد</string>
+    <string name="purchase_100_credits">100 رصيد</string>
+    <string name="purchase_300_credits">300 رصيد</string>
+    <string name="purchase_per_month">/الشهر</string>
+    <string name="purchase_continue_button">متابعة</string>
+    <string name="purchase_payment_info">إلغاء في أي وقت من حسابك في Google Play</string>
+
+
+</resources>

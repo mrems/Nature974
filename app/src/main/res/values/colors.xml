@@ -12,8 +12,8 @@
 
     <!-- Couleurs générales du nouveau layout -->
     <color name="background_light_gray">#F5F5F5</color>
-    <color name="status_bar_translucent_green">#2989e777</color>
-    <color name="navigation_bar_translucent_green">#29c9f482</color>
+    <color name="status_bar_translucent_green">#2E89e777</color>
+    <color name="navigation_bar_translucent_green">#2Ec9f482</color>
     <color name="status_bar_translucent_green_0_4">#6689e777</color>
     <color name="navigation_bar_translucent_green_0_4">#66c9f482</color>
     <color name="text_dark_gray">#333333</color>

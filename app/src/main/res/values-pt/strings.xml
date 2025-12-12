@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+            
+                
+    <!-- ONBOARDING STRINGS --> 
+    <!-- Intro Page 1 -->
+    <string name="intro_page1_welcome_title">Bem-vindo ao</string>
+    <string name="intro_page1_subtitle">A primeira aplicação do mundo que identifica todos os reinos animal, vegetal e mineral</string>
+    <string name="intro_page1_bold_text">Você não tem mais limites!</string>
+    <string name="intro_page1_item_birds">Pássaros</string>
+    <string name="intro_page1_item_plants">Plantas</string>
+    <string name="intro_page1_item_insects">Insetos</string>
+    <string name="intro_page1_item_flowers">Flores</string>
+    <string name="intro_page1_item_mushrooms">Cogumelos</string>
+    <string name="intro_page1_item_shells">Conchas</string>
+    <string name="intro_page1_item_stones">Pedras</string>
+    <string name="intro_page1_item_tracks">Pegadas</string>
+    <string name="intro_page1_item_etc">etc...</string>
+    <string name="intro_page1_button_start">Começar</string>
+
+    <!-- Intro Page 2 -->
+    <string name="intro_page2_title">Rápido e Intuitivo</string>
+    <string name="intro_page2_description">Basta tirar uma foto para obter uma resposta em segundos</string>
+    <string name="intro_page2_button_next">Próximo</string>
+
+    <!-- Intro Page 3 -->
+    <string name="intro_page3_title">Nova Geração de Modelos de IA</string>
+    <string name="intro_page3_subtitle">Oferecemos os melhores modelos do mundo. Selecione entre nossos três níveis de identificação, cada um oferecendo profundidade analítica crescente.</string>
+    <string name="intro_page3_quick_title">Rápido</string>
+    <string name="intro_page3_quick_description">Identificação rápida e eficiente.</string>
+    <string name="intro_page3_standard_title">Padrão</string>
+    <string name="intro_page3_standard_description">Equilíbrio entre precisão e velocidade.</string>
+    <string name="intro_page3_precise_title">Extremamente Preciso</string>
+    <string name="intro_page3_precise_description">Análise aprofundada para casos difíceis.</string>
+    <string name="intro_page3_button_next">Próximo</string>
+
+    <!-- Intro Page 4 -->
+    <string name="intro_page4_title">Em todo lugar com você</string>
+    <string name="intro_page4_description">Seja em um passeio ou viajando, você logo conhecerá e reconhecerá toda a natureza ao seu redor</string>
+    <string name="intro_page4_button_next">Próximo</string>
+
+    <!-- Intro Page 5 -->
+    <string name="intro_page5_title">Último Passo</string>
+    <string name="intro_page5_description">Para usar o aplicativo, agora você deve se conectar com o Google e aceitar as permissões necessárias.</string>
+    <string name="intro_page5_button_login">Entrar</string>
+
+    <!-- Onboarding Fragment (Permissions) -->
+    <string name="permission_camera_title">Permissão da Câmera</string>
+    <string name="permission_camera_description">Este aplicativo precisa de acesso à sua câmera para capturar e analisar fotos de plantas e animais.</string>
+    <string name="permission_location_title">Permissão de Localização</string>
+    <string name="permission_location_description">O acesso à sua localização melhora a precisão da identificação de espécies com base em sua região.</string>
+    <string name="permission_gallery_title">Permissão da Galeria</string>
+    <string name="permission_gallery_description">O acesso às suas fotos permite que você analise imagens existentes de sua galeria.</string>
+    <string name="crop_image_title">Cortar Imagem</string>
+    <string name="model_selection_title">Escolha o nível de análise</string>
+    <string name="permission_button_accept">Aceitar</string>
+
+                
+    <!-- APP STRINGS -->
+    
+    <!-- FRAGMENT CAMERA -->
+    <!-- Indicators -->
+    <string name="camera_hint_click_menu_buy_credits">Clique aqui para abrir o Menu ou Comprar Créditos</string>
+    <string name="camera_hint_slide_left">← Deslize</string>
+    <string name="camera_hint_slide_right">Deslize →</string>
+    <string name="camera_hint_slide_bottom">↓ Deslize ↓</string>
+
+    <!-- Fragment Title Menu -->
+    <string name="menu_preferences">Preferências</string>
+    <string name="menu_subscription">Assinatura</string>
+    <string name="menu_manual">Manual do Usuário</string>
+    <string name="menu_feedback">Feedback</string>
+
+    
+    <!-- FRAGMENT LAST ANALYSIS -->
+    <!-- Tutorial Type Badge -->
+    <string name="tutorial_type_badge_text">Distintivo da Espécie</string>
+
+    <!-- Tutorial Analysis Entry Texts -->
+    <string name="tutorial_entry_local_name">Nome Comum</string>
+    <string name="tutorial_entry_scientific_name">Nome Científico</string>
+    <string name="tutorial_entry_type">Origem</string>
+    <string name="tutorial_entry_habitat">Esta seção informa onde a espécie vive naturalmente. Você encontrará informações sobre seu ambiente preferido aqui.</string>
+    <string name="tutorial_entry_characteristics">Aqui você descobrirá as características distintivas que o ajudarão a identificar a espécie. Detalhes visuais importantes são descritos aqui.</string>
+    <string name="tutorial_entry_local_context">Informações específicas para sua região aparecem aqui. Você saberá se a espécie está protegida ou se tem peculiaridades locais.</string>
+    <string name="tutorial_entry_description">Este é um exemplo de cartão de análise</string>
+    <string name="tutorial_explanation_first_tab">Descubra aqui a pontuação de certeza da identificação, bem como propostas alternativas com diferenças chave para ajudá-lo a refinar sua análise.</string>
+    <string name="tutorial_explanation_peculiarities">Explore aqui as características únicas, comportamentos e informações de segurança de cada espécie. Esses detalhes o ajudarão a entender e interagir melhor com a natureza.</string>
+
+    <!-- Item Info Card -->
+    <string name="tutorial_info_card_title_habitat">Habitat</string>
+    <string name="tutorial_info_card_title_characteristics">Características</string>
+    <string name="tutorial_info_card_title_peculiarities">Peculiaridades</string>
+    <string name="tutorial_info_card_title_local_context">Contexto Local</string>
+    
+    <!-- Confidence Scores -->
+    <string name="confidence_score_very_reliable">Identificação muito confiável</string>
+    <string name="confidence_score_reliable">Identificação confiável</string>
+    <string name="confidence_score_probable">Identificação provável</string>
+    <string name="confidence_score_uncertain">Identificação incerta</string>
+
+    <!-- Fragment Confidence and Alternatives -->
+    <string name="confidence_score_label">Pontuação de Confiança</string>
+    <string name="confidence_description">Nível de confiança da IA nesta identificação</string>
+    <string name="alternatives_label">Identificações Alternativas</string>
+    <string name="alternatives_subtitle">A IA identificou outras possibilidades</string>
+    <string name="alternatives_subtitle_single">A IA identificou 1 outra possibilidade</string>
+    <string name="alternatives_subtitle_multiple">A IA identificou %1$d outras possibilidades</string>
+
+    
+    <!-- FRAGMENT HISTORY LIST -->
+    <!-- Activity History -->
+    <string name="history_title">Histórico de Análises</string>
+
+    <!-- Empty History List -->
+    <string name="history_list_title">Histórico de Análises</string>
+    <string name="history_list_empty_state_title">Ainda sem análises</string>
+    <string name="history_list_empty_state_description">Capture sua primeira planta ou animal para começar sua coleção!</string>
+
+
+    <!-- DIALOG -->
+    <!-- Dialog History Options -->
+    <string name="history_option_reanalyze">Reanalisar</string>
+    <string name="history_option_delete">Excluir</string>
+
+    <!-- Dialog Loading -->
+    <string name="loading_analysis_in_progress">Análise em andamento...</string>
+    <string name="loading_identifying_photo">Identificando sua foto</string>
+
+    <!-- Dialog Model Selection -->
+    <string name="model_selection_quick_option">Rápido (1 crédito)</string>
+    <string name="model_selection_balanced_option">Equilibrado (2 créditos)</string>
+    <string name="model_selection_ultra_precise_option">Ultra-Preciso (5 créditos)</string>
+    <string name="model_selection_analyze_button">Analisar</string>
+
+    <!-- Dialog Delete -->
+    <string name="dialog_delete_title">Confirmar Exclusão</string>
+    <string name="dialog_delete_message">Tem certeza de que deseja excluir esta entrada de análise?</string>
+    <string name="dialog_delete_button">Excluir</string>
+    <string name="dialog_cancel_button">Cancelar</string>
+    
+    
+    
+    <!-- Activity Purchase -->
+    <string name="purchase_unlock_adventure_title">Desbloqueie sua Aventura!</string>
+    <string name="purchase_choose_plan_description">Escolha seu plano e comece a explorar a natureza.</string>
+    <string name="purchase_50_credits">50 créditos</string>
+    <string name="purchase_100_credits">100 créditos</string>
+    <string name="purchase_300_credits">300 créditos</string>
+    <string name="purchase_per_month">/mês</string>
+    <string name="purchase_continue_button">Continuar</string>
+    <string name="purchase_payment_info">Cancele a qualquer momento na sua conta do Google Play</string>
+
+
+</resources>

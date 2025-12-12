@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+            
+                
+    <!-- ONBOARDING STRINGS --> 
+    <!-- Intro Page 1 -->
+    <string name="intro_page1_welcome_title">Добро пожаловать в</string>
+    <string name="intro_page1_subtitle">Первое в мире приложение, которое идентифицирует все царства животных, растений и минералов</string>
+    <string name="intro_page1_bold_text">У вас больше нет ограничений!</string>
+    <string name="intro_page1_item_birds">Птицы</string>
+    <string name="intro_page1_item_plants">Растения</string>
+    <string name="intro_page1_item_insects">Насекомые</string>
+    <string name="intro_page1_item_flowers">Цветы</string>
+    <string name="intro_page1_item_mushrooms">Грибы</string>
+    <string name="intro_page1_item_shells">Раковины</string>
+    <string name="intro_page1_item_stones">Камни</string>
+    <string name="intro_page1_item_tracks">Следы</string>
+    <string name="intro_page1_item_etc">и т. д.</string>
+    <string name="intro_page1_button_start">Начать</string>
+
+    <!-- Intro Page 2 -->
+    <string name="intro_page2_title">Быстро и интуитивно</string>
+    <string name="intro_page2_description">Просто сделайте фото, чтобы получить ответ за секунды</string>
+    <string name="intro_page2_button_next">Далее</string>
+
+    <!-- Intro Page 3 -->
+    <string name="intro_page3_title">Новое поколение моделей ИИ</string>
+    <string name="intro_page3_subtitle">Мы предлагаем вам лучшие модели в мире. Выберите один из трех уровней идентификации, каждый из которых предлагает возрастающую глубину анализа.</string>
+    <string name="intro_page3_quick_title">Быстрый</string>
+    <string name="intro_page3_quick_description">Быстрая и эффективная идентификация.</string>
+    <string name="intro_page3_standard_title">Стандартный</string>
+    <string name="intro_page3_standard_description">Баланс между точностью и скоростью.</string>
+    <string name="intro_page3_precise_title">Чрезвычайно точный</string>
+    <string name="intro_page3_precise_description">Глубокий анализ для сложных случаев.</string>
+    <string name="intro_page3_button_next">Далее</string>
+
+    <!-- Intro Page 4 -->
+    <string name="intro_page4_title">Везде с вами</string>
+    <string name="intro_page4_description">Будь то прогулка или путешествие, вы скоро узнаете и распознаете всю природу вокруг вас</string>
+    <string name="intro_page4_button_next">Далее</string>
+
+    <!-- Intro Page 5 -->
+    <string name="intro_page5_title">Последний шаг</string>
+    <string name="intro_page5_description">Чтобы использовать приложение, теперь вы должны подключиться к Google и принять необходимые разрешения.</string>
+    <string name="intro_page5_button_login">Войти</string>
+
+    <!-- Onboarding Fragment (Permissions) -->
+    <string name="permission_camera_title">Разрешение камеры</string>
+    <string name="permission_camera_description">Этому приложению требуется доступ к вашей камере для съемки и анализа фотографий растений и животных.</string>
+    <string name="permission_location_title">Разрешение местоположения</string>
+    <string name="permission_location_description">Доступ к вашему местоположению повышает точность идентификации видов в зависимости от вашего региона.</string>
+    <string name="permission_gallery_title">Разрешение галереи</string>
+    <string name="permission_gallery_description">Доступ к вашим фотографиям позволяет анализировать существующие изображения из вашей галереи.</string>
+    <string name="crop_image_title">Обрезать изображение</string>
+    <string name="model_selection_title">Выберите уровень анализа</string>
+    <string name="permission_button_accept">Принять</string>
+
+                
+    <!-- APP STRINGS -->
+    
+    <!-- FRAGMENT CAMERA -->
+    <!-- Indicators -->
+    <string name="camera_hint_click_menu_buy_credits">Нажмите здесь, чтобы открыть Меню или Купить Кредиты</string>
+    <string name="camera_hint_slide_left">← Свайп</string>
+    <string name="camera_hint_slide_right">Свайп →</string>
+    <string name="camera_hint_slide_bottom">↓ Свайп ↓</string>
+
+    <!-- Fragment Title Menu -->
+    <string name="menu_preferences">Настройки</string>
+    <string name="menu_subscription">Подписка</string>
+    <string name="menu_manual">Руководство пользователя</string>
+    <string name="menu_feedback">Обратная связь</string>
+
+    
+    <!-- FRAGMENT LAST ANALYSIS -->
+    <!-- Tutorial Type Badge -->
+    <string name="tutorial_type_badge_text">Значок вида</string>
+
+    <!-- Tutorial Analysis Entry Texts -->
+    <string name="tutorial_entry_local_name">Общее название</string>
+    <string name="tutorial_entry_scientific_name">Научное название</string>
+    <string name="tutorial_entry_type">Происхождение</string>
+    <string name="tutorial_entry_habitat">Этот раздел рассказывает, где вид естественно обитает. Здесь вы найдете информацию о его предпочтительной среде обитания.</string>
+    <string name="tutorial_entry_characteristics">Здесь вы откроете отличительные черты, которые помогут вам идентифицировать вид. Важные визуальные детали описаны здесь.</string>
+    <string name="tutorial_entry_local_context">Здесь появляется специфическая информация для вашего региона. Вы узнаете, защищен ли вид или имеет ли он местные особенности.</string>
+    <string name="tutorial_entry_description">Это пример карточки анализа</string>
+    <string name="tutorial_explanation_first_tab">Здесь вы узнаете показатель достоверности идентификации, а также альтернативные предложения с ключевыми различиями, которые помогут вам уточнить анализ.</string>
+    <string name="tutorial_explanation_peculiarities">Здесь вы узнаете об уникальных чертах, поведении и информации о безопасности для каждого вида. Эти детали помогут вам лучше понять природу и взаимодействовать с ней.</string>
+
+    <!-- Item Info Card -->
+    <string name="tutorial_info_card_title_habitat">Среда обитания</string>
+    <string name="tutorial_info_card_title_characteristics">Характеристики</string>
+    <string name="tutorial_info_card_title_peculiarities">Особенности</string>
+    <string name="tutorial_info_card_title_local_context">Местный контекст</string>
+    
+    <!-- Confidence Scores -->
+    <string name="confidence_score_very_reliable">Очень надежная идентификация</string>
+    <string name="confidence_score_reliable">Надежная идентификация</string>
+    <string name="confidence_score_probable">Вероятная идентификация</string>
+    <string name="confidence_score_uncertain">Неопределенная идентификация</string>
+
+    <!-- Fragment Confidence and Alternatives -->
+    <string name="confidence_score_label">Показатель достоверности</string>
+    <string name="confidence_description">Уровень достоверности ИИ в этой идентификации</string>
+    <string name="alternatives_label">Альтернативные идентификации</string>
+    <string name="alternatives_subtitle">ИИ выявил другие возможности</string>
+    <string name="alternatives_subtitle_single">ИИ выявил 1 другую возможность</string>
+    <string name="alternatives_subtitle_multiple">ИИ выявил %1$d других возможностей</string>
+
+    
+    <!-- FRAGMENT HISTORY LIST -->
+    <!-- Activity History -->
+    <string name="history_title">История анализа</string>
+
+    <!-- Empty History List -->
+    <string name="history_list_title">История анализа</string>
+    <string name="history_list_empty_state_title">Анализов пока нет</string>
+    <string name="history_list_empty_state_description">Сфотографируйте свое первое растение или животное, чтобы начать свою коллекцию!</string>
+
+
+    <!-- DIALOG -->
+    <!-- Dialog History Options -->
+    <string name="history_option_reanalyze">Повторный анализ</string>
+    <string name="history_option_delete">Удалить</string>
+
+    <!-- Dialog Loading -->
+    <string name="loading_analysis_in_progress">Анализ в процессе...</string>
+    <string name="loading_identifying_photo">Идентификация вашей фотографии</string>
+
+    <!-- Dialog Model Selection -->
+    <string name="model_selection_quick_option">Быстрый (1 кредит)</string>
+    <string name="model_selection_balanced_option">Сбалансированный (2 кредита)</string>
+    <string name="model_selection_ultra_precise_option">Ультраточный (5 кредитов)</string>
+    <string name="model_selection_analyze_button">Анализировать</string>
+
+    <!-- Dialog Delete -->
+    <string name="dialog_delete_title">Подтвердить удаление</string>
+    <string name="dialog_delete_message">Вы уверены, что хотите удалить эту запись анализа?</string>
+    <string name="dialog_delete_button">Удалить</string>
+    <string name="dialog_cancel_button">Отмена</string>
+    
+    
+    
+    <!-- Activity Purchase -->
+    <string name="purchase_unlock_adventure_title">Разблокируйте свое приключение!</string>
+    <string name="purchase_choose_plan_description">Выберите свой план и начните исследовать природу.</string>
+    <string name="purchase_50_credits">50 кредитов</string>
+    <string name="purchase_100_credits">100 кредитов</string>
+    <string name="purchase_300_credits">300 кредитов</string>
+    <string name="purchase_per_month">/месяц</string>
+    <string name="purchase_continue_button">Продолжить</string>
+    <string name="purchase_payment_info">Отмените подписку в любое время из своей учетной записи Google Play</string>
+
+
+</resources>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+            
+                
+    <!-- ONBOARDING STRINGS --> 
+    <!-- Intro Page 1 -->
+    <string name="intro_page1_welcome_title">ようこそ</string>
+    <string name="intro_page1_subtitle">動物、植物、鉱物のすべての王国を識別する世界初のアプリケーション</string>
+    <string name="intro_page1_bold_text">もう制限はありません！</string>
+    <string name="intro_page1_item_birds">鳥</string>
+    <string name="intro_page1_item_plants">植物</string>
+    <string name="intro_page1_item_insects">昆虫</string>
+    <string name="intro_page1_item_flowers">花</string>
+    <string name="intro_page1_item_mushrooms">キノコ</string>
+    <string name="intro_page1_item_shells">貝殻</string>
+    <string name="intro_page1_item_stones">石</string>
+    <string name="intro_page1_item_tracks">足跡</string>
+    <string name="intro_page1_item_etc">など...</string>
+    <string name="intro_page1_button_start">始める</string>
+
+    <!-- Intro Page 2 -->
+    <string name="intro_page2_title">高速で直感的</string>
+    <string name="intro_page2_description">写真を撮るだけで数秒で答えが得られます</string>
+    <string name="intro_page2_button_next">次へ</string>
+
+    <!-- Intro Page 3 -->
+    <string name="intro_page3_title">新世代AIモデル</string>
+    <string name="intro_page3_subtitle">私たちは世界最高のモデルを提供しています。分析深度が増す3つの識別レベルから選択してください。</string>
+    <string name="intro_page3_quick_title">クイック</string>
+    <string name="intro_page3_quick_description">高速で効率的な識別。</string>
+    <string name="intro_page3_standard_title">標準</string>
+    <string name="intro_page3_standard_description">精度と速度のバランス。</string>
+    <string name="intro_page3_precise_title">超精密</string>
+    <string name="intro_page3_precise_description">困難なケースの深層分析。</string>
+    <string name="intro_page3_button_next">次へ</string>
+
+    <!-- Intro Page 4 -->
+    <string name="intro_page4_title">どこへでもあなたと</string>
+    <string name="intro_page4_description">散歩中であろうと旅行中であろうと、すぐにあなたの周りのすべての自然を知り、認識できるようになります</string>
+    <string name="intro_page4_button_next">次へ</string>
+
+    <!-- Intro Page 5 -->
+    <string name="intro_page5_title">最後のステップ</string>
+    <string name="intro_page5_description">アプリを使用するには、Googleに接続して必要な権限を受け入れる必要があります。</string>
+    <string name="intro_page5_button_login">ログイン</string>
+
+    <!-- Onboarding Fragment (Permissions) -->
+    <string name="permission_camera_title">カメラの権限</string>
+    <string name="permission_camera_description">このアプリケーションは、植物や動物の写真を撮影および分析するためにカメラへのアクセスが必要です。</string>
+    <string name="permission_location_title">位置情報の権限</string>
+    <string name="permission_location_description">位置情報へのアクセスにより、お住まいの地域に基づいて種の識別の精度が向上します。</string>
+    <string name="permission_gallery_title">ギャラリーの権限</string>
+    <string name="permission_gallery_description">写真へのアクセスにより、ギャラリー内の既存の画像を分析できます。</string>
+    <string name="crop_image_title">画像を切り抜く</string>
+    <string name="model_selection_title">分析レベルを選択してください</string>
+    <string name="permission_button_accept">承認する</string>
+
+                
+    <!-- APP STRINGS -->
+    
+    <!-- FRAGMENT CAMERA -->
+    <!-- Indicators -->
+    <string name="camera_hint_click_menu_buy_credits">メニューを開くか、クレジットを購入するにはここをクリックしてください</string>
+    <string name="camera_hint_slide_left">← スワイプ</string>
+    <string name="camera_hint_slide_right">スワイプ →</string>
+    <string name="camera_hint_slide_bottom">↓ スワイプ ↓</string>
+
+    <!-- Fragment Title Menu -->
+    <string name="menu_preferences">環境設定</string>
+    <string name="menu_subscription">サブスクリプション</string>
+    <string name="menu_manual">ユーザーマニュアル</string>
+    <string name="menu_feedback">フィードバック</string>
+
+    
+    <!-- FRAGMENT LAST ANALYSIS -->
+    <!-- Tutorial Type Badge -->
+    <string name="tutorial_type_badge_text">種のバッジ</string>
+
+    <!-- Tutorial Analysis Entry Texts -->
+    <string name="tutorial_entry_local_name">一般名</string>
+    <string name="tutorial_entry_scientific_name">学名</string>
+    <string name="tutorial_entry_type">起源</string>
+    <string name="tutorial_entry_habitat">このセクションでは、その種が自然にどこに生息しているかを説明します。ここでは、その好む環境に関する情報を見つけることができます。</string>
+    <string name="tutorial_entry_characteristics">ここでは、種を特定するのに役立つ特徴的な特性を発見します。重要な視覚的詳細がここに記述されています。</string>
+    <string name="tutorial_entry_local_context">お住まいの地域固有の情報がここに表示されます。その種が保護されているか、または地域的な特異性があるかどうかがわかります。</string>
+    <string name="tutorial_entry_description">これは分析カードの例です</string>
+    <string name="tutorial_explanation_first_tab">ここでは、識別の確実性スコアと、分析を洗練するのに役立つ主要な違いを持つ代替案を発見してください。</string>
+    <string name="tutorial_explanation_peculiarities">ここでは、各種のユニークな特徴、行動、安全に関する情報を探索してください。これらの詳細は、自然をよりよく理解し、自然と交流するのに役立ちます。</string>
+
+    <!-- Item Info Card -->
+    <string name="tutorial_info_card_title_habitat">生息地</string>
+    <string name="tutorial_info_card_title_characteristics">特徴</string>
+    <string name="tutorial_info_card_title_peculiarities">特異性</string>
+    <string name="tutorial_info_card_title_local_context">地域的背景</string>
+    
+    <!-- Confidence Scores -->
+    <string name="confidence_score_very_reliable">非常に信頼できる識別</string>
+    <string name="confidence_score_reliable">信頼できる識別</string>
+    <string name="confidence_score_probable">可能性のある識別</string>
+    <string name="confidence_score_uncertain">不確実な識別</string>
+
+    <!-- Fragment Confidence and Alternatives -->
+    <string name="confidence_score_label">信頼度スコア</string>
+    <string name="confidence_description">この識別におけるAIの信頼度</string>
+    <string name="alternatives_label">代替識別</string>
+    <string name="alternatives_subtitle">AIは他の可能性を特定しました</string>
+    <string name="alternatives_subtitle_single">AIは別の可能性を1つ特定しました</string>
+    <string name="alternatives_subtitle_multiple">AIは他の可能性を%1$dつ特定しました</string>
+
+    
+    <!-- FRAGMENT HISTORY LIST -->
+    <!-- Activity History -->
+    <string name="history_title">分析履歴</string>
+
+    <!-- Empty History List -->
+    <string name="history_list_title">分析履歴</string>
+    <string name="history_list_empty_state_title">まだ分析はありません</string>
+    <string name="history_list_empty_state_description">最初の植物や動物をキャプチャしてコレクションを開始しましょう！</string>
+
+
+    <!-- DIALOG -->
+    <!-- Dialog History Options -->
+    <string name="history_option_reanalyze">再分析</string>
+    <string name="history_option_delete">削除</string>
+
+    <!-- Dialog Loading -->
+    <string name="loading_analysis_in_progress">分析中...</string>
+    <string name="loading_identifying_photo">写真を識別中</string>
+
+    <!-- Dialog Model Selection -->
+    <string name="model_selection_quick_option">クイック (1クレジット)</string>
+    <string name="model_selection_balanced_option">バランス (2クレジット)</string>
+    <string name="model_selection_ultra_precise_option">超精密 (5クレジット)</string>
+    <string name="model_selection_analyze_button">分析</string>
+
+    <!-- Dialog Delete -->
+    <string name="dialog_delete_title">削除の確認</string>
+    <string name="dialog_delete_message">この分析エントリを削除してもよろしいですか？</string>
+    <string name="dialog_delete_button">削除</string>
+    <string name="dialog_cancel_button">キャンセル</string>
+    
+    
+    
+    <!-- Activity Purchase -->
+    <string name="purchase_unlock_adventure_title">あなたの冒険を解き放ちましょう！</string>
+    <string name="purchase_choose_plan_description">あなたのプランを選んで、自然の探求を始めましょう。</string>
+    <string name="purchase_50_credits">50クレジット</string>
+    <string name="purchase_100_credits">100クレジット</string>
+    <string name="purchase_300_credits">300クレジット</string>
+    <string name="purchase_per_month">/月</string>
+    <string name="purchase_continue_button">続行</string>
+    <string name="purchase_payment_info">Google Playアカウントからいつでもキャンセルできます</string>
+
+
+</resources>
