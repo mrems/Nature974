@@ -28,14 +28,18 @@
     </style>
 
     <style name="Theme.Geronimo.Splash" parent="Theme.AppCompat.NoActionBar">
-        <!-- Barres système (identiques au thème base) -->
-        <item name="android:statusBarColor">@android:color/white</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
+        <!-- Edge-to-edge : pas de bande en haut, le splash s'étend sous la barre d'état -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowLightNavigationBar">true</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:enforceNavigationBarContrast">false</item>
         <item name="android:enforceStatusBarContrast">false</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <!-- Important: couvre aussi la zone de la status bar avant même que le layout soit affiché -->
+        <item name="android:windowBackground">@drawable/geki_splash</item>
 
         <!-- Attributs SplashScreen Android 12+ -->
         <item name="android:windowSplashScreenBackground">@android:color/white</item>

@@ -1,6 +1,7 @@
 package com.pastaga.geronimo
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -52,18 +53,23 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun hideSystemBars() {
-        // Pour les versions Android plus anciennes (avant API 30)
+        // Edge-to-edge : permet au contenu (et au background) de s'étendre sous les barres système
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Sécurise l'absence de bande (couleurs transparentes) même si les barres réapparaissent brièvement
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+
+        // Masquer complètement les barres d'état et de navigation (API-safe via compat)
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.hide(WindowInsetsCompat.Type.systemBars())
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        // Fallback legacy : certains appareils pré-R réagissent mieux avec ce flag en plus
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             @Suppress("DEPRECATION")
             window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        } else {
-            // Pour Android 11+ (API 30+), utiliser WindowInsetsController
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            val controller = WindowCompat.getInsetsController(window, window.decorView)
-            controller?.let {
-                it.hide(WindowInsetsCompat.Type.systemBars())
-                it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
         }
     }
 }
