@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_opacity">
+    android:background="@color/app_background">
 
     <TextureView
         android:id="@+id/camera_preview_texture_view"
@@ -278,7 +278,7 @@
                 android:layout_width="40dp"
                 android:layout_height="4dp"
                 android:layout_gravity="center"
-                android:background="@android:color/darker_gray"
+                android:background="@color/app_handle_indicator"
                 android:alpha="0.8"/>
         </FrameLayout>
 

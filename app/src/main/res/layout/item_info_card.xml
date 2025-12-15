@@ -53,7 +53,7 @@
                 android:id="@+id/content_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:fontFamily="@font/open_sans_regular"
                 android:lineSpacingMultiplier="1.1"/>
 

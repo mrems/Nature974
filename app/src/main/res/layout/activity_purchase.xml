@@ -5,8 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_opacity_0_4"
+    android:background="@android:color/white"
     tools:context=".PurchaseActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/bg_app_opacity_0_4"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="Background Image" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -101,8 +112,8 @@
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
                         android:gravity="center_vertical">
 
                         <RadioButton
@@ -120,7 +131,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="vertical"
-                            android:layout_marginStart="0dp">
+                            android:layout_marginStart="12dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -171,8 +182,8 @@
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
                         android:gravity="center_vertical">
 
                         <RadioButton
@@ -190,7 +201,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                            android:layout_marginStart="0dp">
+                            android:layout_marginStart="12dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -241,8 +252,8 @@
                 android:orientation="horizontal"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
                         android:gravity="center_vertical">
 
                         <RadioButton
@@ -260,7 +271,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                            android:layout_marginStart="0dp">
+                            android:layout_marginStart="12dp">
 
                     <TextView
                         android:layout_width="wrap_content"

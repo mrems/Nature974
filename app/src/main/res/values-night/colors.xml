@@ -7,4 +7,18 @@
     <color name="loading_primary_dark">#4CAF50</color>
     <color name="loading_text_primary">#FFFFFF</color>
     <color name="loading_text_secondary">#B0B0B0</color>
+
+    <!-- Fond général (utilisé notamment par fragment_settings) -->
+    <color name="background_light_gray">#121212</color>
+
+    <!-- Couleurs neutres (utilisées par les layouts pour être compatibles dark/light) -->
+    <color name="app_background">#121212</color>
+    <color name="app_surface">#1E1E1E</color>
+    <color name="app_image_placeholder">#2A2A2A</color>
+    <color name="app_handle_indicator">#2A2A2A</color>
+    <color name="full_screen_image_background">#000000</color>
+    <color name="menu_dialog_background">#D91E1E1E</color>
+    <color name="text_title_discreet">#EEEEEE</color>
+    <color name="card_background">#1E1E1E</color>
+    <color name="text_medium_gray">#B0B0B0</color>
 </resources>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Android 12+ : on conserve tout le thème d'origine et on ajoute les attributs SplashScreen -->
-    <style name="Theme.Geronimo" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.Geronimo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Couleurs principales (identiques au thème base) -->
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryVariant">@android:color/white</item>

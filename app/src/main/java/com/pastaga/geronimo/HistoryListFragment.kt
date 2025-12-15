@@ -1,7 +1,10 @@
 package com.pastaga.geronimo
 
+import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,11 +21,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.net.Uri
 import android.widget.Toast
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import android.os.Parcelable
+import java.io.IOException
 import java.util.Locale
 
 class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener {
@@ -32,6 +39,8 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
     private lateinit var emptyStateLayout: View
     private lateinit var imageAnalyzer: ImageAnalyzer
     private lateinit var modelPreferences: ModelPreferences
+    private lateinit var settingsPreferences: SettingsPreferences
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var sharedPrefs: SharedPreferences? = null
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         if (key == AnalysisHistoryManager.KEY_HISTORY_LIST) {
@@ -44,6 +53,48 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
         super.onCreate(savedInstanceState)
         imageAnalyzer = ImageAnalyzer(requireContext())
         modelPreferences = ModelPreferences(requireContext())
+        settingsPreferences = SettingsPreferences(requireContext())
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+    }
+
+    private fun checkLocationPermissions(): Boolean {
+        val fineLocationGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        val coarseLocationGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        return fineLocationGranted || coarseLocationGranted
+    }
+
+    /**
+     * Récupère (au mieux) la localisation courante (pays/région) pour une ré-analyse.
+     * - Ne demande pas de permission.
+     * - Retourne null/null si indisponible.
+     */
+    private suspend fun getCurrentCountryRegionForReanalysis(): Pair<String?, String?> {
+        if (!settingsPreferences.isLocationEnabled()) return null to null
+        if (!checkLocationPermissions()) return null to null
+
+        return try {
+            val location = fusedLocationClient.lastLocation.await() ?: return null to null
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            val addresses = withContext(Dispatchers.IO) {
+                try {
+                    geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                } catch (_: IOException) {
+                    null
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            val addr = addresses?.firstOrNull()
+            (addr?.countryName) to (addr?.adminArea)
+        } catch (_: Exception) {
+            null to null
+        }
     }
 
     override fun onCreateView(
@@ -223,12 +274,18 @@ class HistoryListFragment : Fragment(), ModelSelectionDialog.ModelSelectionListe
             // --- FIN DE L'AJOUT ---
 
             val newResponse = try {
+                val locationEnabled = settingsPreferences.isLocationEnabled()
+                val (currentCountry, currentRegion) =
+                    if (locationEnabled) getCurrentCountryRegionForReanalysis() else (null to null)
+                // Si on a une localisation courante, on la privilégie; sinon on retombe sur celle stockée dans la fiche
+                val countryToSend = if (locationEnabled) (currentCountry ?: entry.country) else null
+                val regionToSend = if (locationEnabled) (currentRegion ?: entry.region) else null
                 imageAnalyzer.analyzeImage(
                     Uri.parse(entry.imageUri),
                     modelId,
                     currentUser.uid,
-                    entry.country,
-                    entry.region,
+                    countryToSend,
+                    regionToSend,
                     Locale.getDefault().language // Passer le paramètre de langue
                 )
             } catch (e: InsufficientCreditsException) {

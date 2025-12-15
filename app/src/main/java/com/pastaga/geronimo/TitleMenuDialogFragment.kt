@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentTransaction
 
 class TitleMenuDialogFragment : DialogFragment() {
 
@@ -31,6 +32,8 @@ class TitleMenuDialogFragment : DialogFragment() {
 
         view.findViewById<TextView>(R.id.menu_preferences).setOnClickListener {
             listener?.onMenuItemClick(R.id.menu_preferences)
+            val intent = Intent(context, SettingsActivity::class.java)
+            startActivity(intent)
             dismiss()
         }
         view.findViewById<TextView>(R.id.menu_manual).setOnClickListener {

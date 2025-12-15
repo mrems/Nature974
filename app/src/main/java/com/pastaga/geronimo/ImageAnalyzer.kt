@@ -6,9 +6,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
-import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -22,12 +20,121 @@ import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 import android.graphics.ImageDecoder
 import android.os.Build
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonParseException
+import java.lang.reflect.Type
 
 class InsufficientCreditsException(message: String) : Exception(message)
 
 class ImageAnalyzer(private val context: Context) {
 
     private val BACKEND_API_URL = "https://europe-west9-geronimo-7224a.cloudfunctions.net/api/"
+
+    /**
+     * Désérialiseur tolérant pour éviter que l'app considère "aucune réponse"
+     * lorsque le backend renvoie des champs avec un type un peu différent
+     * (ex: confidenceScore = "N/C" au lieu d'un entier).
+     */
+    private class AnalyzeImageResponseDeserializer : JsonDeserializer<AnalyzeImageResponse> {
+        override fun deserialize(
+            json: JsonElement,
+            typeOfT: Type,
+            context: JsonDeserializationContext
+        ): AnalyzeImageResponse {
+            val obj = json.asJsonObjectOrNull()
+                ?: throw JsonParseException("AnalyzeImageResponse: JSON non objet")
+
+            fun str(key: String, default: String = "N/C"): String {
+                val el = obj.get(key)
+                return if (el == null || el.isJsonNull) default else el.asString
+            }
+
+            fun bool(key: String, default: Boolean = false): Boolean {
+                val el = obj.get(key) ?: return default
+                if (el.isJsonNull) return default
+                return try {
+                    when {
+                        el.isJsonPrimitive && el.asJsonPrimitive.isBoolean -> el.asBoolean
+                        el.isJsonPrimitive && el.asJsonPrimitive.isString -> el.asString.equals("true", ignoreCase = true)
+                        else -> default
+                    }
+                } catch (_: Exception) {
+                    default
+                }
+            }
+
+            fun intOrNullFlexible(key: String): Int? {
+                val el = obj.get(key) ?: return null
+                if (el.isJsonNull) return null
+                return try {
+                    when {
+                        el.isJsonPrimitive && el.asJsonPrimitive.isNumber -> el.asInt
+                        el.isJsonPrimitive && el.asJsonPrimitive.isString -> el.asString.toIntOrNull()
+                        else -> null
+                    }
+                } catch (_: Exception) {
+                    null
+                }
+            }
+
+            fun stringOrNull(key: String): String? {
+                val el = obj.get(key) ?: return null
+                if (el.isJsonNull) return null
+                return try { el.asString } catch (_: Exception) { null }
+            }
+
+            fun <T> deserializeOrNull(key: String, type: Type): T? {
+                val el = obj.get(key) ?: return null
+                if (el.isJsonNull) return null
+                return try { context.deserialize<T>(el, type) } catch (_: Exception) { null }
+            }
+
+            // Champs principaux: fallback "N/C" si absent
+            val localName = str("localName")
+            val scientificName = str("scientificName")
+            val type = str("type")
+            val habitat = str("habitat")
+            val characteristics = str("characteristics")
+            val localContext = str("localContext")
+
+            // Champs optionnels / tolérants
+            val peculiarities = stringOrNull("Peculiarities") // backend utilise volontairement P majuscule
+            val representativeColorHex = stringOrNull("representativeColorHex")
+            val danger = bool("danger", default = false)
+            val confidenceScore = intOrNullFlexible("confidenceScore")
+
+            val altType: Type = com.google.gson.reflect.TypeToken.getParameterized(
+                List::class.java,
+                AlternativeIdentification::class.java
+            ).type
+            val alternativeIdentifications: List<AlternativeIdentification>? =
+                deserializeOrNull<List<AlternativeIdentification>>("alternativeIdentifications", altType)
+
+            val justificationText = stringOrNull("justificationText")
+
+            return AnalyzeImageResponse(
+                localName = localName,
+                scientificName = scientificName,
+                type = type,
+                habitat = habitat,
+                characteristics = characteristics,
+                localContext = localContext,
+                Peculiarities = peculiarities,
+                representativeColorHex = representativeColorHex,
+                danger = danger,
+                confidenceScore = confidenceScore,
+                alternativeIdentifications = alternativeIdentifications,
+                justificationText = justificationText
+            )
+        }
+
+        private fun JsonElement.asJsonObjectOrNull(): JsonObject? =
+            try { if (this.isJsonObject) this.asJsonObject else null } catch (_: Exception) { null }
+    }
 
     private val okHttpClient = OkHttpClient.Builder()
         .connectTimeout(150, TimeUnit.SECONDS)
@@ -36,10 +143,14 @@ class ImageAnalyzer(private val context: Context) {
         .retryOnConnectionFailure(false) // Désactiver les tentatives de relance automatiques
         .build()
 
+    private val gson = GsonBuilder()
+        .registerTypeAdapter(AnalyzeImageResponse::class.java, AnalyzeImageResponseDeserializer())
+        .create()
+
     private val retrofit = Retrofit.Builder()
         .baseUrl(BACKEND_API_URL)
         .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
     private val naturePeiService = retrofit.create(NaturePeiApiService::class.java)
@@ -124,14 +235,14 @@ class ImageAnalyzer(private val context: Context) {
     )
 
     data class AnalyzeImageResponse(
-        val localName: String,
-        val scientificName: String,
-        val type: String,
-        val habitat: String,
-        val characteristics: String,
-        val localContext: String,
+        val localName: String = "N/C",
+        val scientificName: String = "N/C",
+        val type: String = "N/C",
+        val habitat: String = "N/C",
+        val characteristics: String = "N/C",
+        val localContext: String = "N/C",
         val Peculiarities: String? = null, // Nouveau champ pour les particularités
-        val representativeColorHex: String?,
+        val representativeColorHex: String? = null,
         val danger: Boolean = false, // Nouveau champ danger
         val confidenceScore: Int? = null, // Score de confiance de l'IA (0-100)
         val alternativeIdentifications: List<AlternativeIdentification>? = null, // Autres possibilités identifiées
@@ -168,14 +279,16 @@ class ImageAnalyzer(private val context: Context) {
                 response
             } catch (e: HttpException) {
                 // Gérer spécifiquement les erreurs HTTP (code 400 pour crédits insuffisants)
+                val errorBody = try { e.response()?.errorBody()?.string() } catch (_: Exception) { null }
+                Log.e("ImageAnalyzer", "Erreur HTTP analyzeImage: code=${e.code()} body=${errorBody ?: "N/A"}", e)
                 if (e.code() == 400) {
-                    val errorBody = e.response()?.errorBody()?.string()
                     if (errorBody?.contains("Crédits insuffisants") == true || errorBody?.contains("insuffisants") == true) {
                         throw InsufficientCreditsException("Crédits insuffisants pour effectuer cette analyse.")
                     }
                 }
                 null
             } catch (e: Exception) {
+                Log.e("ImageAnalyzer", "Erreur analyzeImage (parsing / réseau / autre): ${e.message}", e)
                 null
             }
         }

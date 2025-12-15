@@ -140,6 +140,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
     private lateinit var imageAnalyzer: ImageAnalyzer
     private lateinit var phoneOrientationSensor: PhoneOrientationSensor
     private lateinit var modelPreferences: ModelPreferences
+    private lateinit var settingsPreferences: SettingsPreferences
     private var sensorOrientation: Int = 0
     private var deviceRotation: Int = 0
 
@@ -161,6 +162,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         super.onCreate(savedInstanceState)
         imageAnalyzer = ImageAnalyzer(requireContext())
         modelPreferences = ModelPreferences(requireContext())
+        settingsPreferences = SettingsPreferences(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
@@ -248,12 +250,22 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                 .start()
         }
 
-        showWithFadeThenHide(hintTitleContainer, 2000L)
-        showWithFadeThenHide(hintCreditsContainer, 2000L)
-        showWithFadeThenHide(hintSlideLeftContainer, 2000L)
-        showWithFadeThenHide(hintSlideRightContainer, 2000L)
-        showWithFadeThenHide(hintSlideBottomContainer, 2000L)
-        showWithFadeThenHide(hintClickMessageCenter, 2000L)
+        if (settingsPreferences.areCameraIndicatorsEnabled()) {
+            showWithFadeThenHide(hintTitleContainer, 2000L)
+            showWithFadeThenHide(hintCreditsContainer, 2000L)
+            showWithFadeThenHide(hintSlideLeftContainer, 2000L)
+            showWithFadeThenHide(hintSlideRightContainer, 2000L)
+            showWithFadeThenHide(hintSlideBottomContainer, 2000L)
+            showWithFadeThenHide(hintClickMessageCenter, 2000L)
+        } else {
+            // Sécurité: garantir qu'aucun indicateur ne s'affiche
+            hintTitleContainer.visibility = View.GONE
+            hintCreditsContainer.visibility = View.GONE
+            hintSlideLeftContainer.visibility = View.GONE
+            hintSlideRightContainer.visibility = View.GONE
+            hintSlideBottomContainer.visibility = View.GONE
+            hintClickMessageCenter.visibility = View.GONE
+        }
 
         // Calculer la hauteur du titre + une petite marge en dp
         val density = resources.displayMetrics.density
@@ -437,9 +449,13 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
             Toast.makeText(requireContext(), "Permission camÃ©ra requise", Toast.LENGTH_SHORT).show()
         }
         
-        // Obtenir la localisation si la permission est dÃ©jÃ  accordÃ©e (sans redemander)
-        if (checkLocationPermissions()) {
+        // Obtenir la localisation uniquement si l'utilisateur l'a activée dans les settings
+        if (settingsPreferences.isLocationEnabled() && checkLocationPermissions()) {
             getLastLocation()
+        } else if (!settingsPreferences.isLocationEnabled()) {
+            // Sécurité: si l'option est désactivée, on ne conserve aucune valeur
+            userCountry = null
+            userRegion = null
         }
     }
 
@@ -909,6 +925,11 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
     }
 
     private fun getLastLocation() {
+        if (!settingsPreferences.isLocationEnabled()) {
+            userCountry = null
+            userRegion = null
+            return
+        }
         if (checkLocationPermissions()) {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
@@ -1048,27 +1069,29 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                     lifecycleScope.launch(Dispatchers.IO) {
                         var privateCopyUri: Uri? = null
                         try {
-                            // 1. Enregistrer dans la galerie publique via MediaStore
-                            val contentValues = ContentValues().apply {
-                                put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
-                                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                            // 1. Enregistrer dans la galerie publique via MediaStore (optionnel)
+                            if (settingsPreferences.shouldSaveToGallery()) {
+                                val contentValues = ContentValues().apply {
+                                    put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
+                                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                        put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                                        put(MediaStore.Images.Media.IS_PENDING, 1)
+                                    }
                                 }
-                            }
 
-                            val resolver = requireActivity().contentResolver
-                            val publicUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                                val resolver = requireActivity().contentResolver
+                                val publicUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 
-                            publicUri?.let { uriToSave ->
-                                resolver.openOutputStream(uriToSave)?.use { os ->
-                                    FileInputStream(File(uri.path!!)).copyTo(os)
-                                }
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                    contentValues.clear()
-                                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                                    resolver.update(uriToSave, contentValues, null, null)
+                                publicUri?.let { uriToSave ->
+                                    resolver.openOutputStream(uriToSave)?.use { os ->
+                                        FileInputStream(File(uri.path!!)).copyTo(os)
+                                    }
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                        contentValues.clear()
+                                        contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                                        resolver.update(uriToSave, contentValues, null, null)
+                                    }
                                 }
                             }
 
@@ -1187,6 +1210,11 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                     // Récupérer la langue du système d'exploitation du téléphone
                     val systemLanguage = Locale.getDefault().language
 
+                    // Localisation: si désactivée, ne rien envoyer au backend
+                    val locationEnabled = settingsPreferences.isLocationEnabled()
+                    val countryToSend = if (locationEnabled) userCountry else null
+                    val regionToSend = if (locationEnabled) userRegion else null
+
                     // --- AJOUT DE LA VÉRIFICATION CÔTÉ CLIENT (sans Toast) ---
                     val currentCreditsText = creditsTextView.text.toString()
                     val currentCredits = currentCreditsText.toIntOrNull() ?: 0
@@ -1203,7 +1231,7 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                     // --- FIN DE L'AJOUT ---
 
                     val response = try {
-                        imageAnalyzer.analyzeImage(uri, modelId, currentUser.uid, userCountry, userRegion, systemLanguage)
+                        imageAnalyzer.analyzeImage(uri, modelId, currentUser.uid, countryToSend, regionToSend, systemLanguage)
                     } catch (e: InsufficientCreditsException) {
                         withContext(Dispatchers.Main) {
                             loadingDialog.dismiss()
@@ -1249,8 +1277,8 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
                                 characteristics = response.characteristics,
                                 localContext = response.localContext,
                                 Peculiarities = response.Peculiarities, // Assigner le nouveau champ
-                                country = userCountry,
-                                region = userRegion,
+                                country = countryToSend,
+                                region = regionToSend,
                                 description = "N/C", // Description n'est plus fournie par l'API, utiliser N/C
                                 representativeColorHex = response.representativeColorHex, // Assigner la couleur à l'AnalysisEntry
                                 danger = response.danger, // Assigner le champ danger
@@ -1334,7 +1362,6 @@ class CameraFragment : Fragment(), ModelSelectionDialog.ModelSelectionListener, 
         when (itemId) {
             R.id.menu_preferences -> {
                 // TODO: Ouvrir l'écran des préférences
-                Toast.makeText(requireContext(), "Préférences - Fonctionnalité à implémenter", Toast.LENGTH_SHORT).show()
             }
             R.id.menu_manual -> {
                 val manualUrl = "https://mrems.github.io/geki_manual/"

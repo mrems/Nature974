@@ -108,6 +108,9 @@ dependencies {
     implementation("com.google.android.play:review:2.0.1")
     implementation("com.google.android.play:review-ktx:2.0.1")
 
+    // AndroidX Preference Library
+    implementation("androidx.preference:preference-ktx:1.2.1") // ou la dernière version stable
+
     // PhotoView pour le zoom d'image
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
 }
