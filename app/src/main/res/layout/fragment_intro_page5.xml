@@ -29,7 +29,7 @@
             android:src="@drawable/onboard5"
             android:scaleType="fitCenter"
             android:layout_marginBottom="24dp"
-            android:contentDescription="Logo Geronimo" />
+            android:contentDescription="Logo Geki" />
 
         <TextView
             android:id="@+id/page4_description"

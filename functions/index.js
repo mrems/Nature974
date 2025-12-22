@@ -35,11 +35,11 @@ app.use(express.json({ limit: "15mb" }));
 const GEMINI_API_KEY = defineSecret("GEMINI_API_KEY");
 const ANDROID_PACKAGE_NAME = defineString("ANDROID_PACKAGE_NAME");
 
-// Mapping modèle -> coût en crédits
-const MODEL_CREDITS = {
-  'gemini-2.5-flash-lite-preview-09-2025': 1,
-  'gemini-2.5-flash': 2,
-  'gemini-2.5-pro': 5,
+// Mapping niveau -> modèle et coût en crédits
+const MODEL_CONFIG = {
+  '1': { id: 'gemini-2.5-flash-lite-preview-09-2025', credits: 1 },
+  '2': { id: 'gemini-3-flash-preview', credits: 2 },
+  '3': { id: 'gemini-3-pro-preview', credits: 5 },
 };
 
 // Utilitaire: transformer base64 en part compatible Gemini
@@ -82,28 +82,17 @@ async function analyzeImage(req, res) {
         .json({ message: "Le champ 'uid' est requis pour l'authentification." });
     }
 
-    // Validation du modelId
-    const validModelIds = Object.keys(MODEL_CREDITS);
-    if (!modelId || !validModelIds.includes(modelId)) {
-      console.warn("Validation échouée: modelId invalide ou manquant.");
+    // Validation du niveau de modèle (modelId est maintenant un niveau "1", "2" ou "3")
+    const config = MODEL_CONFIG[modelId];
+    if (!config) {
+      console.warn(`Validation échouée: modelId '${modelId}' invalide ou manquant.`);
       return res
         .status(400)
-        .json({ message: `Le champ 'modelId' est requis et doit être l'un des suivants: ${validModelIds.join(', ')}. `});
+        .json({ message: "Le champ 'modelId' est requis et doit être '1' (Rapide), '2' (Équilibré) ou '3' (Ultra-Précis)." });
     }
 
-    // L'ancienne logique de déduction des crédits en début de requête a été supprimée
-    // pour éviter le double débit. La décrémentation n'a lieu qu'en cas de succès
-    // de l'analyse et d'envoi d'une réponse valide au client (voir lignes 241-242).
-    // const creditsRequired = MODEL_CREDITS[modelId];
-    // console.log(`[${new Date().toISOString()}] Crédits requis pour ${modelId}: ${creditsRequired}`);
-    // try {
-    //   await decrementCreditsWithAmount(uid, creditsRequired);
-    // } catch (creditError) {
-    //   console.error("Erreur lors de la déduction des crédits:", creditError);
-    //   return res
-    //     .status(400)
-    //     .json({ message: creditError.message });
-    // }
+    const actualModelId = config.id;
+    const creditsRequired = config.credits;
 
     // Conversion de l'image
     console.log(
@@ -127,7 +116,7 @@ async function analyzeImage(req, res) {
     // L'ancien log de débogage pour GEMINI_API_KEY a été supprimé car il n'apparaissait pas dans les logs.
     // console.log(`[DEBUG] GEMINI_API_KEY est chargée. Longueur: ${GEMINI_API_KEY.value()?.length || 0}. Début: ${GEMINI_API_KEY.value()?.substring(0, 5) || 'N/A'}`);
 
-    const model = genAI.getGenerativeModel({ model: modelId });
+    const model = genAI.getGenerativeModel({ model: actualModelId });
 
     // Prompt Gemini
     console.log(
@@ -261,7 +250,7 @@ If the species cannot be identified or if a field is unknown, use "N/C".
           `[${new Date().toISOString()}] Réponse envoyée: Succès. Temps total: ${Date.now() - startTime} ms.`
         );
         // Déduire les crédits après un traitement réussi et juste avant d'envoyer la réponse.
-        await decrementCreditsWithAmount(uid, MODEL_CREDITS[modelId]);
+        await decrementCreditsWithAmount(uid, creditsRequired);
         return res.status(200).json(parsedResult);
       } else {
         // L'ancien log de débogage `[DEBUG_VALIDATION_FAILED]` a été supprimé.
@@ -471,7 +460,7 @@ exports.verifyAndGrantCredits = functionsV1.https.onCall(async (data, context) =
 // Configuration de l'authentification Google Play Developer API
 // ----------------------------------------------------------------------
 
-const packageName = 'com.pastaga.geronimo'; // <<< REMPLACEZ PAR LE PACKAGE DE VOTRE APP
+const packageName = 'com.geronimo.geki'; // <<< package de l'app (Geki)
 
 // ----------------------------------------------------------------------
 // Fonction Firebase pour la vérification des abonnements

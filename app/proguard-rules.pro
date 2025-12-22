@@ -31,19 +31,19 @@
 -keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
 
 # Keep all data classes used for JSON serialization/deserialization
--keep class com.pastaga.geronimo.ImageAnalyzer$AnalyzeImageRequest { *; }
--keep class com.pastaga.geronimo.ImageAnalyzer$AnalyzeImageResponse { *; }
--keep class com.pastaga.geronimo.AnalysisEntry { *; }
--keep class com.pastaga.geronimo.AnalysisHistoryManager { *; }
+-keep class com.geronimo.geki.ImageAnalyzer$AnalyzeImageRequest { *; }
+-keep class com.geronimo.geki.ImageAnalyzer$AnalyzeImageResponse { *; }
+-keep class com.geronimo.geki.AnalysisEntry { *; }
+-keep class com.geronimo.geki.AnalysisHistoryManager { *; }
 
 # Keep specific members of AnalysisEntry for Gson deserialization
--keepclassmembers class com.pastaga.geronimo.AnalysisEntry {
+-keepclassmembers class com.geronimo.geki.AnalysisEntry {
     <fields>;
     <methods>;
 }
 
 # Keep specific members of AnalysisHistoryManager for Gson deserialization
--keepclassmembers class com.pastaga.geronimo.AnalysisHistoryManager {
+-keepclassmembers class com.geronimo.geki.AnalysisHistoryManager {
     <fields>;
     <methods>;
 }
@@ -87,7 +87,7 @@
 }
 
 # Keep the names of classes that are referenced by the manifest
--keep public class com.pastaga.geronimo.** { *; }
+-keep public class com.geronimo.geki.** { *; }
 
 # Keep specific classes for reflection that might be needed by libraries
 -keepnames class com.google.android.gms.location.FusedLocationProviderClient

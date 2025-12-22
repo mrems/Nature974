@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "NaturePei"
+rootProject.name = "Geki"
 include(":app")
  

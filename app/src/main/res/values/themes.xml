@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Geronimo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Geki" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:fontFamily">@font/open_sans</item>
         <item name="fontFamily">@font/open_sans</item>
 
         <!-- Typography styles -->
-        <item name="textAppearanceHeadline1">@style/TextAppearance.Geronimo.Headline1</item>
-        <item name="textAppearanceHeadline2">@style/TextAppearance.Geronimo.Headline2</item>
-        <item name="textAppearanceHeadline3">@style/TextAppearance.Geronimo.Headline3</item>
-        <item name="textAppearanceHeadline4">@style/TextAppearance.Geronimo.Headline4</item>
-        <item name="textAppearanceHeadline5">@style/TextAppearance.Geronimo.Headline5</item>
-        <item name="textAppearanceHeadline6">@style/TextAppearance.Geronimo.Headline6</item>
-        <item name="textAppearanceSubtitle1">@style/TextAppearance.Geronimo.Subtitle1</item>
-        <item name="textAppearanceSubtitle2">@style/TextAppearance.Geronimo.Subtitle2</item>
-        <item name="textAppearanceBody1">@style/TextAppearance.Geronimo.Body1</item>
-        <item name="textAppearanceBody2">@style/TextAppearance.Geronimo.Body2</item>
-        <item name="textAppearanceButton">@style/TextAppearance.Geronimo.Button</item>
-        <item name="textAppearanceCaption">@style/TextAppearance.Geronimo.Caption</item>
-        <item name="textAppearanceOverline">@style/TextAppearance.Geronimo.Overline</item>
+        <item name="textAppearanceHeadline1">@style/TextAppearance.Geki.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.Geki.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.Geki.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.Geki.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.Geki.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.Geki.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.Geki.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.Geki.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.Geki.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.Geki.Body2</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Geki.Button</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Geki.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.Geki.Overline</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryVariant">@android:color/white</item>
@@ -43,7 +43,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.Geronimo.Splash" parent="Theme.AppCompat.NoActionBar">
+    <style name="Theme.Geki.Splash" parent="Theme.AppCompat.NoActionBar">
         <!-- Edge-to-edge : pas de bande en haut, le splash s'étend sous la barre d'état -->
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="l">true</item>
         <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
@@ -58,7 +58,7 @@
         <item name="android:windowBackground">@drawable/geki_splash</item>
     </style>
 
-    <style name="Theme.Geronimo.Auth" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Geki.Auth" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Copy all properties from main theme -->
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryVariant">@android:color/white</item>
@@ -102,7 +102,7 @@
         <item name="cornerSize">16dp</item>
     </style>
 
-    <style name="Theme.Geronimo.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+    <style name="Theme.Geki.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="colorSurface">@color/loading_card_background</item>
         <item name="colorPrimary">@color/text_title_discreet</item>
@@ -145,76 +145,76 @@
         <item name="android:button">@drawable/custom_radio_button_selector</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
+    <style name="TextAppearance.Geki.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Headline2" parent="TextAppearance.MaterialComponents.Headline2">
+    <style name="TextAppearance.Geki.Headline2" parent="TextAppearance.MaterialComponents.Headline2">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
+    <style name="TextAppearance.Geki.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
+    <style name="TextAppearance.Geki.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+    <style name="TextAppearance.Geki.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+    <style name="TextAppearance.Geki.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <style name="TextAppearance.Geki.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
+    <style name="TextAppearance.Geki.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Body1" parent="TextAppearance.MaterialComponents.Body1">
+    <style name="TextAppearance.Geki.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/open_sans</item>
         <item name="android:fontFamily">@font/open_sans</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Body2" parent="TextAppearance.MaterialComponents.Body2">
+    <style name="TextAppearance.Geki.Body2" parent="TextAppearance.MaterialComponents.Body2">
         <item name="fontFamily">@font/open_sans</item>
         <item name="android:fontFamily">@font/open_sans</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Button" parent="TextAppearance.MaterialComponents.Button">
+    <style name="TextAppearance.Geki.Button" parent="TextAppearance.MaterialComponents.Button">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Caption" parent="TextAppearance.MaterialComponents.Caption">
+    <style name="TextAppearance.Geki.Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontFamily">@font/open_sans</item>
         <item name="android:fontFamily">@font/open_sans</item>
     </style>
 
-    <style name="TextAppearance.Geronimo.Overline" parent="TextAppearance.MaterialComponents.Overline">
+    <style name="TextAppearance.Geki.Overline" parent="TextAppearance.MaterialComponents.Overline">
         <item name="fontFamily">@font/open_sans</item>
         <item name="android:fontFamily">@font/open_sans</item>
     </style>

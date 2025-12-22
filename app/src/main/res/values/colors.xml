@@ -27,6 +27,7 @@
     <color name="text_light_gray">#9E9E9E</color>
 
     <!-- Couleurs pour le loading dialog -->
+    <color name="loading_dialog_background">#80000000</color>
     <color name="loading_card_background">#FFFFFF</color>
     <color name="loading_primary">#4CAF50</color>
     <color name="loading_primary_dark">#388E3C</color>

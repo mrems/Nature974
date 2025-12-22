@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.pastaga.geronimo"
+    namespace = "com.geronimo.geki"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.pastaga.geronimo"
+        applicationId = "com.geronimo.geki"
         minSdk = 24
         targetSdk = 35
         versionCode = 4

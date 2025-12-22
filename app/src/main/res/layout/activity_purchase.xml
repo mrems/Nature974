@@ -44,7 +44,7 @@
                 android:src="@drawable/nuts_title"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:contentDescription="Titre Geronimo" 
+                android:contentDescription="Titre Geki" 
                 android:layout_marginTop="24dp"/>
             
             <!-- Image geronimo_splash.png ajoutée ici -->
@@ -56,7 +56,7 @@
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_marginTop="-16dp"
-                android:contentDescription="Image du personnage Geronimo" />
+                android:contentDescription="Image du personnage Geki" />
             <!-- Ajustez la largeur et la hauteur de l'image geronimo_splash selon vos besoins -->
 
             <!-- Remplacé par ImageView pour title.png -->

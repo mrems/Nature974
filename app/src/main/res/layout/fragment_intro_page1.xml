@@ -25,12 +25,12 @@
             android:gravity="center_horizontal"
             android:layout_marginBottom="-16dp" />
 
-        <!-- Titre Geronimo! remplacé par l'image -->
+        <!-- Titre Geki! remplacé par l'image -->
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="85dp"
             android:src="@drawable/geki_title"
-            android:contentDescription="Geronimo Logo"
+            android:contentDescription="Logo Geki"
             android:adjustViewBounds="true"
             android:layout_marginBottom="12dp" />
 

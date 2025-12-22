@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Android 12+ : on conserve tout le thème d'origine et on ajoute les attributs SplashScreen -->
-    <style name="Theme.Geronimo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Geki" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Couleurs principales (identiques au thème base) -->
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryVariant">@android:color/white</item>
@@ -27,7 +27,7 @@
         <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
     </style>
 
-    <style name="Theme.Geronimo.Splash" parent="Theme.AppCompat.NoActionBar">
+    <style name="Theme.Geki.Splash" parent="Theme.AppCompat.NoActionBar">
         <!-- Edge-to-edge : pas de bande en haut, le splash s'étend sous la barre d'état -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
